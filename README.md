@@ -21,4 +21,4 @@ Example
 
 http://consolr/login.php
 
-Visit the GitHub Wiki for more information: http://wiki.github.com/dafi/consolr/
+Visit the GitHub Wiki for more information: <http://wiki.github.com/dafi/consolr/>
