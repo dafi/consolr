@@ -1,0 +1,54 @@
+body {
+  background-color: #2C4762;
+  color: #FFF;
+  font: 70% sans-serif;
+}
+
+#loginForm label {
+  color: #D6DCEA;
+}
+
+.login-container {
+  width: 500px;
+  margin: 0 auto;
+}
+
+#loginForm .input-text {
+  width: 300px;
+}
+
+#loginForm .tumblr-name {
+  text-align: right;
+}
+
+a {
+  color: #D6DCEA;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #FFF;
+}
+
+.date-header {
+    background-color: #FFF;
+    color: #000;
+    margin: 0;
+    padding-left: 0.5em;
+    font-weight: normal;
+}
+
+.date-image-container {
+    background-color: #FFF;
+    padding: 0.5em 1em;
+    margin-bottom: 0.6em;
+}
+
+#date-container ul {
+  list-style: none;
+  margin-top: 0;
+}
+
+#date-container li {
+  display: inline;
+}
