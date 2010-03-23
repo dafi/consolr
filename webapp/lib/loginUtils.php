@@ -8,9 +8,9 @@ session_start();
 class login_utils {
     static function login($email, $password, $tumblr_name) {
         $tumblr = new tumblr($email, $password, $tumblr_name);
-        
+
         $_SESSION['tumblr'] = $tumblr;
-        
+
         return true;
     }
 

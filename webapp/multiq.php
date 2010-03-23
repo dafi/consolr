@@ -32,12 +32,12 @@ $tumblr = login_utils::get_tumblr();
                 <br/>
                 <input type="text" name="caption1" id="caption1" size="100"/>
                 <br/>
-                
+
                 <label for="date1">Date</label>
                 <br/>
                 <input type="text" name="date1" id="date1" size="50"/>
                 <br/>
-                
+
                 <label for="tags1">Tags</label>
                 <br/>
                 <input type="text" name="tags1" id="tags1" size="50"/>
@@ -55,18 +55,18 @@ $tumblr = login_utils::get_tumblr();
                 <br/>
                 <input type="text" name="caption2" id="caption2" size="100"/>
                 <br/>
-                
+
                 <label for="date2">Date</label>
                 <br/>
                 <input type="text" name="date2" id="date2" size="50"/>
                 <br/>
-                
+
                 <label for="tags2">Tags</label>
                 <br/>
                 <input type="text" name="tags2" id="tags2" size="50"/>
                 <br/>
             </fieldset>
-            
+
             <div>
                 <input type="submit" value="Insert Photos"/>
             </div>

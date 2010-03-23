@@ -45,14 +45,14 @@
                 <input type="text" id="email" name="email" class="input-text"/>
                 <span id="email-error"></span>
             </p>
-    
+
             <p>
                 <label for="password">Password</label>
                 <br/>
                 <input type="password" id="password" name="password" class="input-text"/>
                 <span id="password-error"></span>
             </p>
-    
+
             <p>
                 <label for="tumblrName">Tumblr name</label>
                 <br/>

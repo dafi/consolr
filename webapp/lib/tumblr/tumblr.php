@@ -12,7 +12,7 @@ class tumblr {
 
     function get_queue($use_json = false, $start = '0', $num = '0', $type = '') {
         $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
-        
+
         if ($use_json) {
             $api_url .= "/json";
         }
@@ -25,13 +25,13 @@ class tumblr {
                         'type'      => $type,
                         'state'     => 'queue'
                     ));
-        
+
         return $info['result'];
     }
 
     function get_post_by_id($post_id, $use_json = false) {
         $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
-        
+
         if ($use_json) {
             $api_url .= "/json";
         }
@@ -41,7 +41,7 @@ class tumblr {
                         'password'  => $this->password,
                         'id'        => $post_id
                     ));
-        
+
         return $info['result'];
     }
 
@@ -55,7 +55,7 @@ class tumblr {
                         'type'      => 'photo',
                         'source'    => $photo_url,
                         'caption'   => $caption,
-                        
+
                         'group'     => $this->tumblr_name . '.tumblr.com',
                         'tags'      => $tags ? implode(',', $tags) : '',
 
@@ -74,7 +74,7 @@ class tumblr {
         $params = array(
                         'email'     => $this->email,
                         'password'  => $this->password,
-                        
+
                         'post-id'   => $post_id,
 
                         'state'     => 'queue',
@@ -87,7 +87,7 @@ class tumblr {
             $json = json_decode($matches[0], true);
             $post = $json['posts'][0];
             $tags = isset($post['tags']) ? $post['tags'] : array();
-            
+
             if ($post['type'] == 'photo') {
                 $params['caption'] = isset($post_params['photo-caption'])
                                         ? $post_params['photo-caption']
@@ -127,7 +127,7 @@ class tumblr {
         return array('status' => $status,
                      'result' => $result);
     }
-    
+
     public function get_tumblr_name() {
         return $this->tumblr_name;
     }

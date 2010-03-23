@@ -15,17 +15,16 @@ class tumblr_utils {
     }
 
     /**
-     * Group posts by date, every post contains the new property unix-timestamp
+     * Group posts by date
      * @param $posts the associative array obtained from JSON format
-     * @returns associative array in the form ['YYYYMMDD'] { posts }
+     * @returns associative array in the form ['YYYYMMDD'] { post_ids }
      */
     static function group_posts_by_date($posts) {
         $grouped = array();
 
         foreach($posts as $post) {
-            $post['unix-timestamp'] = strtotime($post['publish-on-time']);
             // ignore hours, minutes and seconds
-            $str_time = strftime("%Y%m%d", $post['unix-timestamp']);
+            $str_time = strftime("%Y%m%d", strtotime($post['publish-on-time']));
 
             if (array_key_exists($str_time, $grouped)) {
                 $g = &$grouped[$str_time];
@@ -35,7 +34,7 @@ class tumblr_utils {
                 $g = array();
                 $grouped[$str_time] = &$g;
             }
-            array_push($g, $post);
+            array_push($g, $post['id']);
         }
 
         return $grouped;
