@@ -1,0 +1,9 @@
+#dialog-modify-thumb {
+  margin-right: 3px;
+  border: 1px solid;
+  /*float: left*/
+}
+
+#dialog-form input[type='text'] {
+  width: 100%;
+}
