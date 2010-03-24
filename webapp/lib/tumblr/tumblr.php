@@ -93,7 +93,7 @@ class tumblr {
                                         ? $post_params['photo-caption']
                                         : $post['photo-caption'];
                 if (isset($post_params['tags'])) {
-                    $tags = array_merge($post['tags'], $post_params['tags']);
+                    $tags = array_merge($tags, $post_params['tags']);
                 }
             }
             $params['tags'] = implode(",", $tags);
