@@ -42,6 +42,8 @@ $tumblr_posts = array(
                     bodyHandler: function() {
                         var post = consolr.findPost(this.id);
                         var caption = $(post['photo-caption']).text();
+                        // If text() returns an empty string uses the caption
+                        caption = caption || post['photo-caption'];
                         var tags = post['tags'] ? post['tags'].join(", ") : "";
                         var time = formatDate(new Date(post['publish-unix-timestamp']), "HH:mm:ss");
 
@@ -56,8 +58,8 @@ $tumblr_posts = array(
 
                 $("#dialog-form").dialog({
                     autoOpen: false,
-                    height: 200,
-                    width: 350,
+                    height: 400,
+                    width: 500,
                     modal: true,
                     buttons: {
                         'Save': function() {
