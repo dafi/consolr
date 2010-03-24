@@ -23,7 +23,6 @@ var consolr = {
             return true;
         });
 
-        // update the publish time attribute
         var imageElement = $("#" + imageId).detach();
 
         if (element) {
@@ -42,7 +41,9 @@ var consolr = {
                 data: params,
                 success: function(data, status) {
                     var newDate = new Date(params.publishDate);
-                    consolr.movePost(parseInt(params.postId, 10), newDate);
+                    var post = consolr.movePost(parseInt(params.postId, 10), newDate);
+                    post['tags'] = params.tags.replace(/,\s*/, ',').split(',');
+                    post['photo-caption'] = params.caption;
                     consolr.moveImage(params.postId, newDate);
                 },
                 error: function(xhr, status) {
@@ -67,6 +68,13 @@ var consolr = {
         return null;
     },
 
+    /**
+     * Move post to new sorted position, the post 'publish-unix-timestamp' property
+     * is updated to new value
+     * @param postId the post id
+     * @param destDateStr the date string representing new post publish time
+     * @returns the post
+     */
     movePost : function(postId, destDateStr) {
         var destDate = new Date(destDateStr);
         var fromGroupDate = consolrPosts['group-date'][consolr.findGroupDateByPostId(postId)];
@@ -95,6 +103,8 @@ var consolr = {
 
         posts.splice(currIndex, 1);
         posts.splice(newIndex, 0, post);
+        
+        return post;
     },
 
     findGroupDateByPostId : function(postId) {

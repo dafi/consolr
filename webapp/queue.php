@@ -5,6 +5,7 @@ require_once 'lib/tumblr/tumblrUtils.php';
 $tumblr = login_utils::get_tumblr();
 $tumblr_queue = tumblr_utils::get_json_map($tumblr->get_queue(true));
 $tumblr_posts = array(
+    "tumblog" => $tumblr_queue['tumblelog'],
     "group-date" => tumblr_utils::group_posts_by_date($tumblr_queue['posts']),
     "posts" => $tumblr_queue['posts']);
 ?>
@@ -41,7 +42,7 @@ $tumblr_posts = array(
                     bodyHandler: function() {
                         var post = consolr.findPost(this.id);
                         var caption = $(post['photo-caption']).text();
-                        var tags = post['tags'].join(',');
+                        var tags = post['tags'] ? post['tags'].join(", ") : "";
                         var time = formatDate(new Date(post['publish-unix-timestamp']), "HH:mm:ss");
 
                         return $("<root>"
@@ -62,7 +63,9 @@ $tumblr_posts = array(
                         'Save': function() {
                             var params = {
                                 postId : $(this).dialog('option', 'postInfo').id,
-                                publishDate : $('#dialog-modify-publish-date').val()
+                                publishDate : $('#dialog-modify-publish-date').val(),
+                                caption : $('#dialog-modify-caption').val(),
+                                tags : $('#dialog-modify-tags').val()
                             };
                             consolr.updateImagePost(params);
                             $(this).dialog('close');
@@ -74,10 +77,12 @@ $tumblr_posts = array(
                     open: function() {
                         var postInfo = $($(this).dialog('option', 'postInfo'));
                         var post = consolr.findPost(postInfo.attr('id'));
+                        var tags = post['tags'] ? post['tags'].join(", ") : "";
+                        var date = formatDate(new Date(post['publish-unix-timestamp']), "dd NNN yyyy HH:mm:ss");
 
                         $('#dialog-modify-caption').val(post['photo-caption']);
-                        $('#dialog-modify-publish-date').val(formatDate(new Date(post['publish-unix-timestamp']), "dd NNN yyyy HH:mm:ss"));
-                        $('#dialog-modify-tags').val(post['tags'].join(", "));
+                        $('#dialog-modify-publish-date').val(date);
+                        $('#dialog-modify-tags').val(tags);
                         $('#dialog-modify-thumb').attr("src", post['photo-url-75']);
                     },
                     close: function() {
