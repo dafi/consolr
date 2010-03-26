@@ -1,6 +1,7 @@
 // ===================================================================
 // Author: Matt Kruse <matt@mattkruse.com>
 // WWW: http://www.mattkruse.com/
+// http://www.javascripttoolbox.com/lib/date/documentation.php
 //
 // NOTICE: You may use this code for any purpose, commercial or
 // private, without any further permission from the author. You may
