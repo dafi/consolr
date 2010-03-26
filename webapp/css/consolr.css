@@ -67,7 +67,6 @@ a:hover {
 }
 
 #tooltip div.body span {
-  background: url("../images/document.png") no-repeat;
   height: 16px;
   padding-left: 16px;
   margin: 0 0 4px 0;
@@ -75,10 +74,14 @@ a:hover {
   display: block;
 }
 
-#tooltip div.body #time {
+#tooltip .tooltip-caption {
+  background: url("../images/document.png") no-repeat;
+}
+
+#tooltip .tooltip-time {
   background: url("../images/calendar.png") no-repeat;
 }
 
-#tooltip div.body #tags {
+#tooltip .tooltip-tags {
   background: url("../images/tags.png") no-repeat;
 }

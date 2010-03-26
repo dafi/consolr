@@ -1,7 +1,7 @@
 #dialog-modify-thumb {
   margin-right: 3px;
   border: 1px solid;
-  /*float: left*/
+  display: block;
 }
 
 #dialog-form input[type='text'] {
