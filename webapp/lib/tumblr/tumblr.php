@@ -62,8 +62,7 @@ class tumblr {
                         'state'     => 'queue',
                         'publish-on' => $publish_time
                     ));
-        print_r($info);
-        return $info['status'] == '201';
+        return $info;
     }
 
     /**
