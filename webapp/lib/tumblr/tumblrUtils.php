@@ -17,14 +17,16 @@ class tumblr_utils {
     /**
      * Group posts by date
      * @param $posts the associative array obtained from JSON format
+     * @package $date_property the property to use to get date, the default is
+     * 'publish-on-time' used for queued posts
      * @returns associative array in the form ['YYYYMMDD'] { post_ids }
      */
-    static function group_posts_by_date($posts) {
+    static function group_posts_by_date($posts, $date_property = 'publish-on-time') {
         $grouped = array();
 
         foreach($posts as $post) {
             // ignore hours, minutes and seconds
-            $str_time = strftime("%Y%m%d", strtotime($post['publish-on-time']));
+            $str_time = strftime("%Y%m%d", strtotime($post[$date_property]));
 
             if (array_key_exists($str_time, $grouped)) {
                 $g = &$grouped[$str_time];

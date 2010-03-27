@@ -183,5 +183,20 @@ var consolr = {
         }
         
         return groupDateWidget;
+    },
+    
+    groupTags : function() {
+        var tagsMap = [];
+
+        $(consolrPosts['posts']).each(function(i, post) {
+            $(post.tags).each(function(i, tag) {
+                tagsMap[tag] = tagsMap[tag] ? tagsMap[tag] + 1 : 1;
+            });
+        });
+        var tags = [];
+        for (i in tagsMap) {
+            tags.push({name: i, count : tagsMap[i]});
+        }
+        return tags;
     }
 }

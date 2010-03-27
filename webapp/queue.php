@@ -31,6 +31,8 @@ $tumblr_posts = array(
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
 
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
         <script type="text/javascript">
         <!--//
             var consolrPosts = <?php echo json_encode($tumblr_posts); ?>;
@@ -41,6 +43,21 @@ $tumblr_posts = array(
                     if (consolrPosts['group-date'][g].length > 0) ++days;
                 };
                 $("#count").text(consolrPosts['posts'].length +  ' posts in ' + days + ' days');
+            }
+
+            function drawChart() {
+                var tags = consolr.groupTags();
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Tags');
+                data.addColumn('number', 'Posts');
+
+                $(tags).each(function(i, tag) {
+                    data.addRow([tag.name, tag.count]);
+                });
+
+                data.sort(0);
+                new google.visualization.BarChart(
+                    document.getElementById('tags-chart')).draw(data, {legend : 'none'});
             }
 
             $(function() {
@@ -112,6 +129,28 @@ $tumblr_posts = array(
                         //allFields.val('').removeClass('ui-state-error');
                     }
                 });
+
+                $("#dialog-tags").dialog({
+                    autoOpen: false,
+                    width: 950,
+                    height: 650,
+                    modal: true,
+                    buttons: {
+                        'Close': function() {
+                            $(this).dialog('close');
+                        }
+                    },
+                    open: function() {
+                        google.load("visualization", "1", {packages:["barchart"], callback: drawChart});
+                    },
+                    close: function() {
+                        //allFields.val('').removeClass('ui-state-error');
+                    }
+                });
+                
+                $("#show-tags-chart").click(function() {
+                    $('#dialog-tags').dialog('open');
+                });
             });
         -->
         </script>
@@ -131,6 +170,7 @@ $tumblr_posts = array(
         </div>
 
         <h3>Queue - <span id="count"></span></h3>
+        <input type="button" id="show-tags-chart" value="Show Tags"/>
 
         <div id="date-container">
 <?php
@@ -172,6 +212,10 @@ $tumblr_posts = array(
             <input type="text" name="dialog-modify-publish-date" id="dialog-modify-publish-date"/>
     </fieldset>
     </form>
+</div>
+
+<div id="dialog-tags" title="Tags Chart">
+<div id="tags-chart" style="width: 900px; height: 540px;"></div>
 </div>
 
     </body>

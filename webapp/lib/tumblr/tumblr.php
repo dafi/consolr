@@ -96,6 +96,13 @@ class tumblr {
                 }
             }
             $params['tags'] = implode(",", $tags);
+        } else {
+            $params['caption'] = isset($post_params['photo-caption'])
+                                    ? $post_params['photo-caption']
+                                    : '';
+            $params['tags'] = isset($post_params['tags'])
+                                ? implode(",", $post_params['tags'])
+                                : "";
         }
         return tumblr::do_request($api_url, $params);
     }
@@ -129,6 +136,21 @@ class tumblr {
 
     public function get_tumblr_name() {
         return $this->tumblr_name;
+    }
+
+    function get_published_posts($use_json = false, $start = 0, $num = 50) {
+        $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
+
+        if ($use_json) {
+            $api_url .= "/json";
+        }
+        $info = tumblr::do_request($api_url,
+                    array(
+                        'start'     => $start,
+                        'num'       => $num
+                    ));
+
+        return $info['result'];
     }
 }
 
