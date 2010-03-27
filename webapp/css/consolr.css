@@ -85,3 +85,19 @@ a:hover {
 #tooltip .tooltip-tags {
   background: url("../images/tags.png") no-repeat;
 }
+
+noscript div {
+  height: 45px;
+  text-align: center;
+  background-color: #31546f;
+  color: #fff;
+  font: normal 17px 'Lucida Grande',Verdana,sans-serif;
+  line-height: 45px;
+  border: 3px solid #FFDD00;
+}
+
+noscript div a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: solid 1px #5E809C;
+}
