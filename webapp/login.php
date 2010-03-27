@@ -1,8 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-
+<?php
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
     <title>Tumblr Consolr</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
 
     <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
 
@@ -35,7 +40,12 @@
       });
     </script>
 </head>
-<body>
+    <body>
+        <noscript>
+            <div>
+                <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
+            </div>
+        </noscript>
     <div class="login-container">
         <h1>Tumblr Consolr</h1>
         <form id="loginForm" action="doLogin.php" method="post">
@@ -64,5 +74,5 @@
             </div>
         </form>
     </div>
-</body>
+    </body>
 </html>
