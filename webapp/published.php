@@ -40,43 +40,27 @@ $tumblr_posts = array(
 
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
+        <script type="text/javascript" src="js/consolr.dialogs.js"></script>
+        <script type="text/javascript" src="js/consolr.tooltips.js"></script>
+
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
         <script type="text/javascript">
         <!--//
             var consolrPosts = <?php echo json_encode($tumblr_posts); ?>;
 
-            function updateCount() {
-                var days = 0;
-                for (g in consolrPosts['group-date']) {
-                    if (consolrPosts['group-date'][g].length > 0) ++days;
-                };
-                $("#count").text(consolrPosts['posts'].length +  ' posts in ' + days + ' days');
-            }
-
             $(function() {
-                updateCount();
+                consolr.updatePostsCount();
                 // This ensure dates are normalized with client side timezone
                 consolrPosts['posts'].forEach(function(el) {
                     el['publish-unix-timestamp'] = new Date(el['unix-timestamp']).getTime();
                 });
 
-                $("li").tooltip({
-                    bodyHandler: function() {
-                        var post = consolr.findPost(this.id);
-                        var caption = $(post['photo-caption']).text();
-                        // If text() returns an empty string uses the caption
-                        caption = $.cropText(caption || post['photo-caption'], 60);
-                        
-                        var tags = post['tags'] ? $.cropText(post['tags'].join(", "), 60) : "";
-                        var time = formatDate(new Date(post['publish-unix-timestamp']), "HH:mm:ss");
+                $("li").initTooltipPhotoPost();
 
-                        return $("<root>"
-                                 + "<span class='tooltip-caption'>" + caption + "</span>"
-                                 + "<span class='tooltip-tags'>" + tags + "</span>"
-                                 + "<span class='tooltip-time'>" + time + "</span>"
-                                 + "</root>").html();
-                    },
-                    showURL: false
+                $("#dialog-tags").initDialogTagsChart();
+                $("#show-tags-chart").click(function() {
+                    $('#dialog-tags').dialog('open');
                 });
 
             });
@@ -97,7 +81,8 @@ $tumblr_posts = array(
             <a href="logout.php">[<?php echo $tumblr->get_tumblr_name() ?>] Logout</a>
         </div>
 
-        <h3>Queue - <span id="count"></span></h3>
+        <h3>Published - <span id="count"></span></h3>
+        <input type="button" id="show-tags-chart" value="Show Tags"/>
 
         <div id="date-container">
 <?php
@@ -122,5 +107,8 @@ $tumblr_posts = array(
 <?php } ?>
         </div>
 
+<div id="dialog-tags" title="Tags Chart">
+<div id="tags-chart" style="width: 900px; height: 540px;"></div>
+</div>
     </body>
 </html>

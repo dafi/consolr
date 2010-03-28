@@ -1,11 +1,15 @@
-var consolr = {
+if (typeof(consolr) == "undefined") {
+    var consolr = {};
+}
+
+(function() {
     /**
      * Move image widget to new date container or position
      * @param imageId the image element id to move to new position
      * @param newDate the new date string, it's used to determine the destination
      * container
      */
-    moveImageWidget : function(imageId, newDate) {
+    this.moveImageWidget = function(imageId, newDate) {
         var time = newDate.getTime();
         var groupDateId = consolr.createGroupDateId(newDate);
         imageId = "i" + imageId;
@@ -33,9 +37,9 @@ var consolr = {
         } else {
             consolr.getGroupDateWidget(groupDateId, newDate).append(imageElement);
         }
-    },
+    }
 
-    updateImagePost : function(params) {
+    this.updateImagePost = function(params) {
         $.ajax({url: 'doUpdate.php',
                 type: 'post',
                 async: false,
@@ -58,7 +62,7 @@ var consolr = {
      * @param postId the postId used for search
      * @returns the post if found, null otherwise
      */
-    findPost : function(postId) {
+    this.findPost = function(postId) {
         // remove the alphabetic prefix
         if (typeof(postId) == "string") {
             postId = parseInt(postId.replace(/^[a-z]/i, ''), 10);
@@ -80,7 +84,7 @@ var consolr = {
      * @param destDateStr the date string representing new post publish time
      * @returns the post
      */
-    movePost : function(postId, destDateStr) {
+    this.movePost = function(postId, destDateStr) {
         var destDate = new Date(destDateStr);
         var destGroupId = consolr.createGroupDateId(destDate);
         var fromGroupDate = consolrPosts['group-date'][consolr.findGroupDateByPostId(postId)];
@@ -116,7 +120,7 @@ var consolr = {
         return post;
     },
 
-    findGroupDateByPostId : function(postId) {
+    this.findGroupDateByPostId = function(postId) {
         postId = parseInt(postId);
         var groups = consolrPosts['group-date'];
 
@@ -128,14 +132,14 @@ var consolr = {
         return null;
     },
 
-    createGroupDateId : function(date) {
+    this.createGroupDateId = function(date) {
         function pad(num) {
             return (num < 10 ? "0" : "") + num;
         }
         return "gd" + (1900 + date.getYear()) + pad(date.getMonth() + 1) + pad(date.getDate());
     },
 
-    findTimestampIndex : function(arr, ts) {
+    this.findTimestampIndex = function(arr, ts) {
         if (ts <= arr[0]['publish-unix-timestamp']) {
             return 0;
         }
@@ -156,7 +160,7 @@ var consolr = {
      * @param {Date} groupDate the date from which determine the widget
      * @returns the JQuery object
      */
-    getGroupDateWidget : function(groupDateId, newDate) {
+    this.getGroupDateWidget = function(groupDateId, newDate) {
         var groupDateWidget = $("#" + groupDateId);
 
         // this date group doesn't exists create it and insert at correct position
@@ -185,7 +189,7 @@ var consolr = {
         return groupDateWidget;
     },
     
-    groupTags : function() {
+    this.groupTags = function() {
         var tagsMap = [];
 
         $(consolrPosts['posts']).each(function(i, post) {
@@ -199,4 +203,27 @@ var consolr = {
         }
         return tags;
     }
-}
+
+    this.drawTagsChart = function() {
+        var tags = consolr.groupTags();
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Tags');
+        data.addColumn('number', 'Posts');
+
+        $(tags).each(function(i, tag) {
+            data.addRow([tag.name, tag.count]);
+        });
+
+        data.sort(0);
+        new google.visualization.BarChart(
+            document.getElementById('tags-chart')).draw(data, {legend : 'none'});
+    }
+
+    this.updatePostsCount = function() {
+        var days = 0;
+        for (g in consolrPosts['group-date']) {
+            if (consolrPosts['group-date'][g].length > 0) ++days;
+        };
+        $("#count").text(consolrPosts['posts'].length +  ' posts in ' + days + ' days');
+    }
+}).apply(consolr);

@@ -30,6 +30,8 @@ $tumblr_posts = array(
 
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
+        <script type="text/javascript" src="js/consolr.dialogs.js"></script>
+        <script type="text/javascript" src="js/consolr.tooltips.js"></script>
 
         <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
@@ -37,117 +39,22 @@ $tumblr_posts = array(
         <!--//
             var consolrPosts = <?php echo json_encode($tumblr_posts); ?>;
 
-            function updateCount() {
-                var days = 0;
-                for (g in consolrPosts['group-date']) {
-                    if (consolrPosts['group-date'][g].length > 0) ++days;
-                };
-                $("#count").text(consolrPosts['posts'].length +  ' posts in ' + days + ' days');
-            }
-
-            function drawChart() {
-                var tags = consolr.groupTags();
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Tags');
-                data.addColumn('number', 'Posts');
-
-                $(tags).each(function(i, tag) {
-                    data.addRow([tag.name, tag.count]);
-                });
-
-                data.sort(0);
-                new google.visualization.BarChart(
-                    document.getElementById('tags-chart')).draw(data, {legend : 'none'});
-            }
-
             $(function() {
-                updateCount();
+                consolr.updatePostsCount();
                 // This ensure dates are normalized with client side timezone
                 consolrPosts['posts'].forEach(function(el) {
                     el['publish-unix-timestamp'] = new Date(el['publish-on-time']).getTime();
                 });
 
+                $("li").initTooltipPhotoPost();
+
                 $("li").dblclick(function() {
                     $('#dialog-form').dialog('option', 'postInfo', this);
                     $('#dialog-form').dialog('open');
                 });
+                $("#dialog-form").initDialogModifyQueuePost();
 
-                $("li").tooltip({
-                    bodyHandler: function() {
-                        var post = consolr.findPost(this.id);
-                        var caption = $(post['photo-caption']).text();
-                        // If text() returns an empty string uses the caption
-                        caption = $.cropText(caption || post['photo-caption'], 60);
-                        
-                        var tags = post['tags'] ? $.cropText(post['tags'].join(", "), 60) : "";
-                        var time = formatDate(new Date(post['publish-unix-timestamp']), "HH:mm:ss");
-
-                        return $("<root>"
-                                 + "<span class='tooltip-caption'>" + caption + "</span>"
-                                 + "<span class='tooltip-tags'>" + tags + "</span>"
-                                 + "<span class='tooltip-time'>" + time + "</span>"
-                                 + "</root>").html();
-                    },
-                    showURL: false
-                });
-
-                $("#dialog-form").dialog({
-                    autoOpen: false,
-                    width: 450,
-                    height: 330,
-                    modal: true,
-                    buttons: {
-                        'Save': function() {
-                            var params = {
-                                postId : parseInt($(this).dialog('option', 'postInfo').id.replace(/^[a-z]/i, ''), 10),
-                                publishDate : $('#dialog-modify-publish-date').val(),
-                                caption : $('#dialog-modify-caption').val(),
-                                tags : $('#dialog-modify-tags').val()
-                            };
-                            consolr.updateImagePost(params);
-                            updateCount();
-                            $(this).dialog('close');
-                        },
-                        Cancel: function() {
-                            $(this).dialog('close');
-                        }
-                    },
-                    open: function() {
-                        var postInfo = $($(this).dialog('option', 'postInfo'));
-                        var post = consolr.findPost(postInfo.attr('id'));
-                        var tags = post['tags'] ? post['tags'].join(", ") : "";
-                        var date = formatDate(new Date(post['publish-unix-timestamp']), "dd NNN yyyy HH:mm:ss");
-
-                        $('#dialog-modify-caption').val(post['photo-caption']);
-                        $('#dialog-modify-publish-date').val(date);
-                        $('#dialog-modify-tags').val(tags);
-                        $('#dialog-modify-thumb').attr("src", post['photo-url-75']);
-                        
-                        $('#dialog-modify-caption').focus().select();
-                    },
-                    close: function() {
-                        //allFields.val('').removeClass('ui-state-error');
-                    }
-                });
-
-                $("#dialog-tags").dialog({
-                    autoOpen: false,
-                    width: 950,
-                    height: 650,
-                    modal: true,
-                    buttons: {
-                        'Close': function() {
-                            $(this).dialog('close');
-                        }
-                    },
-                    open: function() {
-                        google.load("visualization", "1", {packages:["barchart"], callback: drawChart});
-                    },
-                    close: function() {
-                        //allFields.val('').removeClass('ui-state-error');
-                    }
-                });
-                
+                $("#dialog-tags").initDialogTagsChart();
                 $("#show-tags-chart").click(function() {
                     $('#dialog-tags').dialog('open');
                 });
