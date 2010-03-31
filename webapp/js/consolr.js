@@ -116,7 +116,7 @@ if (typeof(consolr) == "undefined") {
 
         posts.splice(currIndex, 1);
         posts.splice(newIndex, 0, post);
-        
+
         return post;
     },
 
@@ -165,10 +165,10 @@ if (typeof(consolr) == "undefined") {
 
         // this date group doesn't exists create it and insert at correct position
         if (groupDateWidget.length == 0) {
-            var value = parseInt(groupDateId, 10);
+            var value = parseInt(groupDateId.replace(/^[a-z]+/i, ''), 10);
             var position;
             $('#date-container ul').each(function() {
-                    if (parseInt(this.id, 10) > value) {
+                    if (parseInt(this.id.replace(/^[a-z]+/i, ''), 10) > value) {
                         return false;
                     }
                     position = this;
@@ -185,10 +185,10 @@ if (typeof(consolr) == "undefined") {
             }
             groupDateWidget = $("#" + groupDateId);
         }
-        
+
         return groupDateWidget;
     },
-    
+
     this.groupTags = function() {
         var tagsMap = [];
 
@@ -214,9 +214,12 @@ if (typeof(consolr) == "undefined") {
             data.addRow([tag.name, tag.count]);
         });
 
+        var tagsChart = $('#tags-chart');
+        var chartHeight = Math.max(tagsChart.height(), tags.length * 20);
+
         data.sort(0);
         new google.visualization.BarChart(
-            document.getElementById('tags-chart')).draw(data, {legend : 'none'});
+            tagsChart.get(0)).draw(data, {legend : 'none', height: chartHeight});
     }
 
     this.updatePostsCount = function() {

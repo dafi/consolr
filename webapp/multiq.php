@@ -1,6 +1,4 @@
 <?php
-echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-
 require_once 'lib/loginUtils.php';
 require_once 'lib/tumblr/tumblrUtils.php';
 
@@ -33,11 +31,14 @@ if (isset($_POST['url'])) {
                                   "error_info" => $results['result']));
             }
         } else {
-            array_push($errors, array("url" => "",
-                                      "caption" => "",
-                                      "date" => "",
-                                      "tags" => "",
-                                      "error_info" => "Url is mandatory"));
+            // add error only if at least one field isn't empty
+            if ($captions[$i] || $dates[$i] || $tags[$i]) {
+                array_push($errors, array("url" => "",
+                                          "caption" => $captions[$i],
+                                          "date" => $dates[$i],
+                                          "tags" => $tags[$i],
+                                          "error_info" => "Url is mandatory"));
+            }
         }
     }
 }
@@ -45,6 +46,8 @@ if (isset($_POST['url'])) {
 if (count($errors) == 0) {
     array_push($errors, array("url" => "", "caption" => "", "date" => "", "tags" => ""));
 }
+
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">

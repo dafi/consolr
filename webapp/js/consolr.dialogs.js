@@ -31,7 +31,7 @@
                 $('#dialog-modify-publish-date').val(date);
                 $('#dialog-modify-tags').val(tags);
                 $('#dialog-modify-thumb').attr("src", post['photo-url-75']);
-                
+
                 $('#dialog-modify-caption').focus().select();
             },
             close: function() {
@@ -41,15 +41,16 @@
 
     $.fn.initDialogTagsChart = function(settings) {
         var config = {drawCallback: consolr.drawTagsChart};
- 
+
         if (settings) {
             $.extend(config, settings);
         }
         this.dialog({
             autoOpen: false,
-            width: 950,
-            height: 650,
+            width: 500,
+            height: 450,
             modal: true,
+            resizable: false,
             buttons: {
                 'Close': function() {
                     $(this).dialog('close');
@@ -59,8 +60,6 @@
                 google.load("visualization", "1", {
                     packages:["barchart"],
                     callback: config.drawCallback});
-            },
-            close: function() {
             }
         });
     };

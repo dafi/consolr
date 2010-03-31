@@ -1,6 +1,4 @@
 <?php
-echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-
 require_once 'lib/loginUtils.php';
 require_once 'lib/tumblr/tumblrUtils.php';
 
@@ -10,6 +8,8 @@ $tumblr_posts = array(
     "tumblog" => $tumblr_queue['tumblelog'],
     "group-date" => tumblr_utils::group_posts_by_date($tumblr_queue['posts']),
     "posts" => $tumblr_queue['posts']);
+
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -122,7 +122,7 @@ $tumblr_posts = array(
 </div>
 
 <div id="dialog-tags" title="Tags Chart">
-<div id="tags-chart" style="width: 900px; height: 540px;"></div>
+    <div id="tags-chart"></div>
 </div>
 
     </body>
