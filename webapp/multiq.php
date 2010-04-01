@@ -95,13 +95,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
-        <div style="text-align: right">
-            <a href="multiq.php">Multiple Queue</a>
-            |
-            <a href="queue.php">Queue</a>
-            |
-            <a href="logout.php">[<?php echo $tumblr->get_tumblr_name() ?>] Logout</a>
-        </div>
+        <?php include('inc/menu.php') ?>
         <h1>Upload multiple files to queue at once</h1>
         <?php if (count($info) > 0) { ?>
         <h3><?php echo count($info) . " post(s) inserted with success" ?></h3>
