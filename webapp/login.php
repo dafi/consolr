@@ -7,7 +7,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
     <title>Tumblr Consolr</title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
     <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
 

@@ -55,7 +55,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
         <title>Consolr - Queue Multiple Photos At Once</title>
 
-        <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
         <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
         <style type="text/css">
@@ -78,7 +78,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 $("#add-photo").click(function() {
                     var newPhotoFields = $("#photo-fields" + currPhoto).clone();
                     newPhotoFields.insertAfter("#photo-fields" + currPhoto);
-                    
+
                     ++currPhoto;
                     newPhotoFields.attr("id", "photo-fields" + currPhoto);
                     newPhotoFields.children("legend").text("Photo " + currPhoto);
@@ -123,7 +123,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <br/>
                 <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>" size="50"/>
                 <br/>
-                
+
                 <label for="tags[]">Tags</label>
                 <br/>
                 <input type="text" name="tags[]" id="tags[]"  value="<?php echo $error['tags'] ?>" size="50"/>
