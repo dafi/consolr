@@ -4,10 +4,6 @@ require_once 'lib/tumblr/tumblrUtils.php';
 
 $tumblr = login_utils::get_tumblr();
 $tumblr_queue = tumblr_utils::get_json_map($tumblr->get_queue(true));
-$tumblr_posts = array(
-    "tumblog" => $tumblr_queue['tumblelog'],
-    "group-date" => tumblr_utils::group_posts_by_date($tumblr_queue['posts']),
-    "posts" => $tumblr_queue['posts']);
 
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 ?>
@@ -17,7 +13,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
         <title>Consolr Queue List</title>
 
-        <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+        <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
         <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
         <link href="css/dialogs.css" type="text/css" rel="stylesheet"/>
@@ -37,14 +33,20 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <script type="text/javascript">
         <!--//
-            var consolrPosts = <?php echo json_encode($tumblr_posts); ?>;
+            var consolrPosts = {posts: <?php echo json_encode($tumblr_queue['posts']); ?>};
 
             $(function() {
-                consolr.updatePostsCount();
                 // This ensure dates are normalized with client side timezone
                 consolrPosts['posts'].forEach(function(el) {
                     el['publish-unix-timestamp'] = new Date(el['publish-on-time']).getTime();
                 });
+
+                consolrPosts["group-date"] = consolr.groupPostsByDate(consolrPosts.posts, 'publish-on-time');
+                $("#date-container").html(consolr.getDateContainerHTML({
+                        dateProperty : 'publish-on-time',
+                        sortByDateAsc : false}));
+
+                consolr.updatePostsCount();
 
                 $("li").initTooltipPhotoPost();
 
@@ -70,30 +72,16 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         </noscript>
         <?php include('inc/menu.php') ?>
 
-        <h3>Queue - <span id="count"></span></h3>
+        <div id="message-panel">
+            <span id="message-progress-container" style="display: none">
+                <img class="message-progress-indicator" src="images/progress.gif">
+            </span>
+            <span id="message-text" class="message-text"></span>
+        </div>
+
         <input type="button" id="show-tags-chart" value="Show Tags"/>
 
         <div id="date-container">
-<?php
-    foreach($tumblr_posts['group-date'] as $date => $group_posts) {
-        $posts = array();
-        foreach($group_posts as $gp) {
-            foreach($tumblr_posts['posts'] as $p) {
-                if ($p['id'] == $gp) {
-                    array_push($posts, $p);
-                }
-            }
-        }
-?>
-            <h3 class="date-header ui-corner-top"><span><?php echo strftime("%Y, %A %e %B", strtotime($posts[0]['publish-on-time']));?></span></h3>
-            <ul id="gd<?php echo $date ?>" class="date-image-container">
-    <?php foreach($posts as $p) { ?>
-                <li id="i<?php echo $p['id'] ?>">
-                    <img src="<?php echo $p['photo-url-75']?>" alt="<?php echo $p['slug']?>"/>
-                </li>
-    <?php } ?>
-            </ul>
-<?php } ?>
         </div>
 
 <div id="dialog-form" title="Modify Post">
