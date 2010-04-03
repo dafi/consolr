@@ -3,6 +3,14 @@ if (typeof(consolr) == "undefined") {
 }
 
 (function() {
+    var GROUP_DATE_FORMAT_STRING = "yyyy, EE dd MMM";
+    var TEMPL_DATE_CONTAINER = '<h3 class="date-header ui-corner-top"><span>$dateTitle</span></h3>'
+                + '<ul id="gd$dateId" class="date-image-container">$items</ul>';
+    var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId">'
+                + '<img src="$imgSrc" alt="$imgAlt"/>'
+                + '</li>';
+    var POST_PER_REQUEST = 50;
+
     /**
      * Move image widget to new date container or position
      * @param imageId the image element id to move to new position
@@ -175,8 +183,11 @@ if (typeof(consolr) == "undefined") {
                     return true;
                 });
 
-            var longDate = formatDate(newDate, "yyyy, EE dd MMM");
-            var el = $('<h3 class="date-header ui-corner-top"><span>' + longDate + '</span></h3><ul id="' + groupDateId + '" class="date-image-container">');
+            var longDate = formatDate(newDate, GROUP_DATE_FORMAT_STRING);
+            var el = $(this.formatString(TEMPL_DATE_CONTAINER, {
+                            "dateTitle" : longDate,
+                            "dateId" : value,
+                            "items" : ""}));
             if (position) {
                 el.insertAfter($(position));
             } else {
@@ -227,6 +238,129 @@ if (typeof(consolr) == "undefined") {
         for (g in consolrPosts['group-date']) {
             if (consolrPosts['group-date'][g].length > 0) ++days;
         };
-        $("#count").text(consolrPosts['posts'].length +  ' posts in ' + days + ' days');
+        this.setMessageText(consolrPosts['posts'].length +  ' posts in ' + days + ' days');
     }
+
+    this.formatString = function(str, patterns) {
+        var reStr = [];
+        for (p in patterns) {
+            reStr.push(p);
+        };
+        return str.replace(new RegExp("\\$(" + reStr.join("|") + ")", "g"), function(str, p1) {
+                return patterns[p1];
+            });
+    }
+
+    this.getDateContainerHTML = function(settings) {
+        var config = {
+            dateProperty : 'publish-on-time',
+            sortByDateAsc : true
+        }
+        if (settings) {
+            $.extend(config, settings);
+        }
+
+        var itemPatterns = {};
+        var html = "";
+
+        // ensure group dates are sorted in reverse order (from more recent to older)
+        var sortedGroups = [];
+        for (g in consolrPosts['group-date']) {
+            sortedGroups.push(g);
+        }
+        var direction = config.sortByDateAsc ? -1 : 1;
+        sortedGroups.sort(function(a, b) {
+            return a === b ? 0 : a < b ? -direction : direction;
+        });
+
+        for (g in sortedGroups) {
+            var dateId = sortedGroups[g];
+            var datePostIds = consolrPosts['group-date'][dateId];
+            var itemsHtml = "";
+            var time;
+
+            for (var i in datePostIds) {
+                var id = datePostIds[i];
+
+                for (var p in consolrPosts['posts']) {
+                    var post = consolrPosts['posts'][p];
+
+                    if (post.id == id) {
+                        itemPatterns["postId"] = id;
+                        itemPatterns["imgSrc"] = post['photo-url-75'];
+                        itemPatterns["imgAlt"] = post['slug'];
+                        itemsHtml += this.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
+
+                        time = formatDate(new Date(post[config.dateProperty]), GROUP_DATE_FORMAT_STRING);
+                        break;
+                    }
+                }
+            }
+            html += this.formatString(TEMPL_DATE_CONTAINER, {
+                            "dateTitle" : time,
+                            "dateId" : dateId,
+                            "items" : itemsHtml});
+        };
+        return html;
+    }
+
+    function fetchTumblr(url, settings) {
+        $.ajax({url: url + '&start=' + settings.start,
+                dataType: 'json',
+                async: false,
+                success: function(data, status) {
+                        settings.posts = settings.posts.concat(data['posts']);
+                        if (data['posts'].length == settings.num) {
+                            if (settings.progress) settings.progress(data, settings.posts);
+                            settings.start += settings.num;
+                            fetchTumblr(url, settings);
+                        } else {
+                            if (settings.complete) settings.complete(settings.posts);
+                        }
+                },
+                error: function(xhr, status) {
+                    alert(xhr.statusText);
+                }
+            });
+    }
+
+    this.readPublicPhotoPosts = function(url, settings) {
+        var config = {start : 0,
+                    num : POST_PER_REQUEST,
+                    posts : [],
+                    progress : null,
+                    complete : null,
+                    type: 'photo'};
+
+        if (settings) {
+            $.extend(config, settings);
+        }
+        fetchTumblr(url + '?callback=?&type=' + config.type + '&num=' + config.num, config);
+    }
+
+    this.groupPostsByDate = function(posts, dateProperty) {
+        if (typeof(dateProperty) == "undefined") {
+            dateProperty = 'publish-on-time';
+        }
+        var grouped = {};
+
+        $(posts).each(function(index, post) {
+            // ignore hours, minutes and seconds
+            var strTime = formatDate(new Date(post[dateProperty]), "yyyyMMdd");
+            var g = grouped[strTime];
+
+            if (!g) {
+                g = [];
+                grouped[strTime] = g;
+            }
+            g.push(post['id']);
+        });
+
+        return grouped;
+    }
+
+    this.setMessageText = function(str) {
+        $("#message-text").text(str);
+    }
+
 }).apply(consolr);
