@@ -30,6 +30,10 @@ a:hover {
   color: #FFF;
 }
 
+a img {
+  border-width:0;
+}
+
 .date-header {
     background-color: #FFF;
     color: #000;
@@ -51,6 +55,7 @@ a:hover {
 
 #date-container li {
   display: inline;
+  margin-right: 3px;
 }
 
 #tooltip {
@@ -100,4 +105,14 @@ noscript div a {
   color: #fff;
   text-decoration: none;
   border-bottom: solid 1px #5E809C;
+}
+
+.message-progress-indicator {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.message-text {
+  font-size: 13px;
+  font-weight: bold;
 }
