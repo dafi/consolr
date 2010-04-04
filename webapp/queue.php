@@ -54,6 +54,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     $('#dialog-form').dialog('option', 'postInfo', this);
                     $('#dialog-form').dialog('open');
                 });
+
                 $("#dialog-form").initDialogModifyQueuePost();
 
                 $("#dialog-tags").initDialogTagsChart();
@@ -74,7 +75,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <div id="message-panel">
             <span id="message-progress-container" style="display: none">
-                <img class="message-progress-indicator" src="images/progress.gif">
+                <img class="message-progress-indicator" src="images/progress.gif" alt="..."/>
             </span>
             <span id="message-text" class="message-text"></span>
         </div>

@@ -8,7 +8,7 @@ require_once 'lib/tumblr/tumblrUtils.php';
             |
             <a href="queue.php">Queue</a>
             |
-            <a href="http://www.tumblr.com/tumblelog/<?php echo login_utils::get_tumblr()->get_tumblr_name() ?>" target="_blank"><img width="15" height="13" src="images/external_link.png" style="vertical-align: middle"/> Dashboard</a>
+            <a href="http://www.tumblr.com/tumblelog/<?php echo login_utils::get_tumblr()->get_tumblr_name() ?>" target="_blank"><img width="15" height="13" src="images/external_link.png" alt="" style="vertical-align: middle"/> Dashboard</a>
             |
             <a href="published.php">Published</a>
             |
