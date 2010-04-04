@@ -18,11 +18,11 @@
                 var tags = post['tags'] ? $.cropText(post['tags'].join(", "), config.tagsMaxChars) : "";
                 var time = formatDate(new Date(post[config.datePropName]), config.dateFormat);
 
-                return $("<root>"
+                return $("<div>"
                          + "<span class='tooltip-caption'>" + caption + "</span>"
                          + "<span class='tooltip-tags'>" + tags + "</span>"
                          + "<span class='tooltip-time'>" + time + "</span>"
-                         + "</root>").html();
+                         + "</div>").html();
             },
             showURL: false
         });
