@@ -1,11 +1,15 @@
-#dialog-modify-thumb {
-  margin-right: 3px;
-  border: 1px solid;
-  display: block;
-}
-
 #dialog-form input[type='text'] {
   width: 100%;
+}
+
+#dialog-modify-controls {
+    margin-left: 80px;
+}
+
+#dialog-form fieldset {
+  background-attachment: scroll;
+  background-position: 4px 4px;
+  background-repeat: no-repeat;  
 }
 
 #tags-chart {

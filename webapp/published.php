@@ -54,7 +54,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     complete : function(posts) {
                         consolrPosts.posts = posts;
                         // This ensure dates are normalized with client side timezone
-                        consolrPosts['posts'].forEach(function(el) {
+                        $(consolrPosts['posts']).each(function(i, el) {
                             el['publish-unix-timestamp'] = new Date(el['unix-timestamp']).getTime();
                         });
                         consolrPosts["group-date"] = consolr.groupPostsByDate(consolrPosts.posts, 'date');
@@ -97,8 +97,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="date-container">
         </div>
 
-<div id="dialog-tags" title="Tags Chart">
-<div id="tags-chart" style="width: 900px; height: 540px;"></div>
+<div style="display:none">
+    <div id="dialog-tags" title="Tags Chart">
+        <div id="tags-chart"></div>
+    </div>
 </div>
+
     </body>
 </html>

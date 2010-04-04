@@ -30,7 +30,7 @@
                 $('#dialog-modify-caption').val(post['photo-caption']);
                 $('#dialog-modify-publish-date').val(date);
                 $('#dialog-modify-tags').val(tags);
-                $('#dialog-modify-thumb').attr("src", post['photo-url-75']);
+                $('#dialog-form fieldset').css('background-image', 'url("' + post['photo-url-75'] + '")');
 
                 $('#dialog-modify-caption').focus().select();
             },

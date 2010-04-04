@@ -37,10 +37,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
             $(function() {
                 // This ensure dates are normalized with client side timezone
-                consolrPosts['posts'].forEach(function(el) {
+                $(consolrPosts['posts']).each(function(i, el) {
                     el['publish-unix-timestamp'] = new Date(el['publish-on-time']).getTime();
                 });
-
                 consolrPosts["group-date"] = consolr.groupPostsByDate(consolrPosts.posts, 'publish-on-time');
                 $("#date-container").html(consolr.getDateContainerHTML({
                         dateProperty : 'publish-on-time',
@@ -85,28 +84,27 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="date-container">
         </div>
 
-<div id="dialog-form" title="Modify Post">
-    <form action="">
-    <fieldset>
-        <img id="dialog-modify-thumb" src="" alt="" width="75" height="75"/>
+<div style="display:none">
+    <div id="dialog-form" title="Modify Post">
+        <form action="">
+        <fieldset>
+            <div id="dialog-modify-controls">
+                <label for="dialog-modify-caption">Caption</label>
+                <input type="text" name="dialog-modify-caption" id="dialog-modify-caption"/>
+    
+                <label for="dialog-modify-tags">Tags</label>
+                <input type="text" name="dialog-modify-tags" id="dialog-modify-tags"/>
+    
+                <label for="dialog-modify-publish-date">Publish Date</label>
+                <input type="text" name="dialog-modify-publish-date" id="dialog-modify-publish-date"/>
+            </div>
+        </fieldset>
+        </form>
+    </div>
 
-            <label for="dialog-modify-caption">Caption</label>
-            <input type="text" name="dialog-modify-caption" id="dialog-modify-caption"/>
-            <br/>
-
-            <label for="dialog-modify-tags">Tags</label>
-            <input type="text" name="dialog-modify-tags" id="dialog-modify-tags"/>
-            <br/>
-
-            <label for="dialog-modify-publish-date">Publish Date</label>
-            <input type="text" name="dialog-modify-publish-date" id="dialog-modify-publish-date"/>
-    </fieldset>
-    </form>
+    <div id="dialog-tags" title="Tags Chart">
+        <div id="tags-chart"></div>
+    </div>
 </div>
-
-<div id="dialog-tags" title="Tags Chart">
-    <div id="tags-chart"></div>
-</div>
-
     </body>
 </html>
