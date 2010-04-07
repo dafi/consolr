@@ -15,30 +15,35 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
-        <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
-        <link href="css/dialogs.css" type="text/css" rel="stylesheet"/>
-        <link type="text/css" href="css/consolr/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />
+        <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
+        <link type="text/css" href="css/dialogs.css" rel="stylesheet"/>
+        <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
 
         <script type="text/javascript" src="js/jquery.js"></script>
-        <script type="text/javascript" src="js/jquery-ui-1.8rc3.custom.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/jquery.tooltip.min.js"></script>
         <script type="text/javascript" src="js/jquery.strings.js"></script>
 
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
         <script type="text/javascript" src="js/consolr.dialogs.js"></script>
-        <script type="text/javascript" src="js/consolr.tooltips.js"></script>
+        <script type="text/javascript" src="js/consolr.initializers.js"></script>
 
         <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
 
         <script type="text/javascript">
         <!--//
             var consolrPosts = {posts: <?php echo json_encode($tumblr_queue['posts']); ?>};
 
             $(function() {
+                $.initEditor();
                 // This ensure dates are normalized with client side timezone
                 $(consolrPosts['posts']).each(function(i, el) {
                     el['publish-unix-timestamp'] = new Date(el['publish-on-time']).getTime();
+                });
+                consolrPosts['posts'].sort(function(a, b) {
+                    return a['publish-unix-timestamp'] - b['publish-unix-timestamp'];
                 });
                 consolrPosts["group-date"] = consolr.groupPostsByDate(consolrPosts.posts, 'publish-on-time');
                 $("#date-container").html(consolr.getDateContainerHTML({
@@ -53,6 +58,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     $('#dialog-form').dialog('option', 'postInfo', this);
                     $('#dialog-form').dialog('open');
                 });
+
+		$(".date-image-container").initDraggableImage();
 
                 $("#dialog-form").initDialogModifyQueuePost();
 
@@ -90,11 +97,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <fieldset>
             <div id="dialog-modify-controls">
                 <label for="dialog-modify-caption">Caption</label>
-                <input type="text" name="dialog-modify-caption" id="dialog-modify-caption"/>
-    
+                <textarea name="dialog-modify-caption" id="dialog-modify-caption" rows="4"></textarea>
+
                 <label for="dialog-modify-tags">Tags</label>
                 <input type="text" name="dialog-modify-tags" id="dialog-modify-tags"/>
-    
+
                 <label for="dialog-modify-publish-date">Publish Date</label>
                 <input type="text" name="dialog-modify-publish-date" id="dialog-modify-publish-date"/>
             </div>

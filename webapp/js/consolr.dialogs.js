@@ -10,10 +10,12 @@
                     var params = {
                         postId : parseInt($(this).dialog('option', 'postInfo').id.replace(/^[a-z]/i, ''), 10),
                         publishDate : $('#dialog-modify-publish-date').val(),
-                        caption : $('#dialog-modify-caption').val(),
+                        caption : tinyMCE.get('dialog-modify-caption').getContent(),
                         tags : $('#dialog-modify-tags').val()
                     };
-                    consolr.updateImagePost(params);
+                    consolr.updateQueuedPost(params, {
+                            success:consolr.refreshImagePosition
+                            });
                     consolr.updatePostsCount();
                     $(this).dialog('close');
                 },
@@ -22,10 +24,12 @@
                 }
             },
             open: function() {
+                tinyMCE.execCommand('mceAddControl', false, 'dialog-modify-caption');
+
                 var postInfo = $($(this).dialog('option', 'postInfo'));
                 var post = consolr.findPost(postInfo.attr('id'));
                 var tags = post['tags'] ? post['tags'].join(", ") : "";
-                var date = formatDate(new Date(post['publish-unix-timestamp']), "dd NNN yyyy HH:mm:ss");
+                var date = new Date(post['publish-unix-timestamp']).format("dd NNN yyyy HH:mm:ss");
 
                 $('#dialog-modify-caption').val(post['photo-caption']);
                 $('#dialog-modify-publish-date').val(date);
@@ -35,6 +39,7 @@
                 $('#dialog-modify-caption').focus().select();
             },
             close: function() {
+                tinyMCE.execCommand('mceRemoveControl', false, 'dialog-modify-caption');
             }
         });
     };

@@ -35,27 +35,38 @@ a img {
 }
 
 .date-header {
-    background-color: #FFF;
-    color: #000;
-    margin: 0;
-    padding-left: 0.5em;
-    font-weight: normal;
+  background-color: #FFF;
+  color: #000;
+  margin: 0;
+  padding-left: 0.5em;
+  font-weight: normal;
+  clear: both;
 }
 
 .date-image-container {
-    background-color: #FFF;
-    padding: 0.5em 1em;
-    margin-bottom: 0.6em;
+  background-color: #FFF;
+  padding: 0.5em 1em;
+  margin-bottom: 0.6em;
 }
 
 #date-container ul {
   list-style: none;
   margin-top: 0;
+  margin-left: 0; /* needed by IE */
+  padding: 0 0 3px 0;
+  float: left;
+  width: 100%;
 }
 
 #date-container li {
-  display: inline;
-  margin-right: 3px;
+  margin-top: 3px;
+  margin-left: 3px;
+  float: left;
+}
+
+.date-image-drop-placeholder {
+  height: 75px;
+  line-height: 1.2em;
 }
 
 #tooltip {

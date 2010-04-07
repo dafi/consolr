@@ -47,17 +47,32 @@ if (typeof(consolr) == "undefined") {
         }
     }
 
-    this.updateImagePost = function(params) {
+    this.refreshImagePosition = function(params) {
+        var newDate = new Date(params.publishDate);
+        var post = consolr.movePost(params.postId, newDate);
+        post['tags'] = params.tags.replace(/,\s*/, ',').split(',');
+        post['photo-caption'] = params.caption;
+        consolr.moveImageWidget(params.postId, newDate);
+    }
+
+    /**
+     * Update queued post on server
+     * @param params contains new post values. {postId,publishDate,caption,tags}
+     * @param settings the settings to use, the success property if set points
+     * to a function called on update success
+     */
+    this.updateQueuedPost = function(params, settings) {
+        var config = {success : null};
+        if (settings) {
+            $.extend(config, settings);
+        }
+
         $.ajax({url: 'doUpdate.php',
                 type: 'post',
                 async: false,
                 data: params,
                 success: function(data, status) {
-                    var newDate = new Date(params.publishDate);
-                    var post = consolr.movePost(params.postId, newDate);
-                    post['tags'] = params.tags.replace(/,\s*/, ',').split(',');
-                    post['photo-caption'] = params.caption;
-                    consolr.moveImageWidget(params.postId, newDate);
+                    if (typeof (config.success) == "function") config.success(params);
                 },
                 error: function(xhr, status) {
                     alert(xhr.statusText);
@@ -183,11 +198,10 @@ if (typeof(consolr) == "undefined") {
                     return true;
                 });
 
-            var longDate = formatDate(newDate, GROUP_DATE_FORMAT_STRING);
             var el = $(this.formatString(TEMPL_DATE_CONTAINER, {
-                            "dateTitle" : longDate,
-                            "dateId" : value,
-                            "items" : ""}));
+                        "dateTitle" : newDate.format(GROUP_DATE_FORMAT_STRING),
+                        "dateId" : value,
+                        "items" : ""}));
             if (position) {
                 el.insertAfter($(position));
             } else {
@@ -291,7 +305,7 @@ if (typeof(consolr) == "undefined") {
                         itemPatterns["imgAlt"] = post['slug'];
                         itemsHtml += this.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
 
-                        time = formatDate(new Date(post[config.dateProperty]), GROUP_DATE_FORMAT_STRING);
+                        time = new Date(post[config.dateProperty]).format(GROUP_DATE_FORMAT_STRING);
                         break;
                     }
                 }
@@ -311,11 +325,16 @@ if (typeof(consolr) == "undefined") {
                 success: function(data, status) {
                         settings.posts = settings.posts.concat(data['posts']);
                         if (data['posts'].length == settings.num) {
-                            if (settings.progress) settings.progress(data, settings.posts);
+                            if (typeof (settings.progress) == "function") {
+                                settings.progress(data, settings.posts);
+                            }
+
                             settings.start += settings.num;
                             fetchTumblr(url, settings);
                         } else {
-                            if (settings.complete) settings.complete(settings.posts);
+                            if (typeof (settings.complete) == "function") {
+                                settings.complete(settings.posts);
+                            }
                         }
                 },
                 error: function(xhr, status) {
@@ -346,7 +365,7 @@ if (typeof(consolr) == "undefined") {
 
         $(posts).each(function(index, post) {
             // ignore hours, minutes and seconds
-            var strTime = formatDate(new Date(post[dateProperty]), "yyyyMMdd");
+            var strTime = new Date(post[dateProperty]).format("yyyyMMdd");
             var g = grouped[strTime];
 
             if (!g) {
@@ -363,4 +382,36 @@ if (typeof(consolr) == "undefined") {
         $("#message-text").text(str);
     }
 
+    /**
+     * Adjust currTime to be comprised between prevTime and nextTime
+     * @param {date} currTime the time to adjust
+     * @param {date} prevTime the time before currTime, can be null
+     * @param {date} nextTime the time after currTime, can be null
+     * @param minutesAmount the minutes to add/subtract to to currTime if prevTime
+     * or nextTime are null, default is 10
+     * @returns {date} the new object with adjusted time
+     */
+    this.adjustTime = function(currTime, prevTime, nextTime, minutesAmount) {
+        minutesAmount = minutesAmount ? minutesAmount : 10;
+        var adjustedTime;
+
+        if (!prevTime && !nextTime) {
+            adjustedTime = currTime;
+        } else if (!prevTime) {
+            adjustedTime = new Date(nextTime).add("m", -minutesAmount);
+            if (!adjustedTime.equalsIgnoreTime(nextTime)) {
+                adjustedTime = nextTime;
+            }
+        } else if (!nextTime) {
+            adjustedTime = new Date(prevTime).add("m", minutesAmount);
+            if (!adjustedTime.equalsIgnoreTime(prevTime)) {
+                adjustedTime = prevTime;
+            }
+        } else {
+            adjustedTime = new Date((prevTime.getTime() + nextTime.getTime()) / 2);
+            adjustedTime.setSeconds(0);
+        }
+
+        return adjustedTime;
+    }
 }).apply(consolr);
