@@ -15,19 +15,19 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
-        <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
-        <link href="css/dialogs.css" type="text/css" rel="stylesheet"/>
-        <link type="text/css" href="css/consolr/jquery-ui-1.8rc3.custom.css" rel="stylesheet" />
+        <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
+        <link type="text/css" href="css/dialogs.css" rel="stylesheet"/>
+        <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
 
         <script type="text/javascript" src="js/jquery.js"></script>
-        <script type="text/javascript" src="js/jquery-ui-1.8rc3.custom.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/jquery.tooltip.min.js"></script>
         <script type="text/javascript" src="js/jquery.strings.js"></script>
 
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
         <script type="text/javascript" src="js/consolr.dialogs.js"></script>
-        <script type="text/javascript" src="js/consolr.tooltips.js"></script>
+        <script type="text/javascript" src="js/consolr.initializers.js"></script>
 
         <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
