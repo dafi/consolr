@@ -11,7 +11,10 @@ class tumblr_utils {
      */
     static function get_json_map($tumblr_json) {
         preg_match('/{.*}/s', $tumblr_json, $matches);
-        return json_decode($matches[0], true);
+        if (count($matches)) {
+            return json_decode($matches[0], true);
+        }
+        return array();
     }
 
     /**
