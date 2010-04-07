@@ -9,7 +9,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
-    <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
+    <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
 
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.validate.js"></script>
@@ -70,7 +70,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <span id="tumblrName-error"></span>
             </p>
             <div>
-                <input id="submit" type="submit" value="Log in"/>
+                <input id="submitForm" type="submit" value="Log in"/>
             </div>
         </form>
     </div>
