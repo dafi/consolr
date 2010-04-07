@@ -209,6 +209,7 @@ if (typeof(consolr) == "undefined") {
                 el.insertBefore($('#date-container').children()[0]);
             }
             groupDateWidget = $("#" + groupDateId);
+            groupDateWidget.initDraggableImage();
         }
 
         return groupDateWidget;
