@@ -10,6 +10,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
     <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
+    <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
 
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/jquery.validate.js"></script>
@@ -52,25 +53,26 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <p>
                 <label for="email">Email address</label>
                 <br/>
-                <input type="text" id="email" name="email" class="input-text"/>
+                <input type="text" id="email" name="email" class="input-text ui-widget-content"/>
                 <span id="email-error"></span>
             </p>
 
             <p>
                 <label for="password">Password</label>
                 <br/>
-                <input type="password" id="password" name="password" class="input-text"/>
+                <input type="password" id="password" name="password" class="input-text ui-widget-content"/>
                 <span id="password-error"></span>
             </p>
 
             <p>
                 <label for="tumblrName">Tumblr name</label>
                 <br/>
-                <input type="text" id="tumblrName" name="tumblrName" class="input-text tumblr-name"/><span>.tumblr.com</span>
+                <input type="text" id="tumblrName" name="tumblrName" class="input-text tumblr-name ui-widget-content"/><span>.tumblr.com</span>
                 <span id="tumblrName-error"></span>
             </p>
+
             <div>
-                <input id="submitForm" type="submit" value="Log in"/>
+                <input id="submitForm" type="submit" value="Log in" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-focus"/>
             </div>
         </form>
     </div>
