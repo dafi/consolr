@@ -26,6 +26,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
+        <script type="text/javascript" src="js/consolr.tags.js"></script>
         <script type="text/javascript" src="js/consolr.dialogs.js"></script>
         <script type="text/javascript" src="js/consolr.initializers.js"></script>
 
@@ -64,9 +65,12 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 $("#dialog-form").initDialogModifyQueuePost();
 
                 $("#dialog-tags").initDialogTagsChart();
-                $("#show-tags-chart").click(function() {
-                    $('#dialog-tags').dialog('open');
-                });
+
+                $("#toolbar button").button();
+                $("#show-tags-chart").click(consolr.tags.commands.showTagChart);
+
+                $("#dialog-filter-tags").initDialogFilterTags();
+                $('#filter-tags').click(consolr.tags.commands.filterTags);
             });
         -->
         </script>
@@ -86,12 +90,15 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <span id="message-text" class="message-text"></span>
         </div>
 
-        <input type="button" id="show-tags-chart" value="Show Tags"/>
+        <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
+            <button id="show-tags-chart">Tags Chart</button>
+            <button id="filter-tags">Filter Tags</button>
+	</div>
 
         <div id="date-container">
         </div>
 
-<div style="display:none">
+<div id="dialogs-container" style="display:none">
     <div id="dialog-form" title="Modify Post">
         <form action="">
         <fieldset>
@@ -111,6 +118,12 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     <div id="dialog-tags" title="Tags Chart">
         <div id="tags-chart"></div>
+    </div>
+
+    <div id="dialog-filter-tags" title="Filter Tags">
+        <label for="search">Search</label>
+        <input id="search" type="text" autocomplete="off"/>
+        <div id="tagList" style="height: 100%; overflow-y: visible"></div>
     </div>
 </div>
     </body>

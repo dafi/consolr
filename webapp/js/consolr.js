@@ -5,7 +5,7 @@ if (typeof(consolr) == "undefined") {
 (function() {
     var GROUP_DATE_FORMAT_STRING = "yyyy, EE dd MMM";
     var TEMPL_DATE_CONTAINER = '<h3 class="date-header ui-corner-top"><span>$dateTitle</span></h3>'
-                + '<ul id="gd$dateId" class="date-image-container">$items</ul>';
+                + '<ul id="gd$dateId" class="date-image-container ui-corner-bottom">$items</ul>';
     var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId">'
                 + '<img src="$imgSrc" alt="$imgAlt"/>'
                 + '</li>';
@@ -214,39 +214,6 @@ if (typeof(consolr) == "undefined") {
 
         return groupDateWidget;
     },
-
-    this.groupTags = function() {
-        var tagsMap = [];
-
-        $(consolrPosts['posts']).each(function(i, post) {
-            $(post.tags).each(function(i, tag) {
-                tagsMap[tag] = tagsMap[tag] ? tagsMap[tag] + 1 : 1;
-            });
-        });
-        var tags = [];
-        for (i in tagsMap) {
-            tags.push({name: i, count : tagsMap[i]});
-        }
-        return tags;
-    }
-
-    this.drawTagsChart = function() {
-        var tags = consolr.groupTags();
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Tags');
-        data.addColumn('number', 'Posts');
-
-        $(tags).each(function(i, tag) {
-            data.addRow([tag.name, tag.count]);
-        });
-
-        var tagsChart = $('#tags-chart');
-        var chartHeight = Math.max(tagsChart.height(), tags.length * 20);
-
-        data.sort(0);
-        new google.visualization.BarChart(
-            tagsChart.get(0)).draw(data, {legend : 'none', height: chartHeight});
-    }
 
     this.updatePostsCount = function() {
         var days = 0;

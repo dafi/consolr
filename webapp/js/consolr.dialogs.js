@@ -45,7 +45,7 @@
     };
 
     $.fn.initDialogTagsChart = function(settings) {
-        var config = {drawCallback: consolr.drawTagsChart};
+        var config = {drawCallback: consolr.tags.drawTagsChart};
 
         if (settings) {
             $.extend(config, settings);
@@ -67,5 +67,62 @@
                     callback: config.drawCallback});
             }
         });
+    };
+
+    $.fn.initDialogFilterTags = function() {
+        var TEMPL_CHECKBOX_TAG = "<div id='tag$index'><input type='checkbox' value='$index'>$tag</div>";
+
+        this.dialog({
+            autoOpen: false,
+            width: 300,
+            height: 250,
+            modal: true,
+            resizable: true,
+            buttons: {
+                'Filter': function() {
+                    var selectedTags = [];
+                    var tags = $(this).dialog('option', 'tags');
+
+                    $("#tagList input:checked").each(function(i, tag) {
+                        var tagIndex = parseInt($(tag).val(), 10);
+                        selectedTags.push(tags[tagIndex]);
+                    })
+                    $(this).dialog('close');
+
+                    var onOkCallback = $(this).dialog('option', 'onOk');
+                    if (typeof(onOkCallback) == "function") {
+                        onOkCallback(selectedTags);
+                    }
+                },
+                Cancel : function() {
+                    $(this).dialog('close');
+                }
+            },
+            open: function() {
+                var html = "";
+                var tags = $(this).dialog('option', 'tags');
+                $(tags).each(function(i, tag) {
+                    html += consolr.formatString(TEMPL_CHECKBOX_TAG, {
+                        index : i,
+                        tag: tag.name + ' (' + tag.count + ')'});
+                });
+                // before remove all children that append new content
+                $('#tagList').empty().append(html);
+                $('#search').val('').focus();
+            }
+        });
+        var dialog = this;
+        $('#search').keyup(function() {
+            var pattern = $(this).val().toLowerCase();
+            var tags = $(dialog).dialog('option', 'tags');
+            $(tags).each(function(i, tag) {
+                if (tag.name.toLowerCase().indexOf(pattern) >= 0) {
+                    $("div#tag" + i).show();
+                } else {
+                    $("div#tag" + i).hide();
+                    //$("div#tag" + i + " input").attr('checked', false);
+                }
+            });
+        })
     };
 })(jQuery);
