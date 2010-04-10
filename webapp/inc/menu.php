@@ -3,7 +3,7 @@ require_once 'lib/loginUtils.php';
 require_once 'lib/tumblr/tumblrUtils.php';
 
 ?>
-        <div style="text-align: right">
+        <div class="common-menu">
             <a href="multiq.php">Multiple Queue</a>
             |
             <a href="queue.php">Queue</a>
