@@ -5,6 +5,7 @@
             width: 450,
             height: 330,
             modal: true,
+            resize: "auto",
             buttons: {
                 'Save': function() {
                     var params = {
@@ -13,10 +14,14 @@
                         caption : tinyMCE.get('dialog-modify-caption').getContent(),
                         tags : $('#dialog-modify-tags').val()
                     };
+                    if (isNaN(Date.parse(params.publishDate))) {
+                        alert("Date format is invalid");
+                        return;
+                    }
                     consolr.updateQueuedPost(params, {
                             success:consolr.refreshImagePosition
                             });
-                    consolr.updatePostsCount();
+                    consolr.updateMessagePanel();
                     $(this).dialog('close');
                 },
                 Cancel: function() {
