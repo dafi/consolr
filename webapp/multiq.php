@@ -16,15 +16,26 @@ if (isset($_POST['url'])) {
     $count = count($urls);
     for ($i = 0; $i < $count; $i++) {
         if ($urls[$i]) {
-            $results = $tumblr->post_photo_to_queue($urls[$i],
-                                                    $captions[$i],
-                                                    $dates[$i],
-                                                    explode(",", $tags[$i]));
-            if ($results['status'] == 201) {
-                array_push($info, $results['result']);
-            } else {
+            // remove all \r and any \r or \n at end of string then split string
+            $arr_urls = preg_split("/\n+/", preg_replace("/\r|(\r|\n)+$/", "", $urls[$i]));
+            $invalid_urls = array();
+
+            foreach ($arr_urls as $u) {
+                //$results = array('status' => substr($u, 0, 1) == 'a' ? 201 : 400,
+                //                 'result' => substr($u, 0, 1) == 'a' ? '' : 'wrong url');
+                $results = $tumblr->post_photo_to_queue($u,
+                                                        $captions[$i],
+                                                        $dates[$i],
+                                                        explode(",", $tags[$i]));
+                if ($results['status'] == 201) {
+                    array_push($info, $results['result']);
+                } else {
+                    array_push($invalid_urls, $u);
+                }
+            }
+            if (count($invalid_urls)) {
                 array_push($errors,
-                            array("url" => $urls[$i],
+                            array("url" => implode("\n", $invalid_urls),
                                   "caption" => $captions[$i],
                                   "date" => $dates[$i],
                                   "tags" => $tags[$i],
@@ -66,6 +77,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 color: red;
                 background-color: white;
             }
+            textarea, input[type='text'] {
+                width: 80%;
+            }
         </style>
 
         <script type="text/javascript" src="js/jquery.js"></script>
@@ -91,7 +105,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     </head>
     <body>
         <noscript>
-            <div>
+            <div class="ui-state-error">
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
@@ -108,9 +122,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 ?>
             <fieldset id="photo-fields<?php echo $currPhoto ?>">
                 <legend <?php if (isset($error['error_info'])) echo 'class="error"'?>>Photo <?php echo $currPhoto; if (isset($error['error_info'])) echo " contains error " . $error['error_info']; ?></legend>
-                <label for="url[]">Url</label>
+                <label for="url[]">Urls (specify an url per line)</label>
                 <br/>
-                <input type="text" name="url[]" id="url[]" value="<?php echo $error['url'] ?>" size="100"/>
+                <textarea name="url[]" id="url[]" cols="100" rows="4"><?php echo $error['url'] ?></textarea>
                 <br/>
 
                 <label for="caption[]">Caption</label>
