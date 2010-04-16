@@ -9,6 +9,7 @@
             $.extend(config, settings);
         }
         this.tooltip({
+            extraClass: 'ui-state-highlight',
             bodyHandler: function() {
                 var post = consolr.findPost(this.id);
                 var caption = $(post['photo-caption']).text();
@@ -57,11 +58,20 @@
                                             .get(0).id)[config.datePropName]);
                 }
 
-                var newDate = consolr.adjustTime(currTime,
-                                        prevTime,
-                                        nextTime,
-                                        config.minutesAmount);
-                post[config.datePropName] = newDate.getTime();
+                var newDate;
+                if (prevTime || nextTime) {
+                    newDate = consolr.adjustTime(prevTime,
+                                                 nextTime,
+                                                 config.minutesAmount);
+                } else {
+                    var id = ui.item.parent('ul').attr('id');
+                    newDate = new Date(parseInt(id.substring(2, 6), 10),
+                                parseInt(id.substring(6, 8), 10) - 1,
+                                parseInt(id.substring(8), 10),
+                                currTime.getHours(),
+                                currTime.getMinutes(),
+                                currTime.getSeconds());
+                }
 
                 var params = {
                     postId : post['id'],
@@ -69,7 +79,10 @@
                     caption : post['photo-caption'],
                     tags : post['tags'] ? post['tags'].join(", ") : ""
                 };
-                consolr.updateQueuedPost(params);
+                consolr.updateQueuedPost(params, {
+                        success: consolr.movePost
+                        });
+                consolr.updateMessagePanel();
             }
         }).disableSelection();
     };
