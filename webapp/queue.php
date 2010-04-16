@@ -51,7 +51,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         dateProperty : 'publish-on-time',
                         sortByDateAsc : false}));
 
-                consolr.updatePostsCount();
+                consolr.updateMessagePanel();
 
                 $("li").initTooltipPhotoPost();
 
@@ -77,7 +77,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     </head>
     <body>
         <noscript>
-            <div>
+            <div class="ui-state-error">
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
@@ -88,6 +88,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <img class="message-progress-indicator" src="images/progress.gif" alt="..."/>
             </span>
             <span id="message-text" class="message-text"></span>
+
+            <div id="operation-in-progress-panel" astyle="display: none" class="center-top operation-in-progress ui-corner-all">
+                <span id="operation-in-progress-icon-error" style="display: none; cursor:pointer; float: left; margin-right: 0.3em;" class="ui-icon ui-icon-circle-close"></span><span id="operation-in-progress-text"></span>
+            </div>
         </div>
 
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
