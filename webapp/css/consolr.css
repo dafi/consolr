@@ -72,10 +72,7 @@ a img {
 #tooltip {
   position: absolute;
   z-index: 3000;
-  border: 1px solid #111;
   padding: 5px;
-  background-color: #BBC552;
-  color: #3B440F;
 }
 
 #tooltip h3, #tooltip div {
@@ -86,7 +83,6 @@ a img {
   height: 16px;
   padding-left: 16px;
   margin: 0 0 4px 0;
-  color: yellow;
   display: block;
 }
 
@@ -105,17 +101,12 @@ a img {
 noscript div {
   height: 45px;
   text-align: center;
-  background-color: #31546f;
-  color: #fff;
-  font: normal 17px 'Lucida Grande',Verdana,sans-serif;
+  font-size: 2em;
   line-height: 45px;
-  border: 3px solid #FFDD00;
 }
 
 noscript div a {
-  color: #fff;
-  text-decoration: none;
-  border-bottom: solid 1px #5E809C;
+  border-bottom: solid 1px #cd0a0a;
 }
 
 .message-progress-indicator {
@@ -129,10 +120,39 @@ noscript div a {
 }
 
 .toolbar {
-    padding: 4px 4px;
-    margin-bottom: 4px;
+  padding: 4px 4px;
+  margin-bottom: 4px;
 }
 
 .common-menu {
   text-align: right;
+}
+
+.empty-days {
+  background-color: #ffdd00;
+  color: black;
+  width: 20em;
+  text-align: center;
+  clear:both;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
+.center-top {
+  top: 0.2em;
+  left: 50%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  position: fixed;
+  width: 18em;
+  margin-left: -9em;
+}
+
+.operation-in-progress {
+  font-size: 1.2em;
+  text-align: center;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  z-index: 9999;
 }
