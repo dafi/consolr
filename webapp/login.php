@@ -43,7 +43,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 </head>
     <body>
         <noscript>
-            <div>
+            <div class="ui-state-error">
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
