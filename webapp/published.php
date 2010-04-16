@@ -62,7 +62,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         $("#date-container").html(consolr.getDateContainerHTML({
                                         dateProperty : 'date'}));
 
-                        consolr.updatePostsCount();
+                        consolr.updateMessagePanel();
                         // add tooltip when date container is filled
                         $("li").initTooltipPhotoPost({
                             datePropName: 'date'});
@@ -94,6 +94,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <img class="message-progress-indicator" src="images/progress.gif" alt="..."/>
             </span>
             <span id="message-text" class="message-text"></span>
+
+            <div id="operation-in-progress-panel" style="display: none" class="center-top operation-in-progress ui-corner-all ui-state-highlight">
+                <span id="operation-in-progress-text"></span>
+            </div>
         </div>
 
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
