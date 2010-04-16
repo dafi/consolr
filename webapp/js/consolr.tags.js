@@ -8,7 +8,7 @@ if (typeof(consolr.tags) == "undefined") {
 
 (function() {
     this.commands = {};
-    
+
     /**
      * Return tags grouped by name
      * @returns {array} (elements are objects in the form {name, count})
@@ -67,7 +67,7 @@ if (typeof(consolr.tags) == "undefined") {
             });
             return retVal;
         }
-        
+
         if (showAllIfEmpty && !includeTags.length) {
             $("#date-container li").show();
             return;
