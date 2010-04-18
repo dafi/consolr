@@ -43,7 +43,7 @@
             connectWith: config.connectWith,
             placeholder: config.placeholder,
             forcePlaceholderSize : true,
-            stop: function(event, ui) {
+            receive: function(event, ui) {
                 var prevTime = null;
                 var nextTime = null;
                 var post = consolr.findPost(ui.item.get(0).id);
@@ -80,7 +80,10 @@
                     tags : post['tags'] ? post['tags'].join(", ") : ""
                 };
                 consolr.updateQueuedPost(params, {
-                        success: consolr.movePost
+                        success: consolr.movePost,
+                        error : function() {
+                            $(ui.sender).sortable('cancel');
+                        }
                         });
                 consolr.updateMessagePanel();
             }

@@ -55,7 +55,7 @@ if (typeof(consolr) == "undefined") {
      * to a function called on update success
      */
     this.updateQueuedPost = function(params, settings) {
-        var config = {success : null};
+        var config = {success: null, error: null};
         if (settings) {
             $.extend(config, settings);
         }
@@ -69,6 +69,7 @@ if (typeof(consolr) == "undefined") {
                     consolr.hideOperationProgressMessageText();
                 },
                 error: function(xhr, status) {
+                    if (typeof (config.error) == "function") config.error(params);
                     consolr.showOperationProgressMessageText(xhr.statusText, true);
                 },
                 beforeSend: function(xhr) {
