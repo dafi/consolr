@@ -10,6 +10,9 @@ if (typeof(consolr) == "undefined") {
                 + '<img src="$imgSrc" alt="$imgAlt"/>'
                 + '</li>';
     var POST_PER_REQUEST = 50;
+    var POSTS_IN_DAYS = '$postsCount posts in $postsDays days';
+    var DAYS_WITHOUT_POST = "$dayCount day(s) without posts";
+    var UPDATE_POST = "Update post...";
 
     /**
      * Move image widget to new date container or position
@@ -73,7 +76,7 @@ if (typeof(consolr) == "undefined") {
                     consolr.showOperationProgressMessageText(xhr.statusText, true);
                 },
                 beforeSend: function(xhr) {
-                    consolr.showOperationProgressMessageText("Update post...");
+                    consolr.showOperationProgressMessageText(UPDATE_POST);
                 }
             });
     },
@@ -219,24 +222,27 @@ if (typeof(consolr) == "undefined") {
         return groupDateWidget;
     },
 
-    this.updateMessagePanel = function() {
+    this.updateMessagePanel = function(showEmptyDays) {
+        showEmptyDays = typeof(showEmptyDays) == "undefined" || showEmptyDays == null ? true : showEmptyDays;
         var postsCount = getPostsCount();
         var emptyDays = getEmptyDays();
 
-        var panelStr = '$postsCount posts in $postsDays days';
-
-        var html = this.formatString(panelStr, {
+        var html = consolr.formatString(POSTS_IN_DAYS, {
             postsCount : postsCount.count,
             postsDays : postsCount.days
             });
         this.setMessageText(html);
 
-        $('.empty-days').remove();
-        $(emptyDays).each(function(i, item) {
-            var str = item.dayCount + " day(s) without posts";
-            $('<div class="empty-days ui-corner-all"><span>' + str + '</span></div>')
-                .insertAfter($('#' + consolr.createGroupDateId(item.start)))
-        })
+        if (showEmptyDays) {
+            $('.empty-days').remove();
+            $(emptyDays).each(function(i, item) {
+                var str = consolr.formatString(DAYS_WITHOUT_POST, {
+                    dayCount: item.dayCount
+                });
+                $('<div class="empty-days ui-corner-all"><span>' + str + '</span></div>')
+                    .insertAfter($('#' + consolr.createGroupDateId(item.start)))
+            })
+        }
     }
 
     getPostsCount = function() {
@@ -395,7 +401,7 @@ if (typeof(consolr) == "undefined") {
         }
         $('#operation-in-progress-text').html(str);
     }
-    
+
     this.hideOperationProgressMessageText = function() {
         $('#operation-in-progress-text').html('');
         $('#operation-in-progress-panel').hide();

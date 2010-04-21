@@ -1,4 +1,6 @@
 (function($) {
+    var INVALID_DATE = 'Date format is invalid';
+
     $.fn.initDialogModifyQueuePost = function() {
         this.dialog({
             autoOpen: false,
@@ -15,7 +17,7 @@
                         tags : $('#dialog-modify-tags').val()
                     };
                     if (isNaN(Date.parse(params.publishDate))) {
-                        alert("Date format is invalid");
+                        alert(INVALID_DATE);
                         return;
                     }
                     consolr.updateQueuedPost(params, {
