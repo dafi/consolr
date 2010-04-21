@@ -39,11 +39,16 @@
             $.extend(config, settings);
         }
 
+        var dragSource;
         this.sortable({
             connectWith: config.connectWith,
             placeholder: config.placeholder,
             forcePlaceholderSize : true,
             receive: function(event, ui) {
+                // save sender used inside the stop() method
+                dragSource = ui.sender;
+            },
+            stop: function(event, ui) {
                 var prevTime = null;
                 var nextTime = null;
                 var post = consolr.findPost(ui.item.get(0).id);
@@ -82,7 +87,12 @@
                 consolr.updateQueuedPost(params, {
                         success: consolr.movePost,
                         error : function() {
-                            $(ui.sender).sortable('cancel');
+                            // stop doesn't receive a valid sender so get the item parent
+                            // if dragSource isn't set then the item has been moved
+                            // inside same container otherwise has been set
+                            // inside receive() method
+                            $(dragSource ? dragSource : ui.item.parent('ul')).sortable('cancel');
+                            dragSource = undefined;
                         }
                         });
                 consolr.updateMessagePanel();
