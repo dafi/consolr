@@ -25,6 +25,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript" src="js/jquery.strings.js"></script>
 
         <script type="text/javascript" src="js/date.js"></script>
+        <script type="text/javascript" src="js/consolr.groupDate.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
         <script type="text/javascript" src="js/consolr.tags.js"></script>
         <script type="text/javascript" src="js/consolr.dialogs.js"></script>
@@ -39,18 +40,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
             $(function() {
                 $.initEditor();
-                // This ensure dates are normalized with client side timezone
-                $(consolrPosts['posts']).each(function(i, el) {
-                    el['publish-unix-timestamp'] = new Date(el['publish-on-time']).getTime();
-                });
-                consolrPosts['posts'].sort(function(a, b) {
-                    return a['publish-unix-timestamp'] - b['publish-unix-timestamp'];
-                });
-                consolrPosts["group-date"] = consolr.groupPostsByDate(consolrPosts.posts, 'publish-on-time');
-                $("#date-container").html(consolr.getDateContainerHTML({
-                        dateProperty : 'publish-on-time',
-                        sortByDateAsc : false}));
-
+		consolr.initTimeline('publish-on-time', true);
                 consolr.updateMessagePanel();
 
                 $("li").initTooltipPhotoPost();
@@ -89,7 +79,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </span>
             <span id="message-text" class="message-text"></span>
 
-            <div id="operation-in-progress-panel" astyle="display: none" class="center-top operation-in-progress ui-corner-all">
+            <div id="operation-in-progress-panel" style="display: none" class="center-top operation-in-progress ui-corner-all">
                 <span id="operation-in-progress-icon-error" style="display: none; cursor:pointer; float: left; margin-right: 0.3em;" class="ui-icon ui-icon-circle-close"></span><span id="operation-in-progress-text"></span>
             </div>
         </div>

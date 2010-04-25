@@ -25,6 +25,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript" src="js/jquery.strings.js"></script>
 
         <script type="text/javascript" src="js/date.js"></script>
+        <script type="text/javascript" src="js/consolr.groupDate.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
         <script type="text/javascript" src="js/consolr.tags.js"></script>
         <script type="text/javascript" src="js/consolr.dialogs.js"></script>
@@ -54,18 +55,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     },
                     complete : function(posts) {
                         consolrPosts.posts = posts;
-                        // This ensure dates are normalized with client side timezone
-                        $(consolrPosts['posts']).each(function(i, el) {
-                            el['publish-unix-timestamp'] = new Date(el['unix-timestamp']).getTime();
-                        });
-                        consolrPosts["group-date"] = consolr.groupPostsByDate(consolrPosts.posts, 'date');
-                        $("#date-container").html(consolr.getDateContainerHTML({
-                                        dateProperty : 'date'}));
+                        consolr.initTimeline('date', false);
 
                         consolr.updateMessagePanel();
                         // add tooltip when date container is filled
-                        $("li").initTooltipPhotoPost({
-                            datePropName: 'date'});
+                        $("li").initTooltipPhotoPost();
                         $("#message-progress-container").hide();
                     }
                     });
