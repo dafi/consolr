@@ -12,6 +12,7 @@ if (isset($_POST['url'])) {
     $captions = $_POST['caption'];
     $dates = $_POST['date'];
     $tags = $_POST['tags'];
+    $timespan = $_POST['timespan'];
 
     $count = count($urls);
     for ($i = 0; $i < $count; $i++) {
@@ -19,17 +20,33 @@ if (isset($_POST['url'])) {
             // remove all \r and any \r or \n at end of string then split string
             $arr_urls = preg_split("/\n+/", preg_replace("/\r|(\r|\n)+$/", "", $urls[$i]));
             $invalid_urls = array();
+            $int_timespan = intval($timespan[$i]);
+            if ($int_timespan <= 0) {
+                $int_timespan = 2;
+            }
+            $int_timespan *= 60;
+            $timespan_seconds = 0;
 
             foreach ($arr_urls as $u) {
-                $results = $tumblr->post_photo_to_queue($u,
-                                                        $captions[$i],
-                                                        $dates[$i],
-                                                        explode(",", $tags[$i]));
+                $time = strtotime($dates[$i]);
+                
+                if ($time === false) {
+                    $results = array('status' => 400, 'result' => 'Invalid date format: ' . $dates[$i]);
+                } else {
+                    $time += $timespan_seconds;
+                    $span_date = strftime("%d %b %y %H:%M:%S", $time);
+
+                    $results = $tumblr->post_photo_to_queue($u,
+                                                            $captions[$i],
+                                                            $span_date,
+                                                            explode(",", $tags[$i]));
+                }
                 if ($results['status'] == 201) {
                     array_push($info, $results['result']);
                 } else {
                     array_push($invalid_urls, $u);
                 }
+                $timespan_seconds += $int_timespan;
             }
             if (count($invalid_urls)) {
                 array_push($errors,
@@ -37,6 +54,7 @@ if (isset($_POST['url'])) {
                                   "caption" => $captions[$i],
                                   "date" => $dates[$i],
                                   "tags" => $tags[$i],
+                                  "timespan" => $timespan[$i],
                                   "error_info" => $results['result']));
             }
         } else {
@@ -46,6 +64,7 @@ if (isset($_POST['url'])) {
                                           "caption" => $captions[$i],
                                           "date" => $dates[$i],
                                           "tags" => $tags[$i],
+                                          "timespan" => $timespan[$i],
                                           "error_info" => "Url is mandatory"));
             }
         }
@@ -53,7 +72,7 @@ if (isset($_POST['url'])) {
 }
 
 if (count($errors) == 0) {
-    array_push($errors, array("url" => "", "caption" => "", "date" => "", "tags" => ""));
+    array_push($errors, array("url" => "", "caption" => "", "date" => "", "tags" => "", "timespan" => "2"));
 }
 
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -127,10 +146,19 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <br/>
                 <br/>
 
-                <label for="date[]">Puslish Date</label>
-                <br/>
-                <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>"/>
-                <br/>
+                <div style="overflow: hidden">
+                    <div style="float:left; margin-right: 1em;">
+                        <label for="date[]">Puslish Date</label>
+                        <br/>
+                        <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>" style="width:40em"/>
+                    </div>
+    
+                    <div style="float:left">
+                        <label for="timespan[]">Photo Time Span (in minutes)</label>
+                        <br/>
+                        <input type="text" name="timespan[]" id="timespan[]"  value="<?php echo $error['timespan'] ?>" style="width: 4em"/>
+                    </div>
+                </div>
 
                 <label for="tags[]">Tags</label>
                 <br/>
