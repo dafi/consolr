@@ -3,11 +3,6 @@ if (typeof(consolr) == "undefined") {
 }
 
 (function() {
-    var TEMPL_DATE_CONTAINER = '<h3 class="date-header ui-corner-top"><span id="t$dateId">$dateTitle</span></h3>'
-                + '<ul id="$dateId" class="date-image-container ui-corner-bottom">$items</ul>';
-    var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId">'
-                + '<img src="$imgSrc" alt="$imgAlt"/>'
-                + '</li>';
     var POST_PER_REQUEST = 50;
     var POSTS_IN_DAYS = '$postsCount posts in $postsDays days';
     var DAYS_WITHOUT_POST = "$dayCount day(s) without posts";
@@ -201,50 +196,6 @@ if (typeof(consolr) == "undefined") {
         return {count : consolrPosts['posts'].length, days : days};
     }
 
-    this.getDateContainerHTML = function(settings) {
-        var config = {
-            dateProperty : 'consolr-date',
-            sortByDateAsc : true
-        }
-        if (settings) {
-            $.extend(config, settings);
-        }
-
-        var itemPatterns = {};
-        var html = "";
-
-        // ensure group dates are sorted in reverse order (from more recent to older)
-        var sortedGroups = [];
-        for (g in consolrPosts['group-date']) {
-            sortedGroups.push(g);
-        }
-        var direction = config.sortByDateAsc ? 1 : -1;
-        sortedGroups.sort(function(a, b) {
-            return a === b ? 0 : a < b ? -direction : direction;
-        });
-
-        for (g in sortedGroups) {
-            var dateId = sortedGroups[g];
-            var posts = consolrPosts['group-date'][dateId];
-            var itemsHtml = "";
-            var date = posts[0][config.dateProperty];
-
-            for (var i in posts) {
-                var post = posts[i];
-
-                itemPatterns["postId"] = post.id;
-                itemPatterns["imgSrc"] = post['photo-url-75'];
-                itemPatterns["imgAlt"] = post['slug'];
-                itemsHtml += $.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
-            }
-            html += $.formatString(TEMPL_DATE_CONTAINER, {
-                            "dateTitle" : consolr.groupDate.formatGroupDateTitle(date),
-                            "dateId" : dateId,
-                            "items" : itemsHtml});
-        };
-        return html;
-    }
-
     function fetchTumblr(url, settings) {
         $.ajax({url: url + '&start=' + settings.start,
                 dataType: 'json',
@@ -388,7 +339,7 @@ if (typeof(consolr) == "undefined") {
             return a === b ? 0 : a < b ? -direction : direction;
         });
         consolrPosts['group-date'] = consolr.groupDate.groupPostsByDate(consolrPosts.posts);
-        $('#date-container').html(consolr.getDateContainerHTML({
+        $('#date-container').html(consolr.groupDate.getDateContainerHTML({
                 sortByDateAsc : consolr.isAscending}));
     }
 }).apply(consolr);
