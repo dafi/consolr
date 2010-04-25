@@ -9,7 +9,7 @@ body {
 }
 
 .login-container {
-  width: 500px;
+  width: 35em;
   margin: 0 auto;
 }
 
@@ -155,4 +155,14 @@ noscript div a {
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   z-index: 9999;
+}
+
+#multiqForm textarea,
+#multiqForm input[type='text'] {
+  width: 100%;
+}
+
+.button-box {
+  float: right;
+  margin-top: 0.4em;
 }
