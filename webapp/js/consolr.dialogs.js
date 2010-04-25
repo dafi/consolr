@@ -21,7 +21,9 @@
                         return;
                     }
                     consolr.updateQueuedPost(params, {
-                            success:consolr.refreshImagePosition
+                            success: function(params) {
+                                consolr.refreshImagePosition(params, true);
+                                }
                             });
                     consolr.updateMessagePanel();
                     $(this).dialog('close');
@@ -36,7 +38,7 @@
                 var postInfo = $($(this).dialog('option', 'postInfo'));
                 var post = consolr.findPost(postInfo.attr('id'));
                 var tags = post['tags'] ? post['tags'].join(", ") : "";
-                var date = new Date(post['publish-unix-timestamp']).format("dd NNN yyyy HH:mm:ss");
+                var date = post['consolr-date'].format("dd NNN yyyy HH:mm:ss");
 
                 $('#dialog-modify-caption').val(post['photo-caption']);
                 $('#dialog-modify-publish-date').val(date);
@@ -109,7 +111,7 @@
                 var html = "";
                 var tags = $(this).dialog('option', 'tags');
                 $(tags).each(function(i, tag) {
-                    html += consolr.formatString(TEMPL_CHECKBOX_TAG, {
+                    html += $.formatString(TEMPL_CHECKBOX_TAG, {
                         index : i,
                         tag: tag.name + ' (' + tag.count + ')'});
                 });

@@ -1,6 +1,6 @@
 (function($) {
     $.fn.initTooltipPhotoPost = function(settings) {
-        var config = {datePropName: 'publish-unix-timestamp',
+        var config = {datePropName: 'consolr-date',
                         captionMaxChars : 60,
                         tagsMaxChars : 60,
                         dateFormat: "HH:mm:ss"};
@@ -17,7 +17,7 @@
                 caption = $.cropText(caption || post['photo-caption'], config.captionMaxChars);
 
                 var tags = post['tags'] ? $.cropText(post['tags'].join(", "), config.tagsMaxChars) : "";
-                var time = new Date(post[config.datePropName]).format(config.dateFormat);
+                var time = post[config.datePropName].format(config.dateFormat);
 
                 return $("<div>"
                          + "<span class='tooltip-caption'>" + caption + "</span>"
@@ -30,7 +30,7 @@
     };
 
     $.fn.initDraggableImage = function(settings) {
-        var config = {datePropName: 'publish-unix-timestamp',
+        var config = {datePropName: 'consolr-date',
                         connectWith: '.date-image-container',
                         placeholder: 'date-image-drop-placeholder ui-state-highlight',
                         minutesAmount : 10};
@@ -52,15 +52,15 @@
                 var prevTime = null;
                 var nextTime = null;
                 var post = consolr.findPost(ui.item.get(0).id);
-                var currTime = new Date(post[config.datePropName]);
+                var currTime = post[config.datePropName];
 
                 if (ui.item.prev().length) {
-                    prevTime = new Date(consolr.findPost(ui.item.prev()
-                                            .get(0).id)[config.datePropName]);
+                    prevTime = consolr.findPost(ui.item.prev()
+                                            .get(0).id)[config.datePropName];
                 }
                 if (ui.item.next().length) {
-                    nextTime = new Date(consolr.findPost(ui.item.next()
-                                            .get(0).id)[config.datePropName]);
+                    nextTime = consolr.findPost(ui.item.next()
+                                            .get(0).id)[config.datePropName];
                 }
 
                 var newDate;
@@ -85,7 +85,9 @@
                     tags : post['tags'] ? post['tags'].join(", ") : ""
                 };
                 consolr.updateQueuedPost(params, {
-                        success: consolr.movePost,
+                        success: function(params) {
+                            consolr.refreshImagePosition(params, false);
+                            },
                         error : function() {
                             // stop doesn't receive a valid sender so get the item parent
                             // if dragSource isn't set then the item has been moved
