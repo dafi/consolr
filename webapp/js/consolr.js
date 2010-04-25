@@ -3,8 +3,7 @@ if (typeof(consolr) == "undefined") {
 }
 
 (function() {
-    var GROUP_DATE_FORMAT_STRING = "yyyy, EE dd MMM";
-    var TEMPL_DATE_CONTAINER = '<h3 class="date-header ui-corner-top"><span>$dateTitle</span></h3>'
+    var TEMPL_DATE_CONTAINER = '<h3 class="date-header ui-corner-top"><span id="t$dateId">$dateTitle</span></h3>'
                 + '<ul id="$dateId" class="date-image-container ui-corner-bottom">$items</ul>';
     var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId">'
                 + '<img src="$imgSrc" alt="$imgAlt"/>'
@@ -14,6 +13,9 @@ if (typeof(consolr) == "undefined") {
     var DAYS_WITHOUT_POST = "$dayCount day(s) without posts";
     var UPDATE_POST = "Update post...";
 
+    this.dateProperty = 'publish-on-time';
+    this.isAscending = false;
+
     /**
      * Move image widget to new date container or position
      * @param imageId the image element id to move to new position
@@ -22,7 +24,7 @@ if (typeof(consolr) == "undefined") {
      */
     this.moveImageWidget = function(imageId, newDate) {
         var time = newDate.getTime();
-        var groupDateId = consolr.createGroupDateId(newDate);
+        var groupDateId = consolr.groupDate.createGroupDateId(newDate);
         var posts = [];
 
         // remove imageId for posts
@@ -42,13 +44,26 @@ if (typeof(consolr) == "undefined") {
                 imageElement.insertBefore($('#i' + post.id));
             }
         } else {
-            consolr.getGroupDateWidget(groupDateId, newDate).append(imageElement);
+            consolr.groupDate.getGroupDateWidget(groupDateId, newDate).append(imageElement);
         }
     }
 
-    this.refreshImagePosition = function(params) {
+    /**
+     * refresh image widget position and update internal post data
+     * @param params contains new post values. {postId,publishDate,caption,tags}
+     * @param moveImage if true the image widget is moved to new position
+     */
+    this.refreshImagePosition = function(params, moveImage) {
+        var fromDate = consolr.findPost(params.postId)['consolr-date'];
+        var toDate = new Date(params.publishDate);
+
         consolr.movePost(params);
-        consolr.moveImageWidget(params.postId, new Date(params.publishDate));
+        if (moveImage) {
+            consolr.moveImageWidget(params.postId, toDate);
+        }
+
+        consolr.groupDate.setGroupDateTitle(fromDate);
+        consolr.groupDate.setGroupDateTitle(toDate);
     }
 
     /**
@@ -102,7 +117,7 @@ if (typeof(consolr) == "undefined") {
     },
 
     /**
-     * Move post to new sorted position, the post 'publish-unix-timestamp' property
+     * Move post to new sorted position, the post 'consolr-date' property
      * is updated to new value
      * @param params contains new post values. {postId,publishDate,caption,tags}
      * @returns the post
@@ -116,20 +131,20 @@ if (typeof(consolr) == "undefined") {
 
             if (post.id === postId) {
                 var publishDate = new Date(params.publishDate);
-                var currPostDate = new Date(post['publish-unix-timestamp']);
+                var currPostDate = post['consolr-date'];
 
                 post['tags'] = params.tags.replace(/,\s*/, ',').split(',');
                 post['photo-caption'] = params.caption;
-                post['publish-unix-timestamp'] = publishDate.getTime();
+                post['consolr-date'] = publishDate;
 
                 posts.splice(i, 1);
 
                 // move to ordered position
-                var newIndex = consolr.findTimeClosestIndex(posts, publishDate.getTime());
+                var newIndex = consolr.findTimeClosestIndex(posts, publishDate);
                 newIndex = newIndex < 0 ? posts.length : newIndex;
                 posts.splice(newIndex, 0, post);
 
-                consolr.updatePostGroupDate(post, currPostDate, publishDate);
+                consolr.groupDate.updatePostGroupDate(post, currPostDate, publishDate);
 
                 return post;
             }
@@ -137,110 +152,43 @@ if (typeof(consolr) == "undefined") {
         return null;
     },
 
-    this.updatePostGroupDate = function(post, fromDate, destDate) {
-        var groupDate = consolrPosts['group-date'];
-        var fromGroupId = consolr.createGroupDateId(fromDate);
-        var fromGroupDate = groupDate[fromGroupId];
-
-        // remove the post from group
-        for (var i in fromGroupDate) {
-            if (fromGroupDate[i].id === post.id) {
-                fromGroupDate.splice(i, 1);
-                break;
-            }
-        }
-
-        var destGroupId = consolr.createGroupDateId(destDate);
-        var destGroupDate = groupDate[destGroupId];
-        if (!destGroupDate) {
-            destGroupDate = groupDate[destGroupId] = [];
-        }
-        // add into dest group, order is not important
-        destGroupDate.push(post);
-        post['group-date'] = destGroupId;
-    },
-
     /**
-     * Create the groupDateId used by DOM elements
-     * @param {date} date the date to use to build the id
-     * @returns {string} the id
-     */
-    this.createGroupDateId = function(date) {
-        return "gd" + date.format('yyyyMMdd');
-    },
-
-    /**
-     * Find the left closest post index by publish-unix-timestamp
+     * Find the left closest post index by consolr-date
      * @param posts array
-     * @param ts timestamp used to find closest index
+     * @param time used to find closest index
      * @returns the index of -1 if ts in greater tha all posts
      */
-    this.findTimeClosestIndex = function(posts, ts) {
+    this.findTimeClosestIndex = function(posts, time) {
         for (var i = 0; i < posts.length; i++) {
-            if (ts < posts[i]['publish-unix-timestamp']) {
+            if (time < posts[i]['consolr-date']) {
                 return i;
             }
         }
         return -1;
     }
 
-    /**
-     * Get the group date widget corresponding to passed date.
-     * If the widget doesn't exist it is created and inserted at correct position
-     * @param groupDateId the groupDateId
-     * @param {Date} groupDate the date from which determine the widget
-     * @returns the JQuery object
-     */
-    this.getGroupDateWidget = function(groupDateId, newDate) {
-        var groupDateWidget = $("#" + groupDateId);
-
-        // this date group doesn't exists create it and insert at correct position
-        if (groupDateWidget.length == 0) {
-            var position;
-            $('#date-container ul').each(function() {
-                    if (this.id > groupDateId) {
-                        return false;
-                    }
-                    position = this;
-                    return true;
-                });
-
-            var el = $(this.formatString(TEMPL_DATE_CONTAINER, {
-                        "dateTitle" : newDate.format(GROUP_DATE_FORMAT_STRING),
-                        "dateId" : groupDateId,
-                        "items" : ""}));
-            if (position) {
-                el.insertAfter($(position));
-            } else {
-                // the new date group is the first
-                el.insertBefore($('#date-container').children()[0]);
-            }
-            groupDateWidget = $("#" + groupDateId);
-            groupDateWidget.initDraggableImage();
-        }
-
-        return groupDateWidget;
-    },
-
     this.updateMessagePanel = function(showEmptyDays) {
         showEmptyDays = typeof(showEmptyDays) == "undefined" || showEmptyDays == null ? true : showEmptyDays;
         var postsCount = getPostsCount();
-        var emptyDays = getEmptyDays();
 
-        var html = consolr.formatString(POSTS_IN_DAYS, {
+        var html = $.formatString(POSTS_IN_DAYS, {
             postsCount : postsCount.count,
             postsDays : postsCount.days
             });
         this.setMessageText(html);
 
         if (showEmptyDays) {
+            var propPosition = consolr.isAscending ? 'start' : 'end';
+            var emptyDays = getEmptyDays();
+
             $('.empty-days').remove();
             $(emptyDays).each(function(i, item) {
-                var str = consolr.formatString(DAYS_WITHOUT_POST, {
+                var str = $.formatString(DAYS_WITHOUT_POST, {
                     dayCount: item.dayCount
                 });
+
                 $('<div class="empty-days ui-corner-all"><span>' + str + '</span></div>')
-                    .insertAfter($('#' + consolr.createGroupDateId(item.start)))
+                    .insertAfter($('#' + consolr.groupDate.createGroupDateId(item[propPosition])))
             })
         }
     }
@@ -253,19 +201,9 @@ if (typeof(consolr) == "undefined") {
         return {count : consolrPosts['posts'].length, days : days};
     }
 
-    this.formatString = function(str, patterns) {
-        var reStr = [];
-        for (p in patterns) {
-            reStr.push(p);
-        };
-        return str.replace(new RegExp("\\$(" + reStr.join("|") + ")", "g"), function(str, p1) {
-                return patterns[p1];
-            });
-    }
-
     this.getDateContainerHTML = function(settings) {
         var config = {
-            dateProperty : 'publish-on-time',
+            dateProperty : 'consolr-date',
             sortByDateAsc : true
         }
         if (settings) {
@@ -280,7 +218,7 @@ if (typeof(consolr) == "undefined") {
         for (g in consolrPosts['group-date']) {
             sortedGroups.push(g);
         }
-        var direction = config.sortByDateAsc ? -1 : 1;
+        var direction = config.sortByDateAsc ? 1 : -1;
         sortedGroups.sort(function(a, b) {
             return a === b ? 0 : a < b ? -direction : direction;
         });
@@ -289,7 +227,7 @@ if (typeof(consolr) == "undefined") {
             var dateId = sortedGroups[g];
             var posts = consolrPosts['group-date'][dateId];
             var itemsHtml = "";
-            var time = new Date(posts[0][config.dateProperty]).format(GROUP_DATE_FORMAT_STRING);
+            var date = posts[0][config.dateProperty];
 
             for (var i in posts) {
                 var post = posts[i];
@@ -297,10 +235,10 @@ if (typeof(consolr) == "undefined") {
                 itemPatterns["postId"] = post.id;
                 itemPatterns["imgSrc"] = post['photo-url-75'];
                 itemPatterns["imgAlt"] = post['slug'];
-                itemsHtml += this.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
+                itemsHtml += $.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
             }
-            html += this.formatString(TEMPL_DATE_CONTAINER, {
-                            "dateTitle" : time,
+            html += $.formatString(TEMPL_DATE_CONTAINER, {
+                            "dateTitle" : consolr.groupDate.formatGroupDateTitle(date),
                             "dateId" : dateId,
                             "items" : itemsHtml});
         };
@@ -344,36 +282,6 @@ if (typeof(consolr) == "undefined") {
             $.extend(config, settings);
         }
         fetchTumblr(url + '?callback=?&type=' + config.type + '&num=' + config.num, config);
-    }
-
-    /**
-     * Create a map(string, array) where key is the string date yyyyMMdd and
-     * value is the array with posts.
-     * Every post will contain a new property group-date
-     * @param posts the posts array
-     * @param dateProperty the date property to use to group dates
-     * @returns the map(string, array)
-     */
-    this.groupPostsByDate = function(posts, dateProperty) {
-        if (typeof(dateProperty) == "undefined") {
-            dateProperty = 'publish-on-time';
-        }
-        var grouped = {};
-
-        $(posts).each(function(index, post) {
-            // ignore hours, minutes and seconds
-            var strTime = consolr.createGroupDateId(new Date(post[dateProperty]));
-            var g = grouped[strTime];
-
-            if (!g) {
-                g = [];
-                grouped[strTime] = g;
-            }
-            post['group-date'] = strTime;
-            g.push(post);
-        });
-
-        return grouped;
     }
 
     this.setMessageText = function(str) {
@@ -421,6 +329,7 @@ if (typeof(consolr) == "undefined") {
 
         if (!prevTime) {
             adjustedTime = new Date(nextTime).add("m", -minutesAmount);
+            // Check if the day is the same
             if (!adjustedTime.equalsIgnoreTime(nextTime)) {
                 adjustedTime = nextTime;
             }
@@ -462,5 +371,24 @@ if (typeof(consolr) == "undefined") {
             }
         }
         return emptyDays;
+    }
+
+    this.initTimeline = function(tumblrDateProperty, ascending) {
+        consolr.dateProperty = tumblrDateProperty;
+        consolr.isAscending = ascending;
+
+        // This ensure dates are normalized with client side timezone
+        $(consolrPosts['posts']).each(function(i, el) {
+            el['consolr-date'] = new Date(el[consolr.dateProperty]);
+        });
+        var direction = consolr.isAscending ? 1 : -1;
+        consolrPosts['posts'].sort(function(a, b) {
+            a = a['consolr-date'];
+            b = b['consolr-date'];
+            return a === b ? 0 : a < b ? -direction : direction;
+        });
+        consolrPosts['group-date'] = consolr.groupDate.groupPostsByDate(consolrPosts.posts);
+        $('#date-container').html(consolr.getDateContainerHTML({
+                sortByDateAsc : consolr.isAscending}));
     }
 }).apply(consolr);
