@@ -71,7 +71,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <span id="tumblrName-error"></span>
             </p>
 
-            <div>
+            <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
                 <input id="submitForm" type="submit" value="Log in" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-focus"/>
             </div>
         </form>

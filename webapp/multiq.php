@@ -21,8 +21,6 @@ if (isset($_POST['url'])) {
             $invalid_urls = array();
 
             foreach ($arr_urls as $u) {
-                //$results = array('status' => substr($u, 0, 1) == 'a' ? 201 : 400,
-                //                 'result' => substr($u, 0, 1) == 'a' ? '' : 'wrong url');
                 $results = $tumblr->post_photo_to_queue($u,
                                                         $captions[$i],
                                                         $dates[$i],
@@ -69,18 +67,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
         <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
-        <style type="text/css">
-            .buttons {
-                margin-top: 10px;
-            }
-            .error {
-                color: red;
-                background-color: white;
-            }
-            textarea, input[type='text'] {
-                width: 80%;
-            }
-        </style>
+        <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
 
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript">
@@ -114,14 +101,21 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <?php if (count($info) > 0) { ?>
         <h3><?php echo count($info) . " post(s) inserted with success" ?></h3>
         <?php } ?>
-        <form id="postForm" method="post" action="multiq.php">
+        <form id="multiqForm" method="post" action="multiq.php">
 <?php
     $currPhoto = 0;
     foreach ($errors as $error) {
         ++$currPhoto;
 ?>
             <fieldset id="photo-fields<?php echo $currPhoto ?>">
-                <legend <?php if (isset($error['error_info'])) echo 'class="error"'?>>Photo <?php echo $currPhoto; if (isset($error['error_info'])) echo " contains error " . $error['error_info']; ?></legend>
+                <legend>Photo <?php echo $currPhoto;?></legend>
+
+                <?php if (isset($error['error_info'])) { ?>
+                <div class="ui-corner-all ui-state-error" style="height: 1.4em">
+                    <span style="margin: 0.3em;"><?php echo $error['error_info']; ?></span>
+                </div>
+                <?php } ?>
+
                 <label for="url[]">Urls (specify an url per line)</label>
                 <br/>
                 <textarea name="url[]" id="url[]" cols="100" rows="4"><?php echo $error['url'] ?></textarea>
@@ -129,25 +123,26 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 <label for="caption[]">Caption</label>
                 <br/>
-                <input type="text" name="caption[]" id="caption[]" value="<?php echo $error['caption'] ?>" size="100"/>
+                <input type="text" name="caption[]" id="caption[]" value="<?php echo $error['caption'] ?>"/>
                 <br/>
                 <br/>
 
                 <label for="date[]">Puslish Date</label>
                 <br/>
-                <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>" size="50"/>
+                <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>"/>
                 <br/>
 
                 <label for="tags[]">Tags</label>
                 <br/>
-                <input type="text" name="tags[]" id="tags[]"  value="<?php echo $error['tags'] ?>" size="50"/>
+                <input type="text" name="tags[]" id="tags[]"  value="<?php echo $error['tags'] ?>"/>
                 <br/>
             </fieldset>
 <?php } ?>
-            <div class="buttons">
-                <input id="add-photo" type="button" value="Add another photo" />
-                <input type="submit" value="Insert Photos"/>
+            <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
+                <input id="add-photo" type="button" value="Add another photo" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>
+                <input type="submit" value="Insert Photos" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>
             </div>
+
         </form>
     </body>
 </html>
