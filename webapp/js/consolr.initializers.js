@@ -20,12 +20,10 @@
                 caption = $.cropText(caption || post['photo-caption'], config.captionMaxChars);
 
                 var tags = post['tags'] ? $.cropText(post['tags'].join(", "), config.tagsMaxChars) : "";
-                var time = post[config.datePropName].format(config.dateFormat);
 
                 return $("<div>"
                          + "<span class='tooltip-caption'>" + caption + "</span>"
                          + "<span class='tooltip-tags'>" + tags + "</span>"
-                         + "<span class='tooltip-time'>" + time + "</span>"
                          + "</div>").html();
             },
             showURL: false
