@@ -12,6 +12,9 @@
             extraClass: 'ui-state-highlight',
             bodyHandler: function() {
                 var post = consolr.findPost(this.id);
+                if (!post) {
+                    return "";
+                }
                 var caption = $(post['photo-caption']).text();
                 // If text() returns an empty string uses the caption
                 caption = $.cropText(caption || post['photo-caption'], config.captionMaxChars);
@@ -27,13 +30,14 @@
             },
             showURL: false
         });
+        return this;
     };
 
     $.fn.initDraggableImage = function(settings) {
         var config = {datePropName: 'consolr-date',
                         connectWith: '.date-image-container',
-                        placeholder: 'date-image-drop-placeholder ui-state-highlight',
-                        minutesAmount : 10};
+                        placeholder: 'date-image date-image-drop-placeholder ui-state-highlight',
+                        minutesAmount : 2};
 
         if (settings) {
             $.extend(config, settings);
@@ -100,6 +104,7 @@
                 consolr.updateMessagePanel();
             }
         }).disableSelection();
+        return this;
     };
 
     $.extend({
@@ -118,4 +123,37 @@
             });
         }
     });
+
+    $.fn.initImageMenu = function(settings) {
+        this.contextMenu({
+                menu: 'imageMenu',
+                buttons: "L"
+                },
+
+                function(action, el, pos) {
+                    var li = $(el.parents('li'));
+                    switch (action) {
+                        case 'edit':
+                            $('#dialog-form').dialog('option', 'postInfo', li);
+                            $('#dialog-form').dialog('open');
+                            break;
+                        case 'showImage':
+                            var post = consolr.findPost(li.attr('id'));
+                            if (post['photo-url-1280']) {
+                                window.open(post['photo-url-1280']);
+                            }
+                            break;
+                        case 'delete':
+                            if (confirm("Do you want to delete this post?")) {
+                                var post = consolr.findPost(li.attr('id'));
+                                consolr.deletePost(post);
+                            }
+                            break;
+                        default:
+                            alert(action + " is not implemented");
+                            break;
+                    }
+                });
+        return this;
+    };
 })(jQuery);

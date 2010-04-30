@@ -18,11 +18,13 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
         <link type="text/css" href="css/dialogs.css" rel="stylesheet"/>
         <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
+        <link type="text/css" href="css/contextMenus.css" rel="stylesheet"/>
 
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/jquery.tooltip.min.js"></script>
         <script type="text/javascript" src="js/jquery.strings.js"></script>
+        <script type="text/javascript" src="js/jquery.contextMenu.js"></script>
 
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.groupDate.js"></script>
@@ -40,17 +42,26 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
             $(function() {
                 $.initEditor();
-		consolr.initTimeline('publish-on-time', true);
+                consolr.initTimeline('publish-on-time', true);
                 consolr.updateMessagePanel();
 
-                $("li").initTooltipPhotoPost();
+                $(".date-image")
+                    .initTooltipPhotoPost()
+                    .dblclick(function() {
+                        $('#dialog-form').dialog('option', 'postInfo', this);
+                        $('#dialog-form').dialog('open');
+                    })
+                    .hover(
+                          function() {
+                            $(this).find('.menu-handle').css('visibility', 'visible');
+                        },
+                          function() {
+                            $(this).find('.menu-handle').css('visibility', 'hidden');
+                    });
 
-                $("li").dblclick(function() {
-                    $('#dialog-form').dialog('option', 'postInfo', this);
-                    $('#dialog-form').dialog('open');
-                });
+                $(".menu-handle").initImageMenu();
 
-		$(".date-image-container").initDraggableImage();
+                $(".date-image-container").initDraggableImage();
 
                 $("#dialog-form").initDialogModifyQueuePost();
 
@@ -87,7 +98,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
             <button id="show-tags-chart">Tags Chart</button>
             <button id="filter-tags">Filter Tags</button>
-	</div>
+        </div>
 
         <div id="date-container">
         </div>
@@ -120,5 +131,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="tagList" style="height: 100%; overflow-y: visible"></div>
     </div>
 </div>
+
+    <ul id="imageMenu" class="contextMenu">
+        <li><a href="#edit">Edit...</a></li>
+        <li><a href="#delete">Delete...</a></li>
+        <li><a href="#showImage">Show Image</a></li>
+    </ul>
     </body>
 </html>

@@ -45,20 +45,16 @@ a img {
 
 .date-image-container {
   background-color: #FFF;
-  padding: 0.5em 1em;
-  margin-bottom: 0.6em;
-}
-
-#date-container ul {
   list-style: none;
   margin-top: 0;
   margin-left: 0; /* needed by IE */
+  margin-bottom: 0.6em;
   padding: 0 0 3px 0;
   float: left;
   width: 100%;
 }
 
-#date-container li {
+.date-image {
   margin-top: 3px;
   margin-left: 3px;
   float: left;
@@ -69,6 +65,12 @@ a img {
   line-height: 1.2em;
 }
 
+.date-image-time {
+  color: black;
+  width: 75px;
+  text-align: right;
+}
+ 
 #tooltip {
   position: absolute;
   z-index: 3000;
@@ -165,4 +167,16 @@ noscript div a {
 .button-box {
   float: right;
   margin-top: 0.4em;
+}
+
+.menu-handle {
+  background: url("../images/open.png") no-repeat;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  vertical-align: top;
+  display: inline-block;
+  visibility: hidden;
+  position: relative;
+  left: -16px;
 }

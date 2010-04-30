@@ -148,7 +148,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 <div style="overflow: hidden">
                     <div style="float:left; margin-right: 1em;">
-                        <label for="date[]">Puslish Date</label>
+                        <label for="date[]">Publish Date</label>
                         <br/>
                         <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>" style="width:40em"/>
                     </div>

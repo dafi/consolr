@@ -12,8 +12,8 @@ if (typeof(consolr.tags) == "undefined") {
 
     var TEMPL_DATE_CONTAINER = '<h3 class="date-header ui-corner-top"><span id="t$dateId">$dateTitle</span></h3>'
                 + '<ul id="$dateId" class="date-image-container ui-corner-bottom">$items</ul>';
-    var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId">'
-                + '<img src="$imgSrc" alt="$imgAlt"/>'
+    var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId" class="date-image">'
+                + '<img asrc="$imgSrc" alt="$imgAlt"/><span class="menu-handle"></span><div class="date-image-time">$time</div>'
                 + '</li>';
 
     this.updatePostGroupDate = function(post, fromDate, destDate) {
@@ -168,6 +168,7 @@ if (typeof(consolr.tags) == "undefined") {
                 itemPatterns["postId"] = post.id;
                 itemPatterns["imgSrc"] = post['photo-url-75'];
                 itemPatterns["imgAlt"] = post['slug'];
+                itemPatterns["time"] = post['consolr-date'].format('HH:mm:ss');
                 itemsHtml += $.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
             }
             html += $.formatString(TEMPL_DATE_CONTAINER, {
@@ -176,5 +177,17 @@ if (typeof(consolr.tags) == "undefined") {
                             "items" : itemsHtml});
         };
         return html;
+    }
+
+    this.findPostIndex = function(group, postId) {
+        var index = -1;
+        $(group).each(function(i, post) {
+            if (post.id == postId) {
+                index = i;
+                return false;
+            }
+            return true;
+        });
+        return index;
     }
 }).apply(consolr.groupDate);

@@ -69,7 +69,7 @@ if (typeof(consolr.tags) == "undefined") {
         }
 
         if (showAllIfEmpty && !includeTags.length) {
-            $("#date-container li").show();
+            $(".date-image").show();
             return;
         }
         $(posts).each(function(i, post) {

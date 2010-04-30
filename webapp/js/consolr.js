@@ -6,7 +6,8 @@ if (typeof(consolr) == "undefined") {
     var POST_PER_REQUEST = 50;
     var POSTS_IN_DAYS = '$postsCount posts in $postsDays days';
     var DAYS_WITHOUT_POST = "$dayCount day(s) without posts";
-    var UPDATE_POST = "Update post...";
+    var UPDATE_POST = "Updating post...";
+    var DELETE_POST = "Deleting post...";
 
     this.dateProperty = 'publish-on-time';
     this.isAscending = false;
@@ -57,6 +58,7 @@ if (typeof(consolr) == "undefined") {
             consolr.moveImageWidget(params.postId, toDate);
         }
 
+        $('#i' + params.postId + ' .date-image-time').html(toDate.format('HH:mm:ss'));
         consolr.groupDate.setGroupDateTitle(fromDate);
         consolr.groupDate.setGroupDateTitle(toDate);
     }
@@ -68,12 +70,40 @@ if (typeof(consolr) == "undefined") {
      * to a function called on update success
      */
     this.updateQueuedPost = function(params, settings) {
-        var config = {success: null, error: null};
+        settings.progressMessage = UPDATE_POST;
+        doServerOperation('doUpdate.php', params, settings);
+    },
+
+    this.deletePost = function(post, settings) {
+        if (typeof(settings) == "undefined") {
+            settings = {};
+        }
+        settings.progressMessage = DELETE_POST;
+        settings.success = function(params) {
+            var groupDate = consolrPosts['group-date'][post['group-date']];
+            var index = consolr.groupDate.findPostIndex(groupDate, post.id);
+            groupDate.splice(index, 1);
+            consolrPosts['posts'].splice(consolr.findPostIndex(post.id), 1);
+
+            $('#i' + post.id).fadeOut(500, function() {
+                $('#i' + post.id).remove();
+                consolr.groupDate.setGroupDateTitle(post['consolr-date']);
+                consolr.updateMessagePanel();
+            });
+
+        }
+        var params = {postId: post.id};
+
+        doServerOperation('doDelete.php', params, settings);
+    },
+
+    doServerOperation = function(url, params, settings) {
+        var config = {success: null, error: null, progressMessage: null};
         if (settings) {
             $.extend(config, settings);
         }
 
-        $.ajax({url: 'doUpdate.php',
+        $.ajax({url: url,
                 type: 'post',
                 async: false,
                 data: params,
@@ -86,7 +116,9 @@ if (typeof(consolr) == "undefined") {
                     consolr.showOperationProgressMessageText(xhr.statusText, true);
                 },
                 beforeSend: function(xhr) {
-                    consolr.showOperationProgressMessageText(UPDATE_POST);
+                    if (config.progressMessage) {
+                        consolr.showOperationProgressMessageText(config.progressMessage);
+                    }
                 }
             });
     },
@@ -97,6 +129,17 @@ if (typeof(consolr) == "undefined") {
      * @returns the post if found, null otherwise
      */
     this.findPost = function(postId) {
+        var index = consolr.findPostIndex(postId);
+
+        return index < 0 ? null : consolrPosts['posts'][index];
+    },
+
+    /**
+     * Use the global consolrPosts to find the index post by id
+     * @param postId the postId used for search
+     * @returns the index if found, -1 otherwise
+     */
+    this.findPostIndex = function(postId) {
         // remove the alphabetic prefix
         if (typeof(postId) == "string") {
             postId = parseInt(postId.replace(/^[a-z]/i, ''), 10);
@@ -105,10 +148,10 @@ if (typeof(consolr) == "undefined") {
 
         for (var i in arr) {
             if (arr[i].id == postId) {
-                return arr[i];
+                return i;
             }
         }
-        return null;
+        return -1;
     },
 
     /**
@@ -341,5 +384,30 @@ if (typeof(consolr) == "undefined") {
         consolrPosts['group-date'] = consolr.groupDate.groupPostsByDate(consolrPosts.posts);
         $('#date-container').html(consolr.groupDate.getDateContainerHTML({
                 sortByDateAsc : consolr.isAscending}));
+        this.initLazyImageLoader();
+    }
+
+    this.initLazyImageLoader = function() {
+        var showImages = function() {
+            // select all images without src attribute
+            $('#date-container img:not([src])').each(function() {
+                var top = $(window).scrollTop();
+                var bottom = top + $(window).height();
+                var offsetTop = $(this).offset().top;
+                if (top <= offsetTop && offsetTop <= bottom) {
+                    $(this).attr('src', $(this).attr('asrc'));
+                }
+            });
+        };
+
+        $(window).scroll(function() {
+            showImages();
+        });
+        $(window).resize(function() {
+            showImages();
+        });
+
+        // trigger a resize to make "on screen" images visible
+        $(window).resize();
     }
 }).apply(consolr);

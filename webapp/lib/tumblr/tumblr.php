@@ -122,14 +122,6 @@ class tumblr {
         $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
         curl_close($c);
 
-        //if ($status == 201) {
-        //    echo "Success! The new post ID is $result.\n";
-        //} else if ($status == 403) {
-        //    echo 'Bad email or password';
-        //} else if ($status == 200) {
-        //} else {
-        //    echo "Tumblr Error ($status)\n$result\r";
-        //}
         return array('status' => $status,
                      'result' => $result);
     }
@@ -151,6 +143,18 @@ class tumblr {
                     ));
 
         return $info['result'];
+    }
+    
+    function delete_post($post_id) {
+        $api_url = 'http://www.tumblr.com/api/delete';
+
+        return tumblr::do_request($api_url,
+                    array(
+                        'email'     => $this->email,
+                        'password'  => $this->password,
+
+                        'post-id'   => $post_id,
+                    ));
     }
 }
 

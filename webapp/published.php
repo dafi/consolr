@@ -59,7 +59,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                         consolr.updateMessagePanel();
                         // add tooltip when date container is filled
-                        $("li").initTooltipPhotoPost();
+                        $(".date-image").initTooltipPhotoPost();
                         $("#message-progress-container").hide();
                     }
                     });
