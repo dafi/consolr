@@ -137,5 +137,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <li><a href="#delete">Delete...</a></li>
         <li><a href="#showImage">Show Image</a></li>
     </ul>
+
+    <?php include('inc/footer.php'); ?>
     </body>
 </html>

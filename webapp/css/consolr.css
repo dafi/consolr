@@ -70,7 +70,7 @@ a img {
   width: 75px;
   text-align: right;
 }
- 
+
 #tooltip {
   position: absolute;
   z-index: 3000;
@@ -179,4 +179,24 @@ noscript div a {
   visibility: hidden;
   position: relative;
   left: -16px;
+}
+
+#footer {
+  text-align: center;
+  margin-top: 3em;
+}
+
+#footer ul {
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+}
+
+#footer li {
+  display:inline;
+}
+
+#footer li a {
+  font-weight: bold;
+  margin: 0 0.8em;
 }

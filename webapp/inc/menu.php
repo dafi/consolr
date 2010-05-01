@@ -4,7 +4,8 @@ require_once 'lib/tumblr/tumblrUtils.php';
 
 ?>
         <div class="common-menu">
-            <a href="multiq.php">Multiple Queue</a>
+            <?php if (login_utils::is_logged()) { ?>
+            <a href="multiq.php">Multiple Upload</a>
             |
             <a href="queue.php">Queue</a>
             |
@@ -13,4 +14,7 @@ require_once 'lib/tumblr/tumblrUtils.php';
             <a href="published.php">Published</a>
             |
             <a href="logout.php">Logout [<?php echo login_utils::get_tumblr()->get_tumblr_name() ?>]</a>
+            <?php } else { ?>
+            <a href="login.php">Login</a>
+            <?php } ?>
         </div>

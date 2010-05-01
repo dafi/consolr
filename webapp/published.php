@@ -102,17 +102,19 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="date-container">
         </div>
 
-<div style="display:none">
-    <div id="dialog-tags" title="Tags Chart">
-        <div id="tags-chart"></div>
-    </div>
+        <div style="display:none">
+            <div id="dialog-tags" title="Tags Chart">
+                <div id="tags-chart"></div>
+            </div>
 
-    <div id="dialog-filter-tags" title="Filter Tags">
-        <label for="search">Search</label>
-        <input id="search" type="text" autocomplete="off"/>
-        <div id="tagList" style="height: 100%; overflow-y: visible"></div>
-    </div>
-</div>
+            <div id="dialog-filter-tags" title="Filter Tags">
+                <label for="search">Search</label>
+                <input id="search" type="text" autocomplete="off"/>
+                <div id="tagList" style="height: 100%; overflow-y: visible"></div>
+            </div>
+        </div>
+
+    <?php include('inc/footer.php'); ?>
 
     </body>
 </html>

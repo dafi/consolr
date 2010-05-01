@@ -29,7 +29,7 @@ if (isset($_POST['url'])) {
 
             foreach ($arr_urls as $u) {
                 $time = strtotime($dates[$i]);
-                
+
                 if ($time === false) {
                     $results = array('status' => 400, 'result' => 'Invalid date format: ' . $dates[$i]);
                 } else {
@@ -152,7 +152,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         <br/>
                         <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>" style="width:40em"/>
                     </div>
-    
+
                     <div style="float:left">
                         <label for="timespan[]">Photo Time Span (in minutes)</label>
                         <br/>
@@ -172,5 +172,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </div>
 
         </form>
+
+    <?php include('inc/footer.php'); ?>
     </body>
 </html>

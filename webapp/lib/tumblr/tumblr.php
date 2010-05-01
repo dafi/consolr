@@ -144,7 +144,7 @@ class tumblr {
 
         return $info['result'];
     }
-    
+
     function delete_post($post_id) {
         $api_url = 'http://www.tumblr.com/api/delete';
 

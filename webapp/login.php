@@ -53,8 +53,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
+
+        <?php include('inc/menu.php') ?>
+
     <div class="login-container">
-        <h1>Tumblr Consolr</h1>
+        <h1>Consolr</h1>
         <form id="loginForm" action="doLogin.php" method="post">
             <p>
                 <label for="email">Email address</label>
@@ -82,5 +85,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </div>
         </form>
     </div>
+
+    <?php include('inc/footer.php'); ?>
     </body>
 </html>
