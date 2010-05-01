@@ -11,6 +11,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
     </head>
     <body>
+        <?php include('inc/menu.php') ?>
+
         <h1>Consolr - How to easily manage scheduled tumblr</h1>
         <h2>
         <a href="http://consolr.netsons.org/">Consolr</a> is a administration console for <a href="http://www.tumblr.com/">Tumblr</a> blogs, it makes easy to manage scheduled posts for publication
