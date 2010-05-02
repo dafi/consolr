@@ -4,7 +4,7 @@ Consolr
 An administration console for Tumblr.com blogs
 -----------------------------------------
 
-Consolr is an better interface to manage blogs hosted at tumblr.com.
+Consolr provides a powerful UI interface to manage blogs hosted at tumblr.com.
 
 It aims to simplify ripetitive tasks that are complicated on tumblr.
 
