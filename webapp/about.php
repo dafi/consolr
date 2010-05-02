@@ -19,7 +19,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <h1 style="padding: 0pt 0.7em; margin-top: 20px;">About</h1>
         </div>
         <h2>
-        <a href="http://consolr.netsons.org/">Consolr</a> is a administration console for <a href="http://www.tumblr.com/">Tumblr</a> blogs, it makes easy to manage scheduled posts for publication
+        <a href="http://consolr.netsons.org/">Consolr</a> is an administration console for <a href="http://www.tumblr.com/">Tumblr</a> blogs, it makes easy to manage scheduled posts for publication
         </h2>
         <h2>Consolr can</h2>
         <ul>
