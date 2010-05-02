@@ -8,12 +8,16 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <title>Consolr - About</title>
 
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
-        <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
+
+        <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
+        <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
     </head>
     <body>
         <?php include('inc/menu.php') ?>
 
-        <h1>Consolr - How to easily manage scheduled tumblr</h1>
+        <div class="ui-corner-all ui-state-highlight">
+            <h1 style="padding: 0pt 0.7em; margin-top: 20px;">About</h1>
+        </div>
         <h2>
         <a href="http://consolr.netsons.org/">Consolr</a> is a administration console for <a href="http://www.tumblr.com/">Tumblr</a> blogs, it makes easy to manage scheduled posts for publication
         </h2>

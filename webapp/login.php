@@ -57,7 +57,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <?php include('inc/menu.php') ?>
 
     <div class="login-container">
-        <h1>Consolr</h1>
+        <div class="ui-corner-all ui-state-highlight">
+            <h1 style="padding: 0pt 0.7em; margin-top: 20px;">Consolr</h1>
+        </div>
         <form id="loginForm" action="doLogin.php" method="post">
             <p>
                 <label for="email">Email address</label>
