@@ -310,30 +310,35 @@ if (typeof(consolr) == "undefined") {
     }
 
     /**
-     * Return the time adjusted to be comprised between prevTime and nextTime
-     * @param {date} prevTime the time before currTime, can be null
-     * @param {date} nextTime the time after currTime, can be null
-     * @param minutesAmount the minutes to add/subtract if prevTime
-     * or nextTime are null, default is 10
-     * @returns {date} the new object with adjusted time
+     * Return the time adjusted to be comprised between startTime and endTime
+     * @param {date} startTime the lower bound time, if it is null endTime must be not null
+     * @param {date} endTime the upper bound time, if it is null startTime must be not null
+     * @param timeSpan when startTime is null the time returned is computed
+     * using only endTime to which is subtracted the timeSpan, if endTime is null
+     * then it is used only startTime to which is added the timeSpan (default 10).
+     * @returns {date} the new object with adjusted time, null if startTime and
+     * endTime are both null
      */
-    this.adjustTime = function(prevTime, nextTime, minutesAmount) {
-        minutesAmount = minutesAmount ? minutesAmount : 10;
+    this.adjustTime = function(startTime, endTime, timeSpan) {
+        timeSpan = timeSpan ? timeSpan : 10;
         var adjustedTime;
 
-        if (!prevTime) {
-            adjustedTime = new Date(nextTime).add("m", -minutesAmount);
+        if (!startTime && !endTime) {
+            return null;
+        }
+        if (!startTime) {
+            adjustedTime = new Date(endTime).add("m", -timeSpan);
             // Check if the day is the same
-            if (!adjustedTime.equalsIgnoreTime(nextTime)) {
-                adjustedTime = nextTime;
+            if (!adjustedTime.equalsIgnoreTime(endTime)) {
+                adjustedTime = endTime;
             }
-        } else if (!nextTime) {
-            adjustedTime = new Date(prevTime).add("m", minutesAmount);
-            if (!adjustedTime.equalsIgnoreTime(prevTime)) {
-                adjustedTime = prevTime;
+        } else if (!endTime) {
+            adjustedTime = new Date(startTime).add("m", timeSpan);
+            if (!adjustedTime.equalsIgnoreTime(startTime)) {
+                adjustedTime = startTime;
             }
         } else {
-            adjustedTime = new Date((prevTime.getTime() + nextTime.getTime()) / 2);
+            adjustedTime = new Date((startTime.getTime() + endTime.getTime()) / 2);
             adjustedTime.setSeconds(0);
         }
 
@@ -368,6 +373,9 @@ if (typeof(consolr) == "undefined") {
     }
 
     this.initTimeline = function(tumblrDateProperty, ascending) {
+        if (consolrPosts.posts.length == 0) {
+            return;
+        }
         consolr.dateProperty = tumblrDateProperty;
         consolr.isAscending = ascending;
 
@@ -390,12 +398,17 @@ if (typeof(consolr) == "undefined") {
     this.initLazyImageLoader = function() {
         var showImages = function() {
             // select all images without src attribute
-            $('#date-container img:not([src])').each(function() {
+            $('#date-container img[asrc]').each(function() {
+                var img = $(this);
                 var top = $(window).scrollTop();
                 var bottom = top + $(window).height();
-                var offsetTop = $(this).offset().top;
-                if (top <= offsetTop && offsetTop <= bottom) {
-                    $(this).attr('src', $(this).attr('asrc'));
+                var imgTop = img.offset().top;
+                var imgBottom = imgTop + img.height();
+
+                if ((top <= imgTop && imgTop <= bottom)
+                    || (top <= imgBottom && imgBottom <= bottom)) {
+                    img.attr('src', img.attr('asrc'));
+                    img.removeAttr('asrc');
                 }
             });
         };

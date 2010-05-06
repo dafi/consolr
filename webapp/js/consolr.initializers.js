@@ -1,4 +1,6 @@
 (function($) {
+    var DATE_FORMAT = "dd NNN yyyy HH:mm:ss";
+
     $.fn.initTooltipPhotoPost = function(settings) {
         var config = {datePropName: 'consolr-date',
                         captionMaxChars : 60,
@@ -35,7 +37,7 @@
         var config = {datePropName: 'consolr-date',
                         connectWith: '.date-image-container',
                         placeholder: 'date-image date-image-drop-placeholder ui-state-highlight',
-                        minutesAmount : 2};
+                        postTimeSpan : 2};
 
         if (settings) {
             $.extend(config, settings);
@@ -69,7 +71,7 @@
                 if (prevTime || nextTime) {
                     newDate = consolr.adjustTime(prevTime,
                                                  nextTime,
-                                                 config.minutesAmount);
+                                                 config.postTimeSpan);
                 } else {
                     var id = ui.item.parent('ul').attr('id');
                     newDate = new Date(parseInt(id.substring(2, 6), 10),
@@ -82,7 +84,7 @@
 
                 var params = {
                     postId : post['id'],
-                    publishDate : newDate.format("dd NNN yyyy HH:mm:ss"),
+                    publishDate : newDate.format(DATE_FORMAT),
                     caption : post['photo-caption'],
                     tags : post['tags'] ? post['tags'].join(", ") : ""
                 };
