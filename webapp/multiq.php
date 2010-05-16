@@ -137,12 +137,12 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 <label for="url[]">Urls (specify an url per line)</label>
                 <br/>
-                <textarea name="url[]" id="url[]" cols="100" rows="4"><?php echo $error['url'] ?></textarea>
+                <textarea name="url[]" id="url[]" cols="100" rows="4"><?php echo htmlspecialchars($error['url']) ?></textarea>
                 <br/>
 
                 <label for="caption[]">Caption</label>
                 <br/>
-                <input type="text" name="caption[]" id="caption[]" value="<?php echo $error['caption'] ?>"/>
+                <input type="text" name="caption[]" id="caption[]" value="<?php echo htmlspecialchars($error['caption']) ?>"/>
                 <br/>
                 <br/>
 
@@ -150,19 +150,19 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     <div style="float:left; margin-right: 1em;">
                         <label for="date[]">Publish Date</label>
                         <br/>
-                        <input type="text" name="date[]" id="date[]" value="<?php echo $error['date'] ?>" style="width:40em"/>
+                        <input type="text" name="date[]" id="date[]" value="<?php echo htmlspecialchars($error['date']) ?>" style="width:40em"/>
                     </div>
 
                     <div style="float:left">
                         <label for="timespan[]">Photo Time Span (in minutes)</label>
                         <br/>
-                        <input type="text" name="timespan[]" id="timespan[]"  value="<?php echo $error['timespan'] ?>" style="width: 4em"/>
+                        <input type="text" name="timespan[]" id="timespan[]"  value="<?php echo htmlspecialchars($error['timespan']) ?>" style="width: 4em"/>
                     </div>
                 </div>
 
                 <label for="tags[]">Tags</label>
                 <br/>
-                <input type="text" name="tags[]" id="tags[]"  value="<?php echo $error['tags'] ?>"/>
+                <input type="text" name="tags[]" id="tags[]"  value="<?php echo htmlspecialchars($error['tags']) ?>"/>
                 <br/>
             </fieldset>
 <?php } ?>
