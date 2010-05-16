@@ -96,6 +96,9 @@ class tumblr {
                 }
             }
             $params['tags'] = implode(",", $tags);
+            $params['photo-link-url'] = isset($post_params['photo-link-url'])
+                                    ? $post_params['photo-link-url']
+                                    : $post['photo-link-url'];
         } else {
             $params['caption'] = isset($post_params['photo-caption'])
                                     ? $post_params['photo-caption']
@@ -103,6 +106,9 @@ class tumblr {
             $params['tags'] = isset($post_params['tags'])
                                 ? implode(",", $post_params['tags'])
                                 : "";
+            $params['click-through-url'] = isset($post_params['click-through-url'])
+                                    ? $post_params['click-through-url']
+                                    : '';
         }
         return tumblr::do_request($api_url, $params);
     }

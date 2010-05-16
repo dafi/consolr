@@ -116,6 +116,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 <label for="dialog-modify-publish-date">Publish Date</label>
                 <input type="text" name="dialog-modify-publish-date" id="dialog-modify-publish-date"/>
+
+                <label for="dialog-modify-click-through-link">Click Through Link</label>
+                <input type="text" name="dialog-modify-click-through-link" id="dialog-modify-click-through-link"/>
             </div>
         </fieldset>
         </form>

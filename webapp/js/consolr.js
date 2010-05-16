@@ -174,6 +174,7 @@ if (typeof(consolr) == "undefined") {
                 post['tags'] = params.tags.replace(/,\s*/, ',').split(',');
                 post['photo-caption'] = params.caption;
                 post['consolr-date'] = publishDate;
+                post['photo-link-url'] = params.clickThroughLink;
 
                 posts.splice(i, 1);
 

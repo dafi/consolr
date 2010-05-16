@@ -14,6 +14,7 @@
                         postId : parseInt($(this).dialog('option', 'postInfo').id.replace(/^[a-z]/i, ''), 10),
                         publishDate : $('#dialog-modify-publish-date').val(),
                         caption : tinyMCE.get('dialog-modify-caption').getContent(),
+                        clickThroughLink : $('#dialog-modify-click-through-link').val(),
                         tags : $('#dialog-modify-tags').val()
                     };
                     if (isNaN(Date.parse(params.publishDate))) {
@@ -38,10 +39,12 @@
                 var postInfo = $($(this).dialog('option', 'postInfo'));
                 var post = consolr.findPost(postInfo.attr('id'));
                 var tags = post['tags'] ? post['tags'].join(", ") : "";
+                var clickThroughLink = post['photo-link-url'] ? post['photo-link-url'] : "";
                 var date = post['consolr-date'].format("dd NNN yyyy HH:mm:ss");
 
                 $('#dialog-modify-caption').val(post['photo-caption']);
                 $('#dialog-modify-publish-date').val(date);
+                $('#dialog-modify-click-through-link').val(clickThroughLink);
                 $('#dialog-modify-tags').val(tags);
                 $('#dialog-form fieldset').css('background-image', 'url("' + post['photo-url-75'] + '")');
 
