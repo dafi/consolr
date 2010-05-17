@@ -149,6 +149,12 @@
                                 consolr.deletePost(post);
                             }
                             break;
+                        case 'publish':
+                            if (confirm("Do you want to publish this post now?")) {
+                                var post = consolr.findPost(li.attr('id'));
+                                consolr.publishPost(post);
+                            }
+                            break;
                         default:
                             alert(action + " is not implemented");
                             break;

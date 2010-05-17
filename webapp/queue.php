@@ -138,6 +138,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     <ul id="imageMenu" class="contextMenu">
         <li><a href="#edit">Edit...</a></li>
         <li><a href="#delete">Delete...</a></li>
+        <li><a href="#publish">Publish...</a></li>
         <li><a href="#showImage">Show Image</a></li>
     </ul>
 

@@ -162,6 +162,19 @@ class tumblr {
                         'post-id'   => $post_id,
                     ));
     }
+
+    function publish_post($post_id) {
+        $api_url = 'http://www.tumblr.com/api/write';
+
+        return tumblr::do_request($api_url,
+                    array(
+                        'email'     => $this->email,
+                        'password'  => $this->password,
+
+                        'post-id'   => $post_id,
+                        'state'     => 'published',
+                  ));
+    }
 }
 
 ?>

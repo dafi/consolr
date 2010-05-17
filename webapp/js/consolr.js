@@ -8,6 +8,7 @@ if (typeof(consolr) == "undefined") {
     var DAYS_WITHOUT_POST = "$dayCount day(s) without posts";
     var UPDATE_POST = "Updating post...";
     var DELETE_POST = "Deleting post...";
+    var PUBLISH_POST = "Publishing post...";
 
     this.dateProperty = 'publish-on-time';
     this.isAscending = false;
@@ -95,6 +96,29 @@ if (typeof(consolr) == "undefined") {
         var params = {postId: post.id};
 
         doServerOperation('doDelete.php', params, settings);
+    },
+
+    this.publishPost = function(post, settings) {
+        if (typeof(settings) == "undefined") {
+            settings = {};
+        }
+        settings.progressMessage = PUBLISH_POST;
+        settings.success = function(params) {
+            var groupDate = consolrPosts['group-date'][post['group-date']];
+            var index = consolr.groupDate.findPostIndex(groupDate, post.id);
+            groupDate.splice(index, 1);
+            consolrPosts['posts'].splice(consolr.findPostIndex(post.id), 1);
+
+            $('#i' + post.id).fadeOut(500, function() {
+                $('#i' + post.id).remove();
+                consolr.groupDate.setGroupDateTitle(post['consolr-date']);
+                consolr.updateMessagePanel();
+            });
+
+        }
+        var params = {postId: post.id};
+
+        doServerOperation('doPublish.php', params, settings);
     },
 
     doServerOperation = function(url, params, settings) {
