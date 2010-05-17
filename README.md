@@ -13,9 +13,17 @@ Actually only the Photos Queue management is implemented, it allows to see all p
 Installation
 -----------------------------------------
 
-**Prerequisites**: PHP 5.x
+### Prerequisites
+
+* PHP 5.x
+* MySQL 5.x
 
 Drop the webapp directory on server and login from login.php pages.
+
+### Create database (on MySQL)
+
+1. Create a database with name consolr
+2. Execute db/mysql/ddl.sql
 
 Example
 
