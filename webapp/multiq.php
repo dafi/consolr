@@ -43,11 +43,11 @@ if (isset($_POST['url'])) {
                     $time += $timespan_seconds;
                     $span_date = strftime("%d %b %y %H:%M:%S", $time);
 
-                    //$results = $tumblr->post_photo_to_queue($u,
-                    //                                        $captions[$i],
-                    //                                        $span_date,
-                    //                                        explode(",", $tags[$i]));
-                    $results = array('status' => '201', 'result' => 'TEST WITHOUT REAL POST');
+                    $results = $tumblr->post_photo_to_queue($u,
+                                                            $captions[$i],
+                                                            $span_date,
+                                                            explode(",", $tags[$i]));
+                    //$results = array('status' => '201', 'result' => 'TEST WITHOUT REAL POST');
                 }
                 if ($results['status'] == 201) {
                     array_push($info, $results['result']);
