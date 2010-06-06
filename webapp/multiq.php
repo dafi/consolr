@@ -7,6 +7,13 @@ $tumblr = login_utils::get_tumblr();
 $info = array();
 $errors = array();
 
+$urls = array('');
+$captions = array('');
+$dates = array('');
+$tags = array('');
+$timespan = array('2');
+$next_span_time = '';
+
 if (isset($_POST['url'])) {
     $urls = $_POST['url'];
     $captions = $_POST['caption'];
@@ -36,10 +43,11 @@ if (isset($_POST['url'])) {
                     $time += $timespan_seconds;
                     $span_date = strftime("%d %b %y %H:%M:%S", $time);
 
-                    $results = $tumblr->post_photo_to_queue($u,
-                                                            $captions[$i],
-                                                            $span_date,
-                                                            explode(",", $tags[$i]));
+                    //$results = $tumblr->post_photo_to_queue($u,
+                    //                                        $captions[$i],
+                    //                                        $span_date,
+                    //                                        explode(",", $tags[$i]));
+                    $results = array('status' => '201', 'result' => 'TEST WITHOUT REAL POST');
                 }
                 if ($results['status'] == 201) {
                     array_push($info, $results['result']);
@@ -48,6 +56,9 @@ if (isset($_POST['url'])) {
                 }
                 $timespan_seconds += $int_timespan;
             }
+            // contain the time for next images
+            $next_span_time = strftime("%d %b %Y %H:%M:%S", $time + $int_timespan);
+
             if (count($invalid_urls)) {
                 array_push($errors,
                             array("url" => implode("\n", $invalid_urls),
@@ -72,7 +83,11 @@ if (isset($_POST['url'])) {
 }
 
 if (count($errors) == 0) {
-    array_push($errors, array("url" => "", "caption" => "", "date" => "", "tags" => "", "timespan" => "2"));
+    array_push($errors, array("url" => "",
+                              "caption" => $captions[0],
+                              "date" => $next_span_time,
+                              "tags" => $tags[0],
+                              "timespan" => $timespan[0]));
 }
 
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -106,6 +121,13 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     // clear the url and leave other fields filled
                     newPhotoFields.children("#url\\[\\]").val("").focus();
                 });
+                
+                $('#clear-fields').click(function() {
+                    $('#url\\[\\]').val('').focus();
+                    $('#caption\\[\\]').val('');
+                    $('#date\\[\\]').val('');
+                    $('#tags\\[\\]').val('');
+                });
             });
         </script>
     </head>
@@ -118,7 +140,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <?php include('inc/menu.php') ?>
         <h1>Upload multiple files to queue at once</h1>
         <?php if (count($info) > 0) { ?>
-        <h3><?php echo count($info) . " post(s) inserted with success" ?></h3>
+        <div class="ui-state-highlight ui-corner-all" style="padding: 0pt 0.7em; margin-top: 20px;"> 
+            <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>
+	    <?php echo count($info) . " post(s) inserted with success" ?></p>
+	</div>
         <?php } ?>
         <form id="multiqForm" method="post" action="multiq.php">
 <?php
@@ -167,7 +192,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </fieldset>
 <?php } ?>
             <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
-                <input id="add-photo" type="button" value="Add another photo" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>
+                <input id="clear-fields" type="button" value="Clear fields" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>
+                <!--<input id="add-photo" type="button" value="Add another photo" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>-->
                 <input type="submit" value="Insert Photos" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"/>
             </div>
 
