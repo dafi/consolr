@@ -31,6 +31,10 @@ if (typeof(consolr) == "undefined") {
             }
         });
 
+        posts.sort(function(a, b) {
+            return a - b;
+        });
+
         var imageElement = $("#i" + imageId).detach();
         if (posts.length) {
             var index = consolr.findTimeClosestIndex(posts, time);
@@ -116,7 +120,10 @@ if (typeof(consolr) == "undefined") {
             });
 
         }
-        var params = {postId: post.id};
+        var params = {
+                postId: post.id,
+                caption: post['photo-caption'],
+                clickThroughLink: post['photo-link-url'] ? post['photo-link-url'] : null};
 
         doServerOperation('doPublish.php', params, settings);
     },

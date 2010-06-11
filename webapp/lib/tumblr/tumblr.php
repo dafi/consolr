@@ -163,17 +163,20 @@ class tumblr {
                     ));
     }
 
-    function publish_post($post_id) {
+    function publish_post($post_id, $params) {
         $api_url = 'http://www.tumblr.com/api/write';
-
-        return tumblr::do_request($api_url,
-                    array(
+        $all_params = array(
                         'email'     => $this->email,
                         'password'  => $this->password,
 
                         'post-id'   => $post_id,
                         'state'     => 'published',
-                  ));
+                  );
+        if (isset($params)) {
+            $all_params = array_merge($params, $all_params);
+        }
+
+        return tumblr::do_request($api_url, $all_params);
     }
 }
 
