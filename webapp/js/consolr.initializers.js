@@ -86,6 +86,7 @@
                     postId : post['id'],
                     publishDate : newDate.format(DATE_FORMAT),
                     caption : post['photo-caption'],
+                    clickThroughLink : post['photo-link-url'],
                     tags : post['tags'] ? post['tags'].join(", ") : ""
                 };
                 consolr.updateQueuedPost(params, {
