@@ -131,7 +131,7 @@
                 buttons: "L"
                 },
 
-                function(action, el, pos) {
+                function(action, el, pos, e) {
                     var li = $(el.parents('li'));
                     switch (action) {
                         case 'edit':
@@ -151,7 +151,7 @@
                             }
                             break;
                         case 'publish':
-                            if (confirm("Do you want to publish this post now?")) {
+                            if (e.shiftKey || confirm("Do you want to publish this post now?")) {
                                 var post = consolr.findPost(li.attr('id'));
                                 consolr.publishPost(post);
                             }
