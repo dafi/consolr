@@ -122,8 +122,11 @@ if (typeof(consolr) == "undefined") {
         }
         var params = {
                 postId: post.id,
-                caption: post['photo-caption'],
-                clickThroughLink: post['photo-link-url'] ? post['photo-link-url'] : null};
+                caption: post['photo-caption']
+        };
+        if (post['photo-link-url']) {
+            params.clickThroughLink = post['photo-link-url'];
+        };
 
         doServerOperation('doPublish.php', params, settings);
     },
