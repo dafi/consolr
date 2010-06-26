@@ -48,7 +48,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 $(".date-image")
                     .initTooltipPhotoPost()
                     .dblclick(function() {
-                        $('#dialog-form').dialog('option', 'postInfo', this);
+                        $('#dialog-form').dialog('option', 'postInfo', $(this));
                         $('#dialog-form').dialog('open');
                     })
                     .hover(

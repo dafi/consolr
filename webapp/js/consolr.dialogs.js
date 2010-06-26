@@ -11,7 +11,7 @@
             buttons: {
                 'Save': function() {
                     var params = {
-                        postId : parseInt($(this).dialog('option', 'postInfo').id.replace(/^[a-z]/i, ''), 10),
+                        postId : parseInt($(this).dialog('option', 'postInfo').attr('id').replace(/^[a-z]/i, ''), 10),
                         publishDate : $('#dialog-modify-publish-date').val(),
                         caption : tinyMCE.get('dialog-modify-caption').getContent(),
                         clickThroughLink : $('#dialog-modify-click-through-link').val(),
@@ -36,7 +36,7 @@
             open: function() {
                 tinyMCE.execCommand('mceAddControl', false, 'dialog-modify-caption');
 
-                var postInfo = $($(this).dialog('option', 'postInfo'));
+                var postInfo = $(this).dialog('option', 'postInfo');
                 var post = consolr.findPost(postInfo.attr('id'));
                 var tags = post['tags'] ? post['tags'].join(", ") : "";
                 var clickThroughLink = post['photo-link-url'] ? post['photo-link-url'] : "";
