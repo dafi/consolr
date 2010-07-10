@@ -1,0 +1,332 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <!--
+    * Theme:     Optimus (http://www.tumblr.com/theme/6473)
+    * Author:    Jamie Bicknell
+    * Twitter:   http://twitter.com/jamiebicknell
+    * Web:       http://jamiebicknell.com
+    -->
+<title>{Title}</title>
+<link rel='icon' href='{Favicon}' />
+<link rel='shortcut icon' href='{Favicon}' />
+<link rel='alternate' type='application/rss+xml' href='{RSS}' />
+<meta name='description' content='{MetaDescription}' />
+<meta name='color:Link' content='#6699cc' />
+<style type='text/css'>
+    ::selection{
+        background:#FFFFC0;
+        color:#424242;
+    }
+    ::-moz-selection{
+        background:#FFFFC0;
+        color:#424242;
+    }
+    * {
+        outline:none;
+    }
+    body {
+        background-color:#fff;
+        font:0.8em Georgia;
+        line-height:140%;
+        color:#424242;
+        margin:0 0 15px 0;
+    }
+    a img {
+        border:none;
+    }
+    a {
+        text-decoration:none;
+        color:{color:Link};
+    }
+    a:hover {
+        color:#424242;
+    }
+    h1 {
+        margin:0;
+        padding:0 0 10px 0;
+        font-size:2em;
+    }
+    h3 {
+        margin:0 0 8px 0;
+        padding:0;
+        font-size:1.1em;
+    }
+    p {
+        margin:10px 0;
+        padding:0;
+    }
+    #wrapper {
+        width:632px;
+        margin:0 auto;
+    }
+    #header {
+        background:#f8f8f8;
+        border-bottom:1px solid #eee;
+        padding:15px 0;
+        margin:0 0 20px 0;
+    }
+    #headerContent {
+        width:632px;
+        margin:0 auto;
+    }
+    #headerContent h1 a {
+        color:#424242;
+    }
+    #headerContent h1,
+    #headerContent p {
+        padding:0;
+        margin:0;
+    }
+    #headerContent p {
+        padding-top:10px;
+    }
+    .postInfo {
+        width:100px;
+        float:left;
+        padding:8px 0;
+    }
+    .postInfo a,
+    .postInfo a:hover {
+        color:#424242;
+    }
+    .postInfo span,
+    .postInfo span a,
+    .postInfo span a:hover {
+        color:#cecece;
+    }
+    .postWrapper {
+        width:522px;
+        float:left;
+        margin:0 0 15px 0;
+        border:5px solid #f8f8f8;
+    }
+    .postContainer {
+        border:1px solid #d7d7d7;
+    }
+    .post {
+        padding:10px 10px 0 10px;
+    }
+    .postNote {
+        padding:10px;
+    }
+    .insideInfo {
+        background:#f8f8f8;
+        border-top:1px solid #eee;
+        padding:5px 10px;
+        font-size:0.8em;
+        color:#888;
+    }
+    .insideInfo .postTags {
+        width:350px;
+        float:left;
+    }
+    .insideInfo .postTags a {
+        color:#aaa;
+    }
+    .insideInfo .postNotes {
+        width:150px;
+        float:left;
+        text-align:right;
+    }
+    p.quote {
+        font-size:1.3em;
+        margin:0 0 10px 0;
+        border-left:4px solid #d7d7d7;
+        padding:0 0 0 6px;
+    }
+    .chat {
+        margin:0 0 10px 0;
+    }
+    .chat td {
+        padding:5px 8px;
+    }
+    .chat td.label {
+        text-align:right;
+        font-weight:bold;
+    }
+    .chat tr.odd td {
+        background:#f8f8f8;
+        border-bottom:1px solid #eee;
+    }
+    .chat tr.even td {
+        background:#fff;
+    }
+    .audio {
+        width:350px;
+        border:1px solid #eee;
+        border-radius:5px;
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        background:#f8f8f8;
+    }
+    .audioLeft {
+        width:210px;
+        float:left;
+        margin:5px;
+        padding:5px;
+        border:1px solid #eee;
+        border-radius:5px;
+        -moz-border-radius:5px;
+        -webkit-border-radius:5px;
+        background:#fff;
+    }
+    .audioRight {
+        width:110px;
+        float:left;
+        text-align:center;
+        padding:13px 0;
+        font-size:1.2em;
+    }
+    .footer {
+        color:#cecece;
+        padding:0 0 0 116px;
+        font-size:0.8em;
+        font-weight:bold;
+    }
+    .clear {
+        clear:both;
+    }
+    ol.notes,
+    ol.notes li {
+        padding:0;
+        margin:0;
+        list-style-type:none;
+    }
+    ol.notes li.note {
+        padding:2px 0;
+        font-size:0.8em;
+    }
+    ol.notes li.note img.avatar {
+        vertical-align:-8px;
+        margin-right:5px;
+        width:16px;
+        height:16px;
+        padding:2px;
+        border:1px solid #d7d7d7;
+    }
+    ol.notes li.note blockquote a {
+        text-decoration:none;
+    }
+    {CustomCSS}
+    .credits {
+        float:right;
+        text-align:right;
+        padding:0 16px 0 0;
+        font-weight:normal;
+    }
+
+/* tags styles */
+
+.postWrapper {
+    width: 600px;
+}
+h3 {
+    border-bottom: 1px solid #CCCCCC;
+    clear: left;
+    font-weight: normal;
+    padding: 0.4em 0 0;
+}
+
+ul {
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+ul.alpha li {
+    color: #666666;
+    float: left;
+    margin-right: 1em;
+}
+
+li {
+    margin: 0 0 4px;
+}
+
+ul.tag-list {
+    padding-left: 0.1em;
+    margin-left: 0.1em;
+}
+ul.tag-list li {
+    padding-left: 0.1em;
+    margin-left: 0.1em;
+}
+    </style>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $.ajax({url: 'http://www.consolr.netsons.org/api/tags/getTags.php?callback=?&tumblrName=breathtakingwomen',
+                dataType: 'json',
+                success: function(data, status) {
+                    var html = '';
+                    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXY';
+
+                    for (var i = 0; i < alphabet.length; i++) {
+                        var ch = alphabet[i];
+                        if (data[ch] && data[ch].length) {
+                            html += '<li><a href="#t' + ch + '">' + ch + '</a></li>';
+                        } else {
+                            html += '<li>' + ch + '</li>';
+                        }
+                    }
+                    $('#alpha-list').append(html);
+
+                    html = "";
+                    for (var ch in data) {
+                        var tags = data[ch];
+                        
+                        if (tags.length == 0) {
+                            continue;
+                        }
+                        html += '<h3 id="t' + ch + '">' + ch + '</h3>\n';
+                        html += '<ul class="tag-list">\n';
+                        
+                        for (var i in tags) {
+                            var tag = tags[i];
+                            var url = 'http://breathtakingwomen.tumblr.com/tagged/' + tag['tag'].replace(/ /g, '_');
+                            html += '<li><a target="_blank" href="' + url + '">'
+                                + tag['tag'] + '</a> (' + tag['post_count'] + ')</li>\n';
+                        }
+                        html += '</ul';
+                    }
+                    $('#list-container').append(html);
+                },
+                error: function(xhr, status) {
+                    alert("Error while getting tags " + xhr.statusText);
+                }
+            });
+    });
+    </script>
+
+</head>
+<body>
+<div id='header'>
+    <div id='headerContent'>
+        <h1><a href='/'>{Title}</a></h1>
+        {block:Description}
+            <p>{Description}</p>
+        {/block:Description}
+    </div>
+</div>
+<div id='wrapper'>
+    <div class='postWrapper'>
+        <div class='postContainer'>
+            <div class='post'>
+                <ul id="alpha-list" class="alpha"></ul>
+                <div id="list-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class='footer'>
+        <div class='credits'>
+            <a href='{RSS}'>RSS</a> | <a href='/archive'>Archive</a> | 
+            Theme: <a href='http://www.tumblr.com/theme/6473'>Optimus</a> by <a href='http://www.jamiebicknell.com'>Jamie Bicknell</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
