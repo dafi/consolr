@@ -9,6 +9,7 @@ if (typeof(consolr) == "undefined") {
     var UPDATE_POST = "Updating post...";
     var DELETE_POST = "Deleting post...";
     var PUBLISH_POST = "Publishing post...";
+    var SAVE_TAGS_LIST = "Saving tags...";
 
     this.dateProperty = 'publish-on-time';
     this.isAscending = false;
@@ -279,8 +280,12 @@ if (typeof(consolr) == "undefined") {
                 dataType: 'json',
                 async: false,
                 success: function(data, status) {
+                        if (settings.postsToGet === null) {
+                            settings.postsToGet = data['posts-total'];
+                        }
                         settings.posts = settings.posts.concat(data['posts']);
-                        if (data['posts'].length == settings.num) {
+
+                        if ((settings.start + settings.num) < settings.postsToGet) {
                             if (typeof (settings.progress) == "function") {
                                 settings.progress(data, settings.posts);
                             }
@@ -289,7 +294,7 @@ if (typeof(consolr) == "undefined") {
                             fetchTumblr(url, settings);
                         } else {
                             if (typeof (settings.complete) == "function") {
-                                settings.complete(settings.posts);
+                                settings.complete(settings.posts, data);
                             }
                         }
                 },
@@ -303,12 +308,16 @@ if (typeof(consolr) == "undefined") {
         var config = {start : 0,
                     num : POST_PER_REQUEST,
                     posts : [],
+                    postsToGet : null,
                     progress : null,
                     complete : null,
                     type: 'photo'};
 
         if (settings) {
             $.extend(config, settings);
+        }
+        if (config.postsToGet !== null && config.postsToGet < config.num) {
+            config.num = config.postsToGet;
         }
         fetchTumblr(url + '?callback=?&type=' + config.type + '&num=' + config.num, config);
     }
@@ -457,5 +466,17 @@ if (typeof(consolr) == "undefined") {
 
         // trigger a resize to make "on screen" images visible
         $(window).resize();
+    }
+
+    this.saveTagsList = function(params, settings) {
+        if (typeof(settings) == "undefined") {
+            settings = {};
+        }
+        if (typeof(params) == "undefined") {
+            params = {};
+        }
+
+        settings.progressMessage = SAVE_TAGS_LIST;
+        doServerOperation('doSaveTagsList.php', params, settings);
     }
 }).apply(consolr);

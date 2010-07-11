@@ -12,8 +12,6 @@ if (login_utils::is_logged()) {
         foreach ($_POST['tagsMap'] as $k => $v) {
             $size += count($v);
         }
-        echo "delete is " . ($deleteTags ? "on" : "off");
-        echo "items count received " . $size;
         consolr_db::save_tags_list(login_utils::get_tumblr()->get_tumblr_name(),
                                    $_POST['tagsMap'],
                                    $deleteTags);

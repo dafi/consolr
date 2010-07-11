@@ -111,8 +111,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 for (var i in tagsMap) {
                     if (size > 800) {
-                        console.log('%o %o %o', i, destMap);
-                        console.log('final item count sent ' + size);
                         consolr.saveTagsList({tagsMap: destMap, deleteTags: delFlag});
                         delFlag = false;
                         destMap = {};
@@ -121,7 +119,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     destMap[i] = tagsMap[i];
                     size += tagsMap[i].length;
                 }
-                console.log('final item count sent ' + size);
                 consolr.saveTagsList({tagsMap: destMap, deleteTags: delFlag});
             }
         -->
