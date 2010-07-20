@@ -1,0 +1,69 @@
+<!DOCTYPE extension [
+<!ENTITY extension.version "1.0">
+]>
+
+<extension name="imagetablinks">
+    <title-name>Image Tab Links</title-name>
+    <uuid>imagetablinks@dafizilla.sourceforge.net</uuid>
+    <version>&extension.version;</version>
+    <description>Allow many operations on tab links</description>
+    <homepage>http://dafizilla.sourceforge.net/</homepage>
+    <updateurl>http://dafizilla.sourceforge.net//update.php?item_id=%ITEM_ID%&amp;item_version=%ITEM_VERSION%&amp;app_id=%APP_ID%&amp;app_version=%APP_VERSION%</updateurl>
+    <iconurl-path>skin/appicon.png</iconurl-path>
+
+    <!--<optionurl-path>/content/settings/settings.xul</optionurl-path>-->
+
+    <author>davide ficano</author>
+
+    <!-- Do not add to install.rdf deprecated infos about content, skin and locales (i.e. contents.rdf) -->
+    <use-only-chrome-manifest>true</use-only-chrome-manifest>
+
+    <!-- Point to directory containing content, locales and skins. -->
+    <!-- If present must start with / (slash) -->
+    <chrome-extension-directory>/imagetablinks</chrome-extension-directory>
+
+    <!-- Used by web site update.rdf -->
+    <updateLink>http://dafizilla.sourceforge.net//imagetablinks-&extension.version;.xpi</updateLink>
+
+    <!-- used by install.js -->
+    <skins>
+        <skin>classic</skin>
+    </skins>
+    
+    <!-- used by install.js and build process to set the prefs.js.xsl destination file name -->
+    <prefs>
+        <pref>imagetablinks.js</pref>
+    </prefs>
+
+    <locales>
+        <locale pos="1" code="en-US" />
+    </locales>
+
+    <styles>
+        <style uri="chrome://browser/content/browser.xul" value="chrome://imagetablinks/skin/imagetablinks.css" />
+        <style uri="chrome://global/content/customizeToolbar.xul" value="chrome://imagetablinks/skin/imagetablinks.css" />
+    </styles>
+
+    <overlays>
+        <overlay description="Firefox - Main window" uri="chrome://browser/content/browser.xul" value="chrome://imagetablinks/content/imagetablinksOverlay.xul" />
+    </overlays>
+
+    <compatibility>
+        <application>
+            <description>Firefox</description>
+            <id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</id>
+            <minVersion>3.0</minVersion>
+            <maxVersion>4.*</maxVersion>
+        </application>
+
+    </compatibility>
+
+    <contributors>
+        <contributor></contributor>
+    </contributors>
+
+    <translators>
+        <translator></translator>
+    </translators>
+
+</extension>

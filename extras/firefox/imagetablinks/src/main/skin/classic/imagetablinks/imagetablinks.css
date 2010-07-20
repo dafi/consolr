@@ -1,0 +1,7 @@
+#imagetablinks-button {
+  list-style-image: url("chrome://imagetablinks/skin/img/tb32.png");
+}
+
+toolbar[iconsize="small"] #imagetablinks-button {
+  list-style-image: url("chrome://imagetablinks/skin/img/tb16.png");
+}
