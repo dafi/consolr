@@ -1,4 +1,5 @@
 <?php
+
 class consolr_db {
     static function update_login_info($tumblr_name) {
         $db = consolr_db::connect();
@@ -126,6 +127,87 @@ class consolr_db {
 
         mysql_close($db);
         return $count;
+    }
+
+    /**
+     * Set a setting key having a single value
+     * @param $userid the userid
+     * @param $setting_key the key to retrieve
+     * @return null if the key doesn't exists, false if multiple values
+     * exist for the passed key, the value otherwise
+     */
+    static function get_single_setting($userid, $setting_key) {
+        $db = consolr_db::connect();
+
+        $userid = mysql_real_escape_string($userid);
+        $setting_key = mysql_real_escape_string($setting_key);
+        $select_sql = "SELECT SETTING_VALUE FROM CONSOLR_SETTINGS"
+            . " where UID='%userid%' and SETTING_KEY='%setting_key%'";
+
+        $query = str_replace('%userid%', $userid, $select_sql);
+        $query = str_replace('%setting_key%', $setting_key, $query);
+        $result = mysql_query($query, $db);
+
+        if (!$result) {
+            die('Invalid query: ' . mysql_error());
+        }
+
+        $count = mysql_num_rows($result);
+
+        if ($count == 0) {
+            $value = null;
+        } else if ($count > 1) {
+            echo 'Error: Returned more than one result';
+            $value = false;
+        } else {
+            $row = mysql_fetch_assoc($result);
+            $value = $row['SETTING_VALUE'];
+        }
+
+        mysql_free_result($result);
+
+        mysql_close($db);
+        return $value;
+    }
+
+    static function set_single_setting($userid, $setting_key, $setting_value) {
+        $db = consolr_db::connect();
+
+        $userid = mysql_real_escape_string($userid);
+        $setting_key = mysql_real_escape_string($setting_key);
+        $setting_value = mysql_real_escape_string($setting_value);
+        $update_sql = "update CONSOLR_SETTINGS set SETTING_VALUE='%setting_value%'"
+            . " where UID='%userid%' and SETTING_KEY='%setting_key%'";
+        $insert_sql = "insert into CONSOLR_SETTINGS (UID, SETTING_KEY, SETTING_VALUE)"
+            . " values ('%userid%', '%setting_key%', '%setting_value%')";
+
+        $query = str_replace('%userid%', $userid, $update_sql);
+        $query = str_replace('%setting_key%', $setting_key, $query);
+        $query = str_replace('%setting_value%', $setting_value, $query);
+        $result = mysql_query($query, $db);
+        $ret_val = true;
+
+        if (!$result) {
+            echo 'Error while updating setting: ' . mysql_error();
+            $ret_val = false;
+        } else {
+            $count = mysql_affected_rows($db);
+
+            if ($count == 0) {
+                $query = str_replace('%userid%', $userid, $insert_sql);
+                $query = str_replace('%setting_key%', $setting_key, $query);
+                $query = str_replace('%setting_value%', $setting_value, $query);
+                $result = mysql_query($query, $db);
+
+                if (!$result) {
+                    echo 'Error while inserting setting: ' . mysql_error();
+                    $ret_val = false;
+                }
+            }
+        }
+        mysql_close($db);
+
+        return $ret_val;
     }
 }
 ?>

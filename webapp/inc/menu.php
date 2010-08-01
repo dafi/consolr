@@ -13,6 +13,8 @@ require_once 'lib/tumblr/tumblrUtils.php';
             |
             <a href="published.php">Published</a>
             |
+            <a href="settings.php">Settings</a>
+            |
             <a href="logout.php">Logout [<?php echo login_utils::get_tumblr()->get_tumblr_name() ?>]</a>
             <?php } else { ?>
             <a href="login.php">Login</a>

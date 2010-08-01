@@ -25,13 +25,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         $('#loginForm').validate({
             rules: {
               email: "required",
-              password: "required",
-              tumblrName: "required"
+              password: "required"
             },
             messages: {
               email: "Please specify the email",
-              password: "Please specify the password",
-              tumblrName: "Please specify the tumblr name"
+              password: "Please specify the password"
             },
             submitHandler: function(form) {
                 form.submit();
@@ -73,13 +71,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <br/>
                 <input type="password" id="password" name="password" class="input-text ui-widget-content"/>
                 <span id="password-error"></span>
-            </p>
-
-            <p>
-                <label for="tumblrName">Tumblr name</label>
-                <br/>
-                <input type="text" id="tumblrName" name="tumblrName" class="input-text tumblr-name ui-widget-content"/><span>.tumblr.com</span>
-                <span id="tumblrName-error"></span>
             </p>
 
             <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">

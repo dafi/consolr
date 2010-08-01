@@ -1,14 +1,15 @@
 <?php
-class tumblr {
-    private $email;
-    private $password;
-    private $tumblr_name;
+abstract class abstract_tumblr {
+    protected $tumblr_name;
 
-    function tumblr($email, $password, $tumblr_name) {
-        $this->email = $email;
-        $this->password = $password;
-        $this->tumblr_name = $tumblr_name;
-    }
+    /**
+     * Must be overwritten by subclasses
+     * @return array containing 'status' and 'result'
+     * status containg the HTTP response status
+     * result contains the response content
+     */
+    protected abstract function do_logged_request($url, $params);
+    public abstract function get_userid();
 
     function get_queue($use_json = false, $start = '0', $num = '0', $type = '') {
         $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
@@ -16,16 +17,13 @@ class tumblr {
         if ($use_json) {
             $api_url .= "/json";
         }
-        $info = tumblr::do_request($api_url,
+        $info = $this->do_logged_request($api_url,
                     array(
-                        'email'     => $this->email,
-                        'password'  => $this->password,
                         'start'     => $start,
                         'num'       => $num,
                         'type'      => $type,
                         'state'     => 'queue'
                     ));
-
         return $info['result'];
     }
 
@@ -35,10 +33,8 @@ class tumblr {
         if ($use_json) {
             $api_url .= "/json";
         }
-        $info = tumblr::do_request($api_url,
+        $info = $this->do_logged_request($api_url,
                     array(
-                        'email'     => $this->email,
-                        'password'  => $this->password,
                         'id'        => $post_id
                     ));
 
@@ -47,11 +43,8 @@ class tumblr {
 
     function post_photo_to_queue($photo_url, $caption, $publish_time, $tags = null) {
         $api_url = 'http://www.tumblr.com/api/write';
-        $info = tumblr::do_request($api_url,
+        $info = $this->do_logged_request($api_url,
                     array(
-                        'email'     => $this->email,
-                        'password'  => $this->password,
-
                         'type'      => 'photo',
                         'source'    => $photo_url,
                         'caption'   => $caption,
@@ -71,9 +64,6 @@ class tumblr {
     function edit_post_queue_publish_date($post_id, $publish_time, $merge_values = false, $post_params = array()) {
         $api_url = 'http://www.tumblr.com/api/write';
         $params = array(
-                        'email'     => $this->email,
-                        'password'  => $this->password,
-
                         'post-id'   => $post_id,
 
                         'state'     => 'queue',
@@ -110,7 +100,7 @@ class tumblr {
                                     ? $post_params['click-through-url']
                                     : '';
         }
-        return tumblr::do_request($api_url, $params);
+        return $this->do_logged_request($api_url,$params);
     }
 
     /**
@@ -136,6 +126,10 @@ class tumblr {
         return $this->tumblr_name;
     }
 
+    public function set_tumblr_name($tumblr_name) {
+        $this->tumblr_name = $tumblr_name;
+    }
+
     function get_published_posts($use_json = false, $start = 0, $num = 50) {
         $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
 
@@ -154,11 +148,8 @@ class tumblr {
     function delete_post($post_id) {
         $api_url = 'http://www.tumblr.com/api/delete';
 
-        return tumblr::do_request($api_url,
+        return $this->do_logged_request($api_url,
                     array(
-                        'email'     => $this->email,
-                        'password'  => $this->password,
-
                         'post-id'   => $post_id,
                     ));
     }
@@ -166,9 +157,6 @@ class tumblr {
     function publish_post($post_id, $params) {
         $api_url = 'http://www.tumblr.com/api/write';
         $all_params = array(
-                        'email'     => $this->email,
-                        'password'  => $this->password,
-
                         'post-id'   => $post_id,
                         'state'     => 'published',
                   );
@@ -176,7 +164,106 @@ class tumblr {
             $all_params = array_merge($params, $all_params);
         }
 
-        return tumblr::do_request($api_url, $all_params);
+        return $this->do_logged_request($api_url, $all_params);
+    }
+
+    function get_tumblr_list() {
+        $api_url = 'http://www.tumblr.com/api/authenticate';
+
+        $info = $this->do_logged_request($api_url, array());
+        $response = $info['result'];
+
+        $tumblr_list = array();
+
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        if ($dom->loadXML($response)) {
+            if (count($dom->getElementsByTagName('tumblr'))) {
+                $tumblelogs = $dom->getElementsByTagName('tumblelog');
+                foreach ($tumblelogs as $tumblelog) {
+                    if ($tumblelog->getAttribute('name')) {
+                        $attributes = $tumblelog->attributes;
+                        if (!is_null($attributes)) {
+                            $attrs = array();
+                            foreach ($attributes as $index => $attr) {
+                                $attrs[$attr->name] = $attr->value;
+                            }
+                            array_push($tumblr_list, $attrs);
+                        }
+                    }
+                }
+            };
+        }
+        return $tumblr_list;
+    }
+}
+
+class tumblr extends abstract_tumblr {
+    private $email;
+    private $password;
+    private $login_params;
+
+    function do_logged_request($url, $params) {
+        return self::do_request($url,
+            array_merge($params, $this->login_params));
+    }
+
+    function get_userid() {
+        return $this->email;
+    }
+
+    function tumblr($email, $password, $tumblr_name) {
+        $this->email = $email;
+        $this->password = $password;
+        $this->tumblr_name = $tumblr_name;
+        $this->login_params = array(
+                            'email'     => $this->email,
+                            'password'  => $this->password);
+    }
+}
+
+class tumblr_oauth extends abstract_tumblr {
+    private $consumer;
+    private $access_token;
+    private $oauth_token;
+    private $sig_method;
+    private $oauth_params; // array containing parameters to pass to oauth request
+
+    function get_userid() {
+        return $this->access_token->key . ":" . $this->access_token->secret;
+    }
+
+    function tumblr_oauth($oauth_token, $oauth_token_secret, $tumblr_name) {
+        $this->sig_method = new OAuthSignatureMethod_HMAC_SHA1();
+
+        $this->consumer = new OAuthConsumer(OAUTH_CONSUMER_KEY, OAUTH_SECRET_KEY, NULL);
+        $this->access_token = new OAuthConsumer($oauth_token, $oauth_token_secret);
+        $this->oauth_token = $oauth_token;
+        $this->tumblr_name = $tumblr_name;
+
+        $this->oauth_params = array('oauth_token' => $this->oauth_token);
+    }
+
+    function executeOAuthRequest($oauth_req) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $oauth_req->to_url());
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $oauth_req->to_postdata());
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, explode(',', $oauth_req->to_header()));
+        $res = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return array('status' => $status, 'result' => $res);
+    }
+
+    function do_logged_request($url, $params) {
+        $params = array_merge($params, $this->oauth_params);
+
+        $req = OAuthRequest::from_consumer_and_token($this->consumer, $this->access_token, 'POST', $url, $params);
+        $req->sign_request($this->sig_method, $this->consumer, $this->access_token);
+
+        return $this->executeOAuthRequest($req);
     }
 }
 
