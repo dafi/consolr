@@ -1,10 +1,43 @@
 <?php
+require_once 'inc/dbconfig.php';
+require_once 'lib/db.php';
 require_once 'lib/loginUtils.php';
 
-if (login_utils::is_logged()) {
-    header ("location: queue.php");
-    return;
+function getFullRequestUrl() {
+    return "http://" . $_SERVER[HTTP_HOST] . substr($_SERVER[REQUEST_URI], 0, strrpos($_SERVER[REQUEST_URI], "/") + 1);	
 }
+
+if (login_utils::is_logged()) {
+    header("location: home.php");
+}
+
+if (isset($_GET['enter'])) {
+    $params = array(
+        'oauth_callback' => getFullRequestUrl() . 'login.php?access'
+        );
+    header("location: " . tumblr_oauth::authorize($params));
+}
+
+if (isset($_GET['access'])) {
+    $params = array(
+                'oauth_token'    => $_GET['oauth_token'],
+                'oauth_verifier' => $_GET['oauth_verifier']
+            );
+
+    $result = tumblr_oauth::access($params);
+
+    if (isset($result['oauth_token'])
+        && login_utils::login_oauth($result['oauth_token'], $result['oauth_token_secret'], null)) {
+        if (login_utils::after_login()) {
+            header("location: home.php");
+        } else {
+            die("Unable to find a tumblr");
+        }
+    } else {
+        die("Permission Denied");
+    }
+}
+
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -18,32 +51,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
     <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
 
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/jquery.validate.js"></script>
-    <script type="text/javascript">
-      $(function() {
-        $('#loginForm').validate({
-            rules: {
-              email: "required",
-              password: "required"
-            },
-            messages: {
-              email: "Please specify the email",
-              password: "Please specify the password"
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            errorPlacement: function(error, element) {
-                var errorEl = $("#" + element.attr("id") + "-error");
-                error.appendTo(errorEl);
-            }
-          });
-
-
-         $('#email').focus();
-      });
-    </script>
 </head>
     <body>
         <noscript>
@@ -58,25 +65,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div class="ui-corner-all ui-state-highlight">
             <h1 style="padding: 0pt 0.7em; margin-top: 20px;">Consolr</h1>
         </div>
-        <form id="loginForm" action="doLogin.php" method="post">
-            <p>
-                <label for="email">Email address</label>
-                <br/>
-                <input type="text" id="email" name="email" class="input-text ui-widget-content"/>
-                <span id="email-error"></span>
-            </p>
-
-            <p>
-                <label for="password">Password</label>
-                <br/>
-                <input type="password" id="password" name="password" class="input-text ui-widget-content"/>
-                <span id="password-error"></span>
-            </p>
-
-            <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
-                <input id="submitForm" type="submit" value="Log in" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-focus"/>
-            </div>
-        </form>
+        <br>
+        <a style="padding: 0.7em; margin-top: 20px; background-color:white; font-size:14px; color: #000" href="login.php?enter">Sign in with tumblr</a>
     </div>
 
     <?php include('inc/footer.php'); ?>

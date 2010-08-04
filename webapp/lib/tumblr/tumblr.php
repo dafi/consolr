@@ -1,6 +1,7 @@
 <?php
 abstract class abstract_tumblr {
     protected $tumblr_name;
+    private $user_id;
 
     /**
      * Must be overwritten by subclasses
@@ -9,7 +10,19 @@ abstract class abstract_tumblr {
      * result contains the response content
      */
     protected abstract function do_logged_request($url, $params);
-    public abstract function get_userid();
+
+    public function get_userid() {
+        if (!isset($user_id)) {
+            $list = $this->get_tumblr_list();
+            foreach ($list as $l) {
+                if (isset($l['is-primary']) && ($l['is-primary'] == 'yes')) {
+                    $this->user_id = $l['name'];
+                    break;
+                }
+            }
+        }
+        return $this->user_id;
+    }
 
     function get_queue($use_json = false, $start = '0', $num = '0', $type = '') {
         $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
@@ -207,10 +220,6 @@ class tumblr extends abstract_tumblr {
             array_merge($params, $this->login_params));
     }
 
-    function get_userid() {
-        return $this->email;
-    }
-
     function tumblr($email, $password, $tumblr_name) {
         $this->email = $email;
         $this->password = $password;
@@ -228,10 +237,6 @@ class tumblr_oauth extends abstract_tumblr {
     private $sig_method;
     private $oauth_params; // array containing parameters to pass to oauth request
 
-    function get_userid() {
-        return $this->access_token->key . ":" . $this->access_token->secret;
-    }
-
     function tumblr_oauth($oauth_token, $oauth_token_secret, $tumblr_name) {
         $this->sig_method = new OAuthSignatureMethod_HMAC_SHA1();
 
@@ -243,7 +248,7 @@ class tumblr_oauth extends abstract_tumblr {
         $this->oauth_params = array('oauth_token' => $this->oauth_token);
     }
 
-    function executeOAuthRequest($oauth_req) {
+    protected static function executeOAuthRequest($oauth_req) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $oauth_req->to_url());
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -263,7 +268,52 @@ class tumblr_oauth extends abstract_tumblr {
         $req = OAuthRequest::from_consumer_and_token($this->consumer, $this->access_token, 'POST', $url, $params);
         $req->sign_request($this->sig_method, $this->consumer, $this->access_token);
 
-        return $this->executeOAuthRequest($req);
+        return self::executeOAuthRequest($req);
+    }
+
+    protected static function oauth_request($url, $consumer, $token, $params, $parse_response = true, $http_method = 'POST') {
+        $sig_method = new OAuthSignatureMethod_HMAC_SHA1();
+    
+        $req = OAuthRequest::from_consumer_and_token($consumer, $token, $http_method, $url, $params);
+        $req->sign_request($sig_method, $consumer, $token);
+        
+        $response = self::executeOAuthRequest($req);
+    
+        if ($parse_response) {
+            $result = array();
+            parse_str($response['result'], $result);
+    
+            return $result;
+        }
+        
+        return $response['result'];
+    }
+
+    /**
+     * Make an authorize oAuth request
+     * @param params array containing paramenters to pass to authorize request
+     * @return the authorize url to call
+     */
+    static function authorize($params) {
+        $test_consumer = new OAuthConsumer(OAUTH_CONSUMER_KEY, OAUTH_SECRET_KEY, NULL);
+        $result = self::oauth_request(REQUEST_TOKEN_URL, $test_consumer, NULL, $params);
+
+        $oauth_token = $result['oauth_token'];
+        $oauth_token_secret = $result['oauth_token_secret'];
+        $_SESSION[REQUEST_TOKEN] = $oauth_token;
+        $_SESSION[REQUEST_TOKEN_SECRET] = $oauth_token_secret;
+
+        return AUTHORIZE_URL . '?oauth_token=' . $oauth_token;
+    }
+    
+    static function access($params) {
+        $request_token = $_SESSION[REQUEST_TOKEN];
+        $request_token_secret = $_SESSION[REQUEST_TOKEN_SECRET];
+        
+        $test_consumer = new OAuthConsumer(OAUTH_CONSUMER_KEY, OAUTH_SECRET_KEY, NULL);
+        $test_token = new OAuthConsumer($request_token, $request_token_secret);
+        
+        return self::oauth_request(ACCESS_TOKEN_URL, $test_consumer, $test_token, $params);
     }
 }
 
