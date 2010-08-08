@@ -12,7 +12,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     <head>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
         <title>Consolr - Home</title>
-    
+
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
         <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
@@ -26,14 +26,14 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             margin-right: auto;
             margin-top: 40px;
         }
-    
+
         .toolbar li {
             margin: 22px 0 15px 40px;
         }
         .toolbar .label {
             text-align:center
         }
-    
+
         .logo-container {
           width: 35em;
           margin: 0 auto;
@@ -52,7 +52,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         </div>
         <div class="toolbar">
         <ul class="date-image-container ui-corner-all">
-            <li class="date-image"><a href="multiq.php"><img src="images/tb_upload.png" width="75" height="75"/><div class="date-image-time label">Multiple Upload</div></a></li>
+            <li class="date-image"><a href="multiq.php"><img src="images/tb_upload.png" width="75" height="75"/><div class="date-image-time label">Photo Urls Uploader</div></a></li>
             <li class="date-image"><a href="queue.php"><img src="images/tb_queue.png" width="75" height="75"/><div class="date-image-time label">Scheduled Posts</div></a></li>
             <li class="date-image"><a href="published.php"><img src="images/tb_published.png" width="75" height="75"/><div class="date-image-time label">Published Posts</div></a></li>
             <li class="date-image"><a href="settings.php"><img src="images/tb_settings.png" width="75" height="75"/><div class="date-image-time label">Settings</div></a></li>

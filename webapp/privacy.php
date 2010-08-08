@@ -21,7 +21,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <h2>What information do we collect?</h2>
         We collect only the tumblr name and the last login time.
-        
+
         <h2>What do we use your information for?</h2>
         We you these informations to personalize your experience, specific settings per user are stored.
 

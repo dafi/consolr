@@ -7,7 +7,7 @@ require_once 'lib/tumblr/tumblrUtils.php';
             <?php if (login_utils::is_logged()) { ?>
             <a href="home.php">Home</a>
             |
-            <a href="multiq.php">Multiple Upload</a>
+            <a href="multiq.php">Photo Uploader</a>
             |
             <a href="queue.php">Queue</a>
             |

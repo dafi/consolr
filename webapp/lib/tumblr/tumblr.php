@@ -273,19 +273,19 @@ class tumblr_oauth extends abstract_tumblr {
 
     protected static function oauth_request($url, $consumer, $token, $params, $parse_response = true, $http_method = 'POST') {
         $sig_method = new OAuthSignatureMethod_HMAC_SHA1();
-    
+
         $req = OAuthRequest::from_consumer_and_token($consumer, $token, $http_method, $url, $params);
         $req->sign_request($sig_method, $consumer, $token);
-        
+
         $response = self::executeOAuthRequest($req);
-    
+
         if ($parse_response) {
             $result = array();
             parse_str($response['result'], $result);
-    
+
             return $result;
         }
-        
+
         return $response['result'];
     }
 
@@ -305,14 +305,14 @@ class tumblr_oauth extends abstract_tumblr {
 
         return AUTHORIZE_URL . '?oauth_token=' . $oauth_token;
     }
-    
+
     static function access($params) {
         $request_token = $_SESSION[REQUEST_TOKEN];
         $request_token_secret = $_SESSION[REQUEST_TOKEN_SECRET];
-        
+
         $test_consumer = new OAuthConsumer(OAUTH_CONSUMER_KEY, OAUTH_SECRET_KEY, NULL);
         $test_token = new OAuthConsumer($request_token, $request_token_secret);
-        
+
         return self::oauth_request(ACCESS_TOKEN_URL, $test_consumer, $test_token, $params);
     }
 }
