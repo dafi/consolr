@@ -30,8 +30,14 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         .toolbar li {
             margin: 22px 0 15px 40px;
         }
+
+        /**
+         * height must be specified otherwise the elements
+         * moving to new line are shown on the right
+         **/
         .toolbar .label {
-            text-align:center
+            text-align:center;
+            height: 20px;
         }
 
         .logo-container {
@@ -55,6 +61,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <li class="date-image"><a href="multiq.php"><img src="images/tb_upload.png" width="75" height="75"/><div class="date-image-time label">Photo Urls Uploader</div></a></li>
             <li class="date-image"><a href="queue.php"><img src="images/tb_queue.png" width="75" height="75"/><div class="date-image-time label">Scheduled Posts</div></a></li>
             <li class="date-image"><a href="published.php"><img src="images/tb_published.png" width="75" height="75"/><div class="date-image-time label">Published Posts</div></a></li>
+            <li class="date-image"><a href="tags.php"><img src="images/tb_tags.png" width="75" height="75"/><div class="date-image-time label">Tags</div></a></li>
             <li class="date-image"><a href="settings.php"><img src="images/tb_settings.png" width="75" height="75"/><div class="date-image-time label">Settings</div></a></li>
         </li>
         </div>
