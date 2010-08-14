@@ -22,8 +22,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             overflow-y: auto;
         }
 
-        #progress-panel ul {
-            list-style-image: url('images/progress.gif');
+        .url-list {
+            list-style-image: url('images/progress-w.gif');
         }
 
         .error-upload {
@@ -46,14 +46,18 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/jquery.validate.js"></script>
         <script type="text/javascript" src="js/date.js"></script>
+        <script type="text/javascript" src="js/jquery.strings.js"></script>
         <script type="text/javascript">
-            var urlCount = 0;
+            var urlsNotYetUploaded = 0;
+            var urlsTotal = 0;
+            var uploadSuccess = 0;
+            var uploadFail = 0;
             var lastDate;
 
             $(function() {
                 $("#url").focus();
-
                 $('.button').button();
+                $("#tabs").tabs();
 
                 var container = $('.error-container');
 
@@ -86,10 +90,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 });
 
                 $('#clear-errors').click(function() {
-                    $('#progress-panel ul').empty();
+                    $('#error-panel ul').empty();
                 });
 
-                $('#progress-panel').click(function(event) {
+                $('#progress-panel, #error-panel').click(function(event) {
                     if (event.target.hasAttribute('crdate')) {
                         $('#url').val(event.target.getAttribute('crurl'));
                         $('#date').val(event.target.getAttribute('crdate'));
@@ -106,10 +110,17 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     return;
                 }
                 urls = urls.split('\n');
-                urlCount = urls.length;
+                urlsNotYetUploaded = urls.length;
+                urlsTotal = urls.length;
+                uploadSuccess = 0;
+                uploadFail = 0;
+
+                // ensure tab status is visible
+                $('#tabs').tabs('select', 0);
 
                 $('#upload-button').button('disable');
                 $('#clear-errors').button('disable');
+                $('#progress-panel ul').empty();
                 var progressPanel = $('#progress-panel ul');
 
                 var params = {
@@ -144,6 +155,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                             el.fadeOut('slow', function() {
                                 el.remove();
                             });
+                            ++uploadSuccess;
                             uploadFinished();
                         },
                         error: function(xhr, status) {
@@ -153,16 +165,24 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                                       + xhr.statusText
                                       + " : "
                                       + el.attr('crurl'));
+                            ++uploadFail;
                             uploadFinished();
                         }
                 });
             }
 
             function uploadFinished() {
-                if (--urlCount <= 0) {
+                var msgArgs = {s: uploadSuccess,
+                        f: uploadFail,
+                        t: urlsTotal};
+
+                if (--urlsNotYetUploaded <= 0) {
                     var urlList = [];
+                    var errorList = $('#error-panel ul');
                     $('#progress-panel .error-upload').each(function() {
                         urlList.push($(this).attr('crurl'));
+                        // move element to error panel list
+                        $(this).appendTo(errorList);
                     });
                     $('#url').val(urlList.join('\n'));
                     if (lastDate) {
@@ -170,6 +190,20 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     }
                     $('#upload-button').button('enable');
                     $('#clear-errors').button('enable');
+
+                    $('#upload-status').html(
+                        $.formatString('Upload of $t url(s) completed: $s success, $f failed',
+                                       msgArgs));
+                    if (uploadFail) {
+                        $('#upload-error-status').html(
+                            $.formatString('Last upload failed to transfer $f of $t url(s)',
+                                           msgArgs));
+                        $('#tabs').tabs('select', 1);
+                    }
+                } else {
+                    $('#upload-status').html(
+                        $.formatString('Uploading $t url(s): $s success, $f failed',
+                                       msgArgs));
                 }
             }
 
@@ -231,16 +265,26 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </div>
         </form>
 
-        <br style="clear: both"/>
-        <form method="post" action="">
-            <fieldset>
-                <legend>Upload status</legend>
-                <div id="progress-panel"><ul></ul></div>
-            </fieldset>
-            <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
-                <input class="button" type="button" id="clear-errors" value="Clear Errors"/>
+        <br style="clear: both"/><br/>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Upload status</a></li>
+                <li><a href="#tabs-2">Errors</a></li>
+            </ul>
+            <div id="tabs-1">
+                <p id="upload-status">&nbsp;</p>
+                <div id="progress-panel"><ul class="url-list"></ul></div>
             </div>
-        </form>
+            <div id="tabs-2">
+                <p id="upload-error-status">&nbsp;</p>
+                <div id="error-panel"><ul class="url-list"></ul></div>
+                <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
+                    <input class="button" type="button" id="clear-errors" value="Clear Errors"/>
+                </div>
+                <br style="clear: both"/>
+            </div>
+        </div>
+
     <?php include('inc/footer.php'); ?>
     </body>
 </html>
