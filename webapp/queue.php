@@ -100,6 +100,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <button id="filter-tags">Filter Tags</button>
         </div>
 
+        <?php if (count($tumblr_queue['posts']) == 0) { ?>
+        <h2>No post scheduled, use <a href="multiq.php">Photo Uploader</a> or <a href="http://www.tumblr.com/tumblelog/<?php echo $tumblr->get_tumblr_name() ?>/new/photo">Dashboard</a> to add post to queue</h2>
+        <?php } ?>
+
         <div id="date-container">
         </div>
 
