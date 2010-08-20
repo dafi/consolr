@@ -21,7 +21,15 @@
             return str.replace(new RegExp("\\$(" + reStr.join("|") + ")", "g"), function(str, p1) {
                     return patterns[p1];
                 });
-        }
+        },
 
+        stripEmptyLines : function(str) {
+            var trimmed = str
+                .replace(/^\s*$/mg, '') // remove empty lines
+                .replace(/[\r\n]+/g, '\n') // all carriage return/newline
+                .replace(/\n$/, ''); // remove newline at end
+
+            return trimmed.length ? trimmed.split('\n') : [];
+        }
     });
 })(jQuery);

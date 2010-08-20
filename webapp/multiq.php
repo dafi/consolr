@@ -17,7 +17,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <link href="css/consolr.css" type="text/css" rel="stylesheet"/>
         <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
         <style>
-        #progress-panel {
+        .panel-list {
             height: 7em;
             overflow-y: auto;
         }
@@ -41,6 +41,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             height: 4em !important;
             display: none;
         }
+        
+        .upload-status-message {
+            margin: 0
+        }
         </style>
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
@@ -53,6 +57,17 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             var uploadSuccess = 0;
             var uploadFail = 0;
             var lastDate;
+
+            var dateFormat = 'dd NNN yyyy HH:mm:ss';
+            var tabErrorsLabel = "Errors";
+            var tabErrorsWithCountLabel = "Errors ($c)";
+
+            var msgUploadUrlsCompleted = 'Upload of $t url(s) completed: $s success, $f failed';
+            var msgLastUploadFailed = 'Last upload failed to transfer $f of $t url(s)';
+            var msgUploadingUrls = 'Uploading $t url(s): $s success, $f failed';
+            var msgInvalidDateFormat = 'Invalid date format';
+            var msgUploadingPhotoFrom = 'Uploading photo from $u';
+            var msgNoErrors = "No errors";
 
             $(function() {
                 $("#url").focus();
@@ -72,7 +87,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     submitHandler: function(form) {
                         try {
                             if (isNaN(Date.parse($('#date').val()))) {
-                                alert('Invalid date format');
+                                alert(msgInvalidDateFormat);
                             } else {
                                 startUpload();
                             }
@@ -91,6 +106,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 $('#clear-errors').click(function() {
                     $('#error-panel ul').empty();
+                    $('#tabs a[href="#tabs-2"] span').text(tabErrorsLabel);
+                    $('#upload-error-status').html(msgNoErrors);
                 });
 
                 $('#progress-panel, #error-panel').click(function(event) {
@@ -102,18 +119,20 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             });
 
             function startUpload() {
-                var urls = $('#url').val()
-                    .replace(/^\s*$/mg, '') // remove empty lines
-                    .replace(/[\r\n]+/g, '\n') // all carriage return/newline
-                    .replace(/\n$/, ''); // remove newline at end
+                var urls = $.stripEmptyLines($('#url').val());
                 if (!urls.length) {
                     return;
                 }
-                urls = urls.split('\n');
                 urlsNotYetUploaded = urls.length;
                 urlsTotal = urls.length;
                 uploadSuccess = 0;
                 uploadFail = 0;
+
+                var msgArgs = {s: uploadSuccess,
+                        f: uploadFail,
+                        t: urlsTotal};
+                $('#upload-status').html(
+                    $.formatString(msgUploadingUrls, msgArgs));
 
                 // ensure tab status is visible
                 $('#tabs').tabs('select', 0);
@@ -133,8 +152,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 var millisecs = new Date($('#date').val()).getTime();
                 for (var i in urls) {
                     params.url = urls[i];
-                    params.date = new Date(millisecs).format("dd NNN yyyy HH:mm:ss");
-                    var el = $('<li>Uploading photo from ' + params.url + '</li>');
+                    params.date = new Date(millisecs).format(dateFormat);
+
+                    var el = $('<li>' + $.formatString(msgUploadingPhotoFrom, {u: params.url}) + '</li>');
                     el.attr('crurl', params.url);
                     el.attr('crdate', params.date);
 
@@ -142,7 +162,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     millisecs += timespanMS;
                 }
                 // prepare with next date
-                lastDate = new Date(millisecs).format("dd NNN yyyy HH:mm:ss");
+                lastDate = new Date(millisecs).format(dateFormat);
             }
 
             function doUpload(progressPanel, el, params) {
@@ -184,6 +204,14 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         // move element to error panel list
                         $(this).appendTo(errorList);
                     });
+                    var errorsCount = errorList.children().length;
+                    var errorsLabel = tabErrorsLabel;
+                    if (errorsCount > 0) {
+                        errorsLabel = $.formatString(tabErrorsWithCountLabel,
+                                                         {c: errorsCount});
+                    }
+                    $('#tabs a[href="#tabs-2"] span').text(errorsLabel);
+
                     $('#url').val(urlList.join('\n'));
                     if (lastDate) {
                         $('#date').val(lastDate);
@@ -192,21 +220,17 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     $('#clear-errors').button('enable');
 
                     $('#upload-status').html(
-                        $.formatString('Upload of $t url(s) completed: $s success, $f failed',
-                                       msgArgs));
+                        $.formatString(msgUploadUrlsCompleted, msgArgs));
                     if (uploadFail) {
                         $('#upload-error-status').html(
-                            $.formatString('Last upload failed to transfer $f of $t url(s)',
-                                           msgArgs));
+                            $.formatString(msgLastUploadFailed, msgArgs));
                         $('#tabs').tabs('select', 1);
                     }
                 } else {
                     $('#upload-status').html(
-                        $.formatString('Uploading $t url(s): $s success, $f failed',
-                                       msgArgs));
+                        $.formatString(msgUploadingUrls, msgArgs));
                 }
             }
-
         </script>
     </head>
     <body>
@@ -261,23 +285,23 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </fieldset>
             <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
                 <input class="button" type="button" id="clear-fields" value="Clear Fields"/>
-                <input class="button" type="submit" id="upload-button" value="Insert Photos"/>
+                <input class="button" type="submit" id="upload-button" value="Upload"/>
             </div>
         </form>
 
         <br style="clear: both"/><br/>
         <div id="tabs">
             <ul>
-                <li><a href="#tabs-1">Upload status</a></li>
-                <li><a href="#tabs-2">Errors</a></li>
+                <li><a href="#tabs-1"><span>Upload status</span></a></li>
+                <li><a href="#tabs-2"><span>Errors</span></a></li>
             </ul>
             <div id="tabs-1">
-                <p id="upload-status">&nbsp;</p>
-                <div id="progress-panel"><ul class="url-list"></ul></div>
+                <p id="upload-status" class="upload-status-message">&nbsp;</p>
+                <div id="progress-panel" class="panel-list"><ul class="url-list"></ul></div>
             </div>
             <div id="tabs-2">
-                <p id="upload-error-status">&nbsp;</p>
-                <div id="error-panel"><ul class="url-list"></ul></div>
+                <p id="upload-error-status" class="upload-status-message">&nbsp;</p>
+                <div id="error-panel" class="panel-list"><ul class="url-list"></ul></div>
                 <div class="ui-dialog-buttonpane ui-helper-clearfix button-box">
                     <input class="button" type="button" id="clear-errors" value="Clear Errors"/>
                 </div>
