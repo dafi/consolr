@@ -98,7 +98,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                             tagsMap[tag] = [post.id];
                         } else {
                             if (tagsMap[tag].indexOf(post.id) >= 0) {
-                                if (console) console.error('Found duplicated tag "' + tag + '" for post ' + post.id);
+                                if (window.console) console.error('Found duplicated tag "' + tag + '" for post ' + post.id);
                             } else {
                                 tagsMap[tag].push(post.id);
                             }
