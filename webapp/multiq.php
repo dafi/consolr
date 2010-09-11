@@ -18,11 +18,12 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
         <style>
         .panel-list {
-            height: 7em;
-            overflow-y: auto;
+            height: 10em;
         }
 
         .url-list {
+            height: 100%;
+            overflow-y: auto;
             list-style-image: url('images/progress-w.gif');
         }
 
@@ -68,6 +69,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             var msgInvalidDateFormat = 'Invalid date format';
             var msgUploadingPhotoFrom = 'Uploading photo from $u';
             var msgNoErrors = "No errors";
+            var msgTitle = 'Consolr - Photos Uploader';
+            var msgTitleUploadProgress = 'Upload $c/$t';
 
             $(function() {
                 $("#url").focus();
@@ -226,9 +229,13 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                             $.formatString(msgLastUploadFailed, msgArgs));
                         $('#tabs').tabs('select', 1);
                     }
+                    window.document.title = msgTitle;
                 } else {
                     $('#upload-status').html(
                         $.formatString(msgUploadingUrls, msgArgs));
+                    window.document.title = $.formatString(msgTitleUploadProgress,
+                                {c: uploadSuccess + uploadFail,
+                                t: urlsTotal}) + " " + msgTitle;
                 }
             }
         </script>
