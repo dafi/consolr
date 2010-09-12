@@ -30,14 +30,13 @@ abstract class abstract_tumblr {
         if ($use_json) {
             $api_url .= "/json";
         }
-        $info = $this->do_logged_request($api_url,
+        return $this->do_logged_request($api_url,
                     array(
                         'start'     => $start,
                         'num'       => $num,
                         'type'      => $type,
                         'state'     => 'queue'
                     ));
-        return $info['result'];
     }
 
     function get_post_by_id($post_id, $use_json = false) {

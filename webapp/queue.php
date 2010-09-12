@@ -3,7 +3,13 @@ require_once 'lib/loginUtils.php';
 require_once 'lib/tumblr/tumblrUtils.php';
 
 $tumblr = login_utils::get_tumblr();
-$tumblr_queue = tumblr_utils::get_json_map($tumblr->get_queue(true));
+$result = $tumblr->get_queue(true);
+if ($result['status'] == '200') {
+    $tumblr_queue = tumblr_utils::get_json_map($result['result']);
+} else {
+    $tumblr_queue = array('posts' => array());
+    $error = 'Error while reading queue. ' . $result['result'];
+}
 
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 ?>
@@ -100,7 +106,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <button id="filter-tags">Filter Tags</button>
         </div>
 
-        <?php if (count($tumblr_queue['posts']) == 0) { ?>
+        <?php if (isset($error)) { ?>
+        <h2><?php echo $error; ?></h2>
+        <?php } else if (count($tumblr_queue['posts']) == 0) { ?>
         <h2>No post scheduled, use <a href="multiq.php">Photo Uploader</a> or <a href="http://www.tumblr.com/tumblelog/<?php echo $tumblr->get_tumblr_name() ?>/new/photo">Dashboard</a> to add post to queue</h2>
         <?php } ?>
 
