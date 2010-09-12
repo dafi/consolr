@@ -284,8 +284,7 @@ if (typeof(consolr) == "undefined") {
                             settings.postsToGet = data['posts-total'];
                         }
                         settings.posts = settings.posts.concat(data['posts']);
-
-                        if ((settings.start + settings.num) < settings.postsToGet) {
+                        if (data['posts'].length > 0 && ((settings.start + settings.num) < settings.postsToGet)) {
                             if (typeof (settings.progress) == "function") {
                                 settings.progress(data, settings.posts);
                             }
@@ -311,6 +310,7 @@ if (typeof(consolr) == "undefined") {
                     postsToGet : null,
                     progress : null,
                     complete : null,
+                    tags : null,
                     type: 'photo'};
 
         if (settings) {
@@ -319,7 +319,11 @@ if (typeof(consolr) == "undefined") {
         if (config.postsToGet !== null && config.postsToGet < config.num) {
             config.num = config.postsToGet;
         }
-        fetchTumblr(url + '?callback=?&type=' + config.type + '&num=' + config.num, config);
+        url = url + '?callback=?&type=' + config.type + '&num=' + config.num;
+        if (config.tags) {
+            url += '&tagged=' + config.tags;
+        }
+        fetchTumblr(url, config);
     }
 
     this.setMessageText = function(str) {
