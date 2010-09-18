@@ -1,5 +1,5 @@
 (function($) {
-    defaultEllipsis = "...";
+    var defaultEllipsis = "...";
 
     $.extend({
         cropText : function(str, maxLen, ellipsis) {
@@ -32,4 +32,44 @@
             return trimmed.length ? trimmed.split('\n') : [];
         }
     });
+
+    $.fn.showMessageOnBlur = function(settings) {
+        var config = {blurMessage: 'Type something',
+                        blurClass: '',
+                        focusClass: ''};
+
+        if (settings) {
+            $.extend(config, settings);
+        }
+        var onBlur = function() {
+            // when page is reloaded the input field maintains its value so we
+            // check it with blurMessage to apply blur style
+            if ($.trim(this.value) == ''
+                || this.value == config.blurMessage) {
+                this.value = config.blurMessage;
+                $(this).addClass(config.blurClass).removeClass(config.focusClass);
+            }
+        };
+        this.blur($.proxy(onBlur, this[0]))
+        .focus(function() {
+            $(this).addClass(config.focusClass).removeClass(config.blurClass);
+            if (this.value == config.blurMessage) {
+                this.value = '';
+            }
+        });
+        // don't trigger a real blur event but simply call initialization code
+        $.proxy(onBlur, this[0])();
+
+        var coreValFunction = this.val;
+        this.val = function(value) {
+            var text = $.proxy(coreValFunction, this)(value);
+            if (text == config.blurMessage) {
+                this.addClass(config.blurClass).removeClass(config.focusClass);
+                return '';
+            }
+            this.addClass(config.focusClass).removeClass(config.blurClass);
+            return text;
+        }
+        return this;
+    }
 })(jQuery);

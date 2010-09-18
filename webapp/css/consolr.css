@@ -200,3 +200,7 @@ noscript div a {
   font-weight: bold;
   margin: 0 0.8em;
 }
+
+.text-disabled {
+  color: #BBB;
+}

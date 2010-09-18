@@ -70,6 +70,46 @@ abstract class abstract_tumblr {
         return $info;
     }
 
+    function update_published_post($post_id, $merge_values = false, $post_params = array()) {
+        $api_url = 'http://www.tumblr.com/api/write';
+        $params = array(
+                        'post-id'   => $post_id,
+                        'state'     => 'published'
+                    );
+
+        if ($merge_values) {
+            // remove variable declaration and the semicolon at the end of string
+            preg_match('/{.*}/s', $this->get_post_by_id($post_id, true), $matches);
+            $json = json_decode($matches[0], true);
+            $post = $json['posts'][0];
+            $tags = isset($post['tags']) ? $post['tags'] : array();
+
+            if ($post['type'] == 'photo') {
+                $params['caption'] = isset($post_params['photo-caption'])
+                                        ? $post_params['photo-caption']
+                                        : $post['photo-caption'];
+                if (isset($post_params['tags'])) {
+                    $tags = array_unique(array_merge($tags, $post_params['tags']));
+                }
+            }
+            $params['tags'] = implode(",", $tags);
+            $params['photo-link-url'] = isset($post_params['photo-link-url'])
+                                    ? $post_params['photo-link-url']
+                                    : $post['photo-link-url'];
+        } else {
+            $params['caption'] = isset($post_params['photo-caption'])
+                                    ? $post_params['photo-caption']
+                                    : '';
+            $params['tags'] = isset($post_params['tags'])
+                                ? implode(",", $post_params['tags'])
+                                : "";
+            $params['click-through-url'] = isset($post_params['click-through-url'])
+                                    ? $post_params['click-through-url']
+                                    : '';
+        }
+        return $this->do_logged_request($api_url,$params);
+    }
+
     /**
      * @param merge_values read current post values and overwrite only the passed
      */

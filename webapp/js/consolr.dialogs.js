@@ -1,7 +1,19 @@
 (function($) {
     var INVALID_DATE = 'Date format is invalid';
 
-    $.fn.initDialogModifyQueuePost = function() {
+    $.fn.initDialogModifyQueuePost = function(settings) {
+        var config = {isPublishDateEditAllowed: true};
+
+        if (settings) {
+            $.extend(config, settings);
+        }
+        if (config.isPublishDateEditAllowed) {
+            $('#dialog-modify-publish-date').show();
+            $('label[for="dialog-modify-publish-date"]').show();
+        } else {
+            $('#dialog-modify-publish-date').hide();
+            $('label[for="dialog-modify-publish-date"]').hide();
+        }
         this.dialog({
             autoOpen: false,
             width: 450,
@@ -12,17 +24,24 @@
                 'Save': function() {
                     var params = {
                         postId : parseInt($(this).dialog('option', 'postInfo').attr('id').replace(/^[a-z]/i, ''), 10),
-                        publishDate : $('#dialog-modify-publish-date').val(),
                         caption : tinyMCE.get('dialog-modify-caption').getContent(),
                         clickThroughLink : $('#dialog-modify-click-through-link').val(),
                         tags : $('#dialog-modify-tags').val()
                     };
-                    if (isNaN(Date.parse(params.publishDate))) {
-                        alert(INVALID_DATE);
-                        return;
+                    if (config.isPublishDateEditAllowed) {
+                        params.publishDate = $('#dialog-modify-publish-date').val();
+                        if (isNaN(Date.parse(params.publishDate))) {
+                            alert(INVALID_DATE);
+                            return;
+                        }
+                    } else {
+                        // the post to update is in publish state
+                        params.state = 'p';
                     }
                     consolr.updateQueuedPost(params, {
                             success: function(params) {
+                                // publishDate can be not set if isPublishDateEditAllowed is false
+                                params.publishDate = $('#dialog-modify-publish-date').val();
                                 consolr.refreshImagePosition(params, true);
                                 }
                             });
