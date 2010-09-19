@@ -51,6 +51,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/jquery.validate.js"></script>
         <script type="text/javascript" src="js/date.js"></script>
+        <script type="text/javascript" src="js/jquery.cookie.js"></script>
         <script type="text/javascript" src="js/jquery.strings.js"></script>
         <script type="text/javascript">
             var urlsNotYetUploaded = 0;
@@ -76,6 +77,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 $("#url").focus();
                 $('.button').button();
                 $("#tabs").tabs();
+
+                initUpdateDateCheckbox();
 
                 var container = $('.error-container');
 
@@ -216,7 +219,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     $('#tabs a[href="#tabs-2"] span').text(errorsLabel);
 
                     $('#url').val(urlList.join('\n'));
-                    if (lastDate) {
+                    var canUpdateDate = $('#updateDate').attr('checked');
+                    if (canUpdateDate && lastDate) {
                         $('#date').val(lastDate);
                     }
                     $('#upload-button').button('enable');
@@ -236,6 +240,20 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     window.document.title = $.formatString(msgTitleUploadProgress,
                                 {c: uploadSuccess + uploadFail,
                                 t: urlsTotal}) + " " + msgTitle;
+                }
+            }
+            
+            function initUpdateDateCheckbox() {
+                $('#updateDate').click(function() {
+                    var value = $(this).attr('checked') ? 'y' : 'n';
+                    $.cookie('updateDate', value, {
+                        expires: 365}
+                    );
+                });
+                var updateDate = $.cookie('updateDate');
+                // the default is checked
+                if (!updateDate) {
+                    $('#updateDate').click();
                 }
             }
         </script>
@@ -282,6 +300,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         <label for="timespan">Photo Time Span (in minutes)</label>
                         <br/>
                         <input type="text" name="timespan" id="timespan" value="2" style="width: 4em"/>
+                        <input type="checkbox" id="updateDate"/><label for="updateDate">Update Publish Date when upload finish</label>
                     </div>
                 </div>
 
