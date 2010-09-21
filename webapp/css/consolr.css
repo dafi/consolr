@@ -4,21 +4,9 @@ body {
   font: 70% sans-serif;
 }
 
-#loginForm label {
-  color: #D6DCEA;
-}
-
 .login-container {
   width: 35em;
   margin: 0 auto;
-}
-
-#loginForm .input-text {
-  width: 300px;
-}
-
-#loginForm .tumblr-name {
-  text-align: right;
 }
 
 a {
@@ -34,9 +22,11 @@ a img {
   border-width:0;
 }
 
+.date-container {
+  margin-bottom: 0.6em;
+}
+
 .date-header {
-  background-color: #FFF;
-  color: #000;
   margin: 0;
   padding-left: 0.5em;
   font-weight: normal;
@@ -44,7 +34,6 @@ a img {
 }
 
 .date-image-container {
-  background-color: #FFF;
   list-style: none;
   margin-top: 0;
   margin-left: 0; /* needed by IE */
@@ -161,7 +150,7 @@ noscript div a {
 
 #multiqForm textarea,
 #multiqForm input[type='text'] {
-  width: 100%;
+  width: 99%;
 }
 
 .button-box {
@@ -203,4 +192,8 @@ noscript div a {
 
 .text-disabled {
   color: #BBB;
+}
+
+fieldset legend {
+  width: 99%;
 }

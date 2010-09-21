@@ -150,7 +150,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 var params = {
                     caption: $('#caption').val(),
-                    tags: $('#tags').val(),
+                    tags: $('#tags').val()
                 };
 
                 var timespanMS = parseInt($('#timespan').val(), 10);
@@ -275,8 +275,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         </div>
 
         <form id="multiqForm" method="post" action="">
-            <fieldset id="photo-fields">
-                <legend>Photo</legend>
+            <fieldset id="photo-fields" class="ui-widget ui-widget-content">
+                <legend class="ui-widget-header ui-corner-all">Photo</legend>
 
                 <label for="url">Urls (specify an url per line)</label>
                 <br/>
@@ -300,7 +300,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         <label for="timespan">Photo Time Span (in minutes)</label>
                         <br/>
                         <input type="text" name="timespan" id="timespan" value="2" style="width: 4em"/>
-                        <input type="checkbox" id="updateDate"/><label for="updateDate">Update Publish Date when upload finish</label>
+                        <input class="button" type="checkbox" id="updateDate"/><label for="updateDate">Update Publish Date when upload finish</label>
                     </div>
                 </div>
 

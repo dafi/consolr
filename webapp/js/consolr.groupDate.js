@@ -10,8 +10,8 @@ if (typeof(consolr.tags) == "undefined") {
     var GROUP_DATE_FORMAT_STRING = "yyyy, EE dd MMM";
     var GROUP_DATE_TITLE = "$date ($postsCount posts)";
 
-    var TEMPL_DATE_CONTAINER = '<h3 class="date-header ui-corner-top"><span id="t$dateId">$dateTitle</span></h3>'
-                + '<ul id="$dateId" class="date-image-container ui-corner-bottom">$items</ul>';
+    var TEMPL_DATE_CONTAINER = '<div id="c$dateId" class="date-container ui-helper-clearfix ui-corner-all ui-widget-content"><h3 class="date-header ui-widget"><span id="t$dateId">$dateTitle</span></h3>'
+                + '<ul id="$dateId" class="date-image-container">$items</ul></div>';
     var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId" class="date-image">'
                 + '<img src="images/image_placeholder.gif" asrc="$imgSrc" alt="$imgAlt"/><span class="menu-handle"></span><div class="date-image-time">$time</div>'
                 + '</li>';
@@ -56,13 +56,14 @@ if (typeof(consolr.tags) == "undefined") {
      * @returns the JQuery object
      */
     this.getGroupDateWidget = function(groupDateId, newDate) {
-        var groupDateWidget = $("#" + groupDateId);
+        var groupContainerId = "c" + groupDateId; // use the date container (ie div)
+        var groupDateWidget = $("#" + groupContainerId);
 
         // this date group doesn't exists create it and insert at correct position
         if (groupDateWidget.length == 0) {
             var position;
-            $('#date-container ul').each(function() {
-                    if (this.id > groupDateId) {
+            $('#date-container div').each(function() {
+                    if (this.id > groupContainerId) {
                         return false;
                     }
                     position = this;
