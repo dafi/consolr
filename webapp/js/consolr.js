@@ -262,7 +262,7 @@ if (typeof(consolr) == "undefined") {
                 });
 
                 $('<div class="empty-days ui-corner-all"><span>' + str + '</span></div>')
-                    .insertAfter($('#' + consolr.groupDate.createGroupDateId(item[propPosition])))
+                    .insertAfter($('#c' + consolr.groupDate.createGroupDateId(item[propPosition])))
             })
         }
     }
@@ -445,8 +445,8 @@ if (typeof(consolr) == "undefined") {
 
     this.initLazyImageLoader = function() {
         var showImages = function() {
-            // select all images without src attribute
-            $('#date-container img[asrc]').each(function() {
+            // select all *visible* images without src attribute
+            $('#date-container img[asrc]:visible').each(function() {
                 var img = $(this);
                 var top = $(window).scrollTop();
                 var bottom = top + $(window).height();

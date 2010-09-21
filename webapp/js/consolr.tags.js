@@ -87,6 +87,8 @@ if (typeof(consolr.tags) == "undefined") {
                 $("#i" + post.id).show();
             }
         });
+        // simulate a scroll operation to ensure visible images are loaded
+        $(window).scroll();
     }
 
     /**
