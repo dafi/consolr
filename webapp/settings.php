@@ -62,8 +62,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <h1>Settings</h1>
         <form id="settingsForm" method="post" action="settings.php">
-            <fieldset>
-                <legend>Preferences</legend>
+            <fieldset id="photo-fields" class="ui-widget ui-widget-content">
+                <legend class="ui-widget-header ui-corner-all">Preferences</legend>
                 <label for="defaultTumblr">Default tumblr</label>
                 <select id="tumblr-list">
                 <?php
