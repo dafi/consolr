@@ -163,11 +163,7 @@ noscript div a {
   width: 16px;
   height: 16px;
   cursor: pointer;
-  vertical-align: top;
-  display: inline-block;
-  visibility: hidden;
-  position: relative;
-  left: -16px;
+  position: absolute;
 }
 
 #footer {

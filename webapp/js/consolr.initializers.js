@@ -52,12 +52,16 @@
                 // save sender used inside the stop() method
                 dragSource = ui.sender;
             },
+            start: function(event, ui) {
+                $('#imageMenuHandler').trigger('menuhandler.enable', [false]);
+            },
             stop: function(event, ui) {
                 var prevTime = null;
                 var nextTime = null;
                 var post = consolr.findPost(ui.item.get(0).id);
                 var currTime = post[config.datePropName];
 
+                $('#imageMenuHandler').trigger('menuhandler.enable', [true]);
                 if (ui.item.prev().length) {
                     prevTime = consolr.findPost(ui.item.prev()
                                             .get(0).id)[config.datePropName];
@@ -125,14 +129,63 @@
         }
     });
 
+    var menuHandler = {enable: true};
+
+    function createMenuHandler(settings) {
+        if (menuHandler.element) {
+            return;
+        }
+        menuHandler.element = $('<span id="' + settings.id + '" class="' + settings.cssClasses + '"></span>')
+            .appendTo(document.body)
+            // item is always visible but out of screen, this prevents problems
+            // setting position using offset() on webkit
+            .css('left', '-9999px')
+            .bind('menuhandler.enable', function(e, enable) {
+                menuHandler.enable = enable === true;
+                if (!menuHandler.enable) {
+                    $(this).css('left', '-9999px');
+                }
+            });
+    }
+
     $.fn.initImageMenu = function(settings) {
-        this.contextMenu({
+        var config = {id: 'imageMenuHandler',
+                        cssClasses: 'menu-handle'};
+
+        if (settings) {
+            $.extend(config, settings);
+        }
+        createMenuHandler(config);
+
+        this.hover(
+            function(e) {
+                if (!menuHandler.enable) {
+                    return;
+                }
+                var el = $(this);
+                menuHandler.current = el;
+                var menuPos = el.offset();
+
+                // on webkit offsets() doesn't set correctly the position
+                // at first call time so we set manually left and top
+                menuPos.left += el.width() - menuHandler.element.width();
+                menuHandler.element.css('left', menuPos.left + 'px');
+                menuHandler.element.css('top', menuPos.top + 'px');
+            },
+            function(e) {
+                // don't hide if we are on menuhandler
+                if (e.relatedTarget !== menuHandler.element[0]) {
+                    menuHandler.element.css('left', '-9999px');
+                }
+            });
+
+        menuHandler.element.contextMenu({
                 menu: 'imageMenu',
                 buttons: "L"
                 },
 
                 function(action, el, pos, e) {
-                    var li = $(el.parents('li'));
+                    var li = menuHandler.current;
                     switch (action) {
                         case 'edit':
                             $('#dialog-form').dialog('option', 'postInfo', li);

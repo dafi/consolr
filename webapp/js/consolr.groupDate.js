@@ -13,7 +13,7 @@ if (typeof(consolr.tags) == "undefined") {
     var TEMPL_DATE_CONTAINER = '<div id="c$dateId" class="date-container ui-helper-clearfix ui-corner-all ui-widget-content"><h3 class="date-header ui-widget"><span id="t$dateId">$dateTitle</span></h3>'
                 + '<ul id="$dateId" class="date-image-container">$items</ul></div>';
     var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId" class="date-image">'
-                + '<img src="images/image_placeholder.gif" asrc="$imgSrc" alt="$imgAlt"/><span class="menu-handle"></span><div class="date-image-time">$time</div>'
+                + '<img src="images/image_placeholder.gif" asrc="$imgSrc" alt="$imgAlt"/><div class="date-image-time">$time</div>'
                 + '</li>';
 
     this.updatePostGroupDate = function(post, fromDate, destDate) {
