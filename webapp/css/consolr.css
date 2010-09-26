@@ -119,6 +119,10 @@ noscript div a {
   text-align: right;
 }
 
+.common-menu .tumblr-name {
+  font-weight: bold;
+}
+
 .empty-days {
   background-color: #ffdd00;
   color: black;
