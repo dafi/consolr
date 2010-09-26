@@ -84,14 +84,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                                     $('#dialog-form').dialog('option', 'postInfo', $(this));
                                     $('#dialog-form').dialog('open');
                                 })
-                                .hover(
-                                      function() {
-                                        $(this).find('.menu-handle').css('visibility', 'visible');
-                                    },
-                                      function() {
-                                        $(this).find('.menu-handle').css('visibility', 'hidden');
-                                });
-                            $(".menu-handle").initImageMenu();
+                            .initImageMenu({});
                             $("#dialog-form").initDialogModifyQueuePost({isPublishDateEditAllowed: false});
     
                             $("#message-progress-container").hide();
