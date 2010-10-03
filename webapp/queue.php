@@ -71,6 +71,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 $("#dialog-filter-tags").initDialogFilterTags();
                 $('#filter-tags').click(consolr.tags.commands.filterTags);
+
+                $('#dialog-time-distribution').initDialogTimeDistribution();
             });
         -->
         </script>
@@ -137,6 +139,14 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <label for="search">Search</label>
         <input id="search" type="text" autocomplete="off"/>
         <div id="tagList" style="height: 100%; overflow-y: visible"></div>
+    </div>
+
+    <div id="dialog-time-distribution" title="Time Range Distribution">
+        <p>
+            <label for="time-value">Hours Range</label>
+            <span id="time-value"></span>
+        </p>
+        <div id="time-range"></div>
     </div>
 </div>
 

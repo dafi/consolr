@@ -10,7 +10,7 @@ if (typeof(consolr.tags) == "undefined") {
     var GROUP_DATE_FORMAT_STRING = "yyyy, EE dd MMM";
     var GROUP_DATE_TITLE = "$date ($postsCount posts)";
 
-    var TEMPL_DATE_CONTAINER = '<div id="c$dateId" class="date-container ui-helper-clearfix ui-corner-all ui-widget-content"><h3 class="date-header ui-widget"><span id="t$dateId">$dateTitle</span></h3>'
+    var TEMPL_DATE_CONTAINER = '<div id="c$dateId" class="date-container ui-helper-clearfix ui-corner-all ui-widget-content"><h3 class="date-header ui-widget"><span id="t$dateId" class="title-group-date">$dateTitle</span></h3>'
                 + '<ul id="$dateId" class="date-image-container">$items</ul></div>';
     var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId" class="date-image">'
                 + '<img src="images/image_placeholder.gif" asrc="$imgSrc" alt="$imgAlt"/><div class="date-image-time">$time</div>'
@@ -190,5 +190,83 @@ if (typeof(consolr.tags) == "undefined") {
             return true;
         });
         return index;
+    }
+
+    /**
+     * replace all items on passed groupDate graphical widget with newPosts.
+     * The image menu handle and tooltip are attached, too
+     * @param groupDate the groupDate
+     * @param newPosts the new posts
+     */
+    this.replaceGroupDateItems = function(groupDate, newPosts, dateProperty) {
+        // images are visible so remove the asrc attribute
+        var templ = TEMPL_DATE_IMAGE_ITEM
+                        .replace(/src="(.*?)"/, '')
+                        .replace('asrc', 'src');
+        var list = $('#' + groupDate);
+
+        var itemsHtml = "";
+        var itemPatterns = {};
+        var posts = consolrPosts['group-date'][groupDate];
+        for (var i = 0; i < newPosts.length; i++) {
+            var newPost = newPosts[i];
+
+            posts[i] = newPost;
+            itemPatterns["postId"] = newPost.id;
+            itemPatterns["imgSrc"] = newPost['photo-url-75'];
+            itemPatterns["imgAlt"] = newPost['slug'];
+            itemPatterns["time"] = newPost[dateProperty].format('HH:mm:ss');
+            itemsHtml += $.formatString(templ, itemPatterns);
+        }
+
+        list.empty().html(itemsHtml);
+        $('.date-image', list)
+            .initTooltipPhotoPost()
+            .dblclick(function() {
+                $('#dialog-form').dialog('option', 'postInfo', $(this));
+                $('#dialog-form').dialog('open');
+            })
+            .initImageMenu({});
+    }
+
+    /**
+     * Distribute the time on passed posts
+     * @param posts the posts to adjust
+     * @param startDate the date to set (hours, minutes and seconds are cleared)
+     * @param fromMinutes the from time expressed in minutes
+     * @param toMinutes the to time expressed in minutes
+     * @param dateProperty the property to set on posts
+     */
+    this.timeDistribution = function(posts, startDate, fromMinutes, toMinutes, dateProperty) {
+        startDate.setHours(0, 0, 0, 0);
+        var len = posts.length;
+        var startMS = startDate.getTime();
+        var fromMS = fromMinutes * 60 * 1000;
+        var deltaMS = ((toMinutes * 60 * 1000) - fromMS) / (len - 1);
+
+        for (var i = 0; i < len; i++) {
+            var newDate = new Date(startMS + (fromMS + i * deltaMS));
+            newDate.setSeconds(0);
+            posts[i][dateProperty] = newDate;
+        }
+    }
+
+    this.shuffleDatePosts = function(posts, dateProperty) {
+        var len = posts.length;
+        var swap = function(a, b) {
+            var t = posts[a][dateProperty];
+            posts[a][dateProperty] = posts[b][dateProperty];
+            posts[b][dateProperty] = t;
+        }
+
+        for (var i = 0; i < len; i++) {
+            swap(i, Math.floor(Math.random() * len));
+        }
+
+        posts.sort(function(a, b) {
+            return a[dateProperty] - b[dateProperty];
+        });
+
+        return posts;
     }
 }).apply(consolr.groupDate);

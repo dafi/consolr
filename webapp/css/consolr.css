@@ -60,6 +60,10 @@ a img {
   text-align: right;
 }
 
+.title-group-date {
+  cursor: pointer;
+}
+
 #tooltip {
   position: absolute;
   z-index: 3000;

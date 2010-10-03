@@ -71,7 +71,7 @@ if (typeof(consolr) == "undefined") {
 
     /**
      * Update queued post on server
-     * @param params contains new post values. {postId,publishDate,caption,tags}
+     * @param params contains new post values. {postId,publishDate,caption,tags,clickThroughLink}
      * @param settings the settings to use, the success property if set points
      * to a function called on update success
      */
@@ -133,14 +133,14 @@ if (typeof(consolr) == "undefined") {
     },
 
     doServerOperation = function(url, params, settings) {
-        var config = {success: null, error: null, progressMessage: null};
+        var config = {success: null, error: null, progressMessage: null, async : false};
         if (settings) {
             $.extend(config, settings);
         }
 
         $.ajax({url: url,
                 type: 'post',
-                async: false,
+                async: config.async,
                 data: params,
                 success: function(data, status) {
                     if (typeof (config.success) == "function") config.success(params);
@@ -440,6 +440,11 @@ if (typeof(consolr) == "undefined") {
         consolrPosts['group-date'] = consolr.groupDate.groupPostsByDate(consolrPosts.posts);
         $('#date-container').html(consolr.groupDate.getDateContainerHTML({
                 sortByDateAsc : consolr.isAscending}));
+        $('.title-group-date').click(function() {
+            var groupDate = 'gd' + $(this).attr('id').replace(/^[a-z]*/i, '');
+            $('#dialog-time-distribution').dialog('option', 'groupDate', groupDate);
+            $('#dialog-time-distribution').dialog('open');
+        })
         this.initLazyImageLoader();
     }
 

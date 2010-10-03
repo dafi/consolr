@@ -156,4 +156,70 @@
             });
         })
     };
+
+    $.fn.initDialogTimeDistribution = function(settings) {
+        var config = {drawCallback: consolr.tags.drawTagsChart};
+
+        if (settings) {
+            $.extend(config, settings);
+        }
+
+        // Initialized out of open method to preserve values
+        // between successive open dialog calls
+        $('#time-range').slider({
+            range: true,
+            min: 0,
+            max: 24,
+            values: [0, 24],
+            slide: function(event, ui) {
+                $('#time-value').html('From ' + ui.values[0] + ' to ' + ui.values[1]);
+            }
+        });
+
+        this.dialog({
+            autoOpen: false,
+            width: 400,
+            height: 250,
+            modal: true,
+            resizable: true,
+            buttons: {
+                'Save': function() {
+                    var groupDate = $(this).dialog('option', 'groupDate');
+                    var fromMinutes = $("#time-range").slider("values", 0) * 60;
+                    var toMinutes = $("#time-range").slider("values", 1) * 60;
+                    var dateProperty = 'consolr-date';
+                    var posts = consolrPosts['group-date'][groupDate];
+                    posts = posts.slice(0, posts.length);
+                    var startDate = posts[0][dateProperty];
+
+                    consolr.groupDate.timeDistribution(posts, startDate, fromMinutes, toMinutes, dateProperty);
+                    consolr.groupDate.replaceGroupDateItems(groupDate, posts, dateProperty);
+
+                    for (var i = 0; i < posts.length; i++) {
+                        var post = posts[i];
+                        var params = {
+                            postId : post.id,
+                            caption : post['photo-caption'],
+                            clickThroughLink : post['photo-link-url'] ? post['photo-link-url'] : '',
+                            tags : post['tags'] ? post['tags'].join(', ') : '',
+                            publishDate : post[dateProperty].format('dd NNN yyyy HH:mm:ss')
+                        };
+                        consolr.updateQueuedPost(params, {
+                                success: function(params) {
+                                }
+                        });
+                    }
+
+                    $(this).dialog('close');
+                },
+                'Cancel': function() {
+                    $(this).dialog('close');
+                }
+            },
+            open: function() {
+                var values = $('#time-range').slider('values');
+                $('#time-value').html('From ' + values[0] + ' to ' + values[1]);
+            }
+        });
+    };
 })(jQuery);
