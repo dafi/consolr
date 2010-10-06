@@ -158,7 +158,7 @@
     };
 
     $.fn.initDialogTimeDistribution = function(settings) {
-        var config = {drawCallback: consolr.tags.drawTagsChart};
+        var config = {};
 
         if (settings) {
             $.extend(config, settings);
@@ -184,16 +184,41 @@
             resizable: true,
             buttons: {
                 'Save': function() {
+                    // compute the distribution
                     var groupDate = $(this).dialog('option', 'groupDate');
                     var fromMinutes = $("#time-range").slider("values", 0) * 60;
-                    var toMinutes = $("#time-range").slider("values", 1) * 60;
+                    var toMinutes = $("#time-range").slider("values", 1);
                     var dateProperty = 'consolr-date';
                     var posts = consolrPosts['group-date'][groupDate];
                     posts = posts.slice(0, posts.length);
                     var startDate = posts[0][dateProperty];
 
+                    // 24h means 23h59m
+                    if (toMinutes == 24) {
+                        toMinutes = --toMinutes * 60 + 59;
+                    } else {
+                        toMinutes *= 60;
+                    }
                     consolr.groupDate.timeDistribution(posts, startDate, fromMinutes, toMinutes, dateProperty);
                     consolr.groupDate.replaceGroupDateItems(groupDate, posts, dateProperty);
+
+                    // disable buttons while the update is in progress
+                    $(this).dialog('option', 'closeOnEscape', false);
+                    $('.ui-dialog-buttonpane button', $(this).dialog('widget'))
+                        .attr('disabled', 'true')
+                        .addClass('ui-state-disabled');
+
+                    // start update on server
+                    $('#time-progress-container').show();
+                    var completed = 0;
+                    var onComplete = function(params) {
+                        if (++completed == posts.length) {
+                            $('#dialog-time-distribution').dialog('close');
+                        }
+                        $('#time-progressbar').progressbar({
+                            value: completed * 100 / posts.length
+                        });
+                    };
 
                     for (var i = 0; i < posts.length; i++) {
                         var post = posts[i];
@@ -205,12 +230,10 @@
                             publishDate : post[dateProperty].format('dd NNN yyyy HH:mm:ss')
                         };
                         consolr.updateQueuedPost(params, {
-                                success: function(params) {
-                                }
+                                success: onComplete,
+                                async: true
                         });
                     }
-
-                    $(this).dialog('close');
                 },
                 'Cancel': function() {
                     $(this).dialog('close');
@@ -219,7 +242,13 @@
             open: function() {
                 var values = $('#time-range').slider('values');
                 $('#time-value').html('From ' + values[0] + ' to ' + values[1]);
+                $('#time-progress-container').hide();
+                $(this).dialog('option', 'closeOnEscape', true);
+                $('.ui-dialog-buttonpane button', $(this).dialog('widget'))
+                    .removeAttr('disabled')
+                    .removeClass('ui-state-disabled');
             }
         });
+        return this;
     };
 })(jQuery);
