@@ -219,6 +219,18 @@ abstract class abstract_tumblr {
         return $this->do_logged_request($api_url, $all_params);
     }
 
+    function create_post($params) {
+        $api_url = 'http://www.tumblr.com/api/write';
+        $all_params = array(
+                        'group'     => $this->tumblr_name . '.tumblr.com',
+                  );
+        if (isset($params)) {
+            $all_params = array_merge($params, $all_params);
+        }
+
+        return $this->do_logged_request($api_url, $all_params);
+    }
+
     function get_tumblr_list() {
         $api_url = 'http://www.tumblr.com/api/authenticate';
 
