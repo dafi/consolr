@@ -51,7 +51,7 @@ class consolr_db {
 
         $tumblr_name = mysql_real_escape_string($tumblr_name);
         $delete_tags_sql = "delete from CONSOLR_POST_TAG where tumblr_name='%tumblr_name%'";
-        $insert_tags_sql = "insert into CONSOLR_POST_TAG (TUMBLR_NAME, POST_ID, TAG) values ('%tumblr_name%', %post_id%, '%tag%')";
+        $insert_tags_sql = "insert into CONSOLR_POST_TAG (TUMBLR_NAME, POST_ID, TAG, PUBLISH_TIMESTAMP) values ('%tumblr_name%', %post_id%, '%tag%', %ts%)";
 
         if ($delete_tags) {
             $query = str_replace('%tumblr_name%', $tumblr_name, $delete_tags_sql);
@@ -64,8 +64,9 @@ class consolr_db {
         foreach ($tags_list as $tags => $posts) {
             foreach ($posts as $post) {
                 $query = str_replace('%tumblr_name%', $tumblr_name, $insert_tags_sql);
-                $query = str_replace('%post_id%', $post, $query);
+                $query = str_replace('%post_id%', $post['id'], $query);
                 $query = str_replace('%tag%', mysql_real_escape_string($tags), $query);
+                $query = str_replace('%ts%', $post['ts'], $query);
 
                 $result = mysql_query($query, $db);
 
@@ -208,6 +209,38 @@ class consolr_db {
         mysql_close($db);
 
         return $ret_val;
+    }
+
+    static function get_posts_by_publish_range($tumblr_name, $ts1, $ts2) {
+        $db = consolr_db::connect();
+
+        $tumblr_name = mysql_real_escape_string($tumblr_name);
+        $select_tags_sql = "SELECT distinct post_id, publish_timestamp"
+                            . " FROM CONSOLR_POST_TAG"
+                            . " WHERE tumblr_name='%tumblr_name%'"
+                            . " and publish_timestamp between %ts1% and %ts2%";
+
+
+        $query = str_replace('%tumblr_name%', $tumblr_name, $select_tags_sql);
+        $query = str_replace('%ts1%', $ts1, $query);
+        $query = str_replace('%ts2%', $ts2, $query);
+        $result = mysql_query($query, $db);
+
+        if (!$result) {
+            die('Invalid query: ' . mysql_error());
+        }
+
+        $posts = array();
+        while ($row = mysql_fetch_assoc($result)) {
+            array_push($posts, array('post_id' => $row['post_id'],
+                                    'publish_timestamp' => $row['publish_timestamp']));
+        }
+
+        mysql_free_result($result);
+
+        mysql_close($db);
+
+        return $posts;
     }
 }
 ?>
