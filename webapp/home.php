@@ -63,6 +63,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     <li class="date-image"><a href="queue.php"><img src="images/tb_queue.png" width="75" height="75"/><div class="date-image-time label">Scheduled Posts</div></a></li>
                     <li class="date-image"><a href="published.php"><img src="images/tb_published.png" width="75" height="75"/><div class="date-image-time label">Published Posts</div></a></li>
                     <li class="date-image"><a href="tags.php"><img src="images/tb_tags.png" width="75" height="75"/><div class="date-image-time label">Tags</div></a></li>
+                    <li class="date-image"><a href="weeklyDigest.php"><img src="images/tb_weekly.png" width="75" height="75"/><div class="date-image-time label">Weekly Digest</div></a></li>
                     <li class="date-image"><a href="settings.php"><img src="images/tb_settings.png" width="75" height="75"/><div class="date-image-time label">Settings</div></a></li>
                 </ul>
             </div>
