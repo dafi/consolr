@@ -62,7 +62,7 @@ if (typeof(consolr.tags) == "undefined") {
         // this date group doesn't exists create it and insert at correct position
         if (groupDateWidget.length == 0) {
             var position;
-            $('#date-container div').each(function() {
+            $('.date-container').each(function() {
                     if (this.id > groupContainerId) {
                         return false;
                     }
