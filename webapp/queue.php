@@ -147,6 +147,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <span id="time-value"></span>
         </p>
         <div id="time-range"></div>
+        <div id="time-progress-container">
+            <label>Save Progress</label>
+            <div id="time-progressbar"></div>
+        </div>
     </div>
 </div>
 
