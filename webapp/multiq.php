@@ -42,7 +42,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             height: 4em !important;
             display: none;
         }
-        
+
         .upload-status-message {
             margin: 0
         }
@@ -92,7 +92,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     },
                     submitHandler: function(form) {
                         try {
-                            if (isNaN(Date.parse($('#date').val()))) {
+                            if ($('#state').val() == 'queue'
+                                && isNaN(Date.parse($('#date').val()))) {
                                 alert(msgInvalidDateFormat);
                             } else {
                                 startUpload();
@@ -101,7 +102,18 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                             alert(e);
                         }
                     }
-                  });
+                });
+
+                $('#state').change(function() {
+                    if (this.value == 'queue') {
+                        $('#publish-date-box').show();
+                        $('#date').removeAttr('disabled');
+                    } else {
+                        $('#publish-date-box').hide();
+                        // disable so validator ignores it
+                        $('#date').attr('disabled', 'true');
+                    }
+                });
 
                 $('#clear-fields').click(function() {
                     $('#url').val('').focus();
@@ -150,7 +162,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 var params = {
                     caption: $('#caption').val(),
-                    tags: $('#tags').val()
+                    tags: $('#tags').val(),
+                    state: $('#state').val()
                 };
 
                 var timespanMS = parseInt($('#timespan').val(), 10);
@@ -242,7 +255,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                                 t: urlsTotal}) + " " + msgTitle;
                 }
             }
-            
+
             function initUpdateDateCheckbox() {
                 $('#updateDate').click(function() {
                     var value = $(this).attr('checked') ? 'y' : 'n';
@@ -265,7 +278,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </div>
         </noscript>
         <?php include('inc/menu.php') ?>
-        <h1>Upload multiple photo urls to queue at once</h1>
+        <h1>Upload multiple photo urls at once</h1>
 
         <div class="ui-corner-all ui-state-error error-container" style="height: 1.4em">
             <ol>
@@ -278,6 +291,12 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             <fieldset id="photo-fields" class="ui-widget ui-widget-content">
                 <legend class="ui-widget-header ui-corner-all">Photo</legend>
 
+                <select id="state">
+                    <option value="queue">Upload on Queue</option>
+                    <option value="draft">Upload on Draft</option>
+                </select>
+                <br/>
+
                 <label for="url">Urls (specify an url per line)</label>
                 <br/>
                 <textarea name="url" id="url" cols="100" rows="4"></textarea>
@@ -287,9 +306,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <br/>
                 <input type="text" name="caption" id="caption" value=""/>
                 <br/>
-                <br/>
 
-                <div style="overflow: hidden">
+                <div id="publish-date-box" style="overflow: hidden">
+                    <br/>
                     <div style="float:left; margin-right: 1em;">
                         <label for="date">Publish Date</label>
                         <br/>

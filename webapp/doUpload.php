@@ -16,7 +16,7 @@ $tumblr = login_utils::get_tumblr();
  * Post photo by url
  * @return array (status, msg) msg is valid only for some statuses
  */
-function post_photo_by_url($url, $caption, $str_time, $tags, $tumblr) {
+function queue_photo_by_url($url, $caption, $str_time, $tags, $tumblr) {
     if (!isset($url)) {
         return array('status' => CONSOLR_UPLOAD_ERR_URL_MANDATORY);
     }
@@ -36,12 +36,39 @@ function post_photo_by_url($url, $caption, $str_time, $tags, $tumblr) {
     return array('status' => CONSOLR_UPLOAD_OK);
 }
 
+function draft_photo_by_url($url, $caption, $tags, $tumblr) {
+    if (!isset($url)) {
+        return array('status' => CONSOLR_UPLOAD_ERR_URL_MANDATORY);
+    }
+
+    $params = array(
+                    'state'     => 'draft',
+                    'type'      => 'photo',
+                    'source'    => $url,
+                    'caption'   => $caption,
+                    'tags'      => $tags ? $tags : ''
+                   );
+
+    $results = $tumblr->create_post($params);
+    if ($results['status'] != 201) {
+        return array('status' => CONSOLR_UPLOAD_ERR_GENERIC, 'msg' => $results['result']);
+    }
+    return array('status' => CONSOLR_UPLOAD_OK);
+}
+
 $url = $_POST['url'];
 $caption = $_POST['caption'];
 $date = $_POST['date'];
 $tags = $_POST['tags'];
+$state = $_POST['state'];
 
-$results = post_photo_by_url($url, $caption, $date, $tags, $tumblr);
+if ($state == "queue") {
+    $results = queue_photo_by_url($url, $caption, $date, $tags, $tumblr);
+} else if ($state == "draft") {
+    $results = draft_photo_by_url($url, $caption, $tags, $tumblr);
+} else {
+    $results = array('status' => CONSOLR_UPLOAD_ERR_GENERIC, 'msg' => 'Invalid state');
+}
 //$results = array('status' => (rand() % 2) != 0 ? CONSOLR_UPLOAD_OK : CONSOLR_UPLOAD_ERR_GENERIC, 'msg' => 'TEST WITHOUT REAL POST');
 $msg;
 switch ($results['status']) {
