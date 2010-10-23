@@ -218,7 +218,8 @@ class consolr_db {
         $select_tags_sql = "SELECT distinct post_id, publish_timestamp"
                             . " FROM CONSOLR_POST_TAG"
                             . " WHERE tumblr_name='%tumblr_name%'"
-                            . " and publish_timestamp between %ts1% and %ts2%";
+                            . " and publish_timestamp between %ts1% and %ts2%"
+                            . " ORDER BY publish_timestamp";
 
 
         $query = str_replace('%tumblr_name%', $tumblr_name, $select_tags_sql);
