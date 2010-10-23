@@ -27,6 +27,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <!--//
             var tumblrName = "<?php echo $tumblr_name ?>";
             var apiUrl = 'http://' + tumblrName + '.tumblr.com/api/read/json';
+            var msgTitle = 'Consolr - Tags';
+            var msgTitleProgress = 'Read posts $c/$t';
 
             $(function() {
                 $('#update-tags').click(function() {
@@ -36,9 +38,14 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         //type: '',
                         posts : [],
                         progress : function(data, posts) {
-                            consolr.setMessageText("Read posts " + posts.length + "/" + data['posts-total']);
+                            var msg = $.formatString(msgTitleProgress, {
+                                c: posts.length,
+                                t: data['posts-total']});
+                            consolr.setMessageText(msg);
+                            window.document.title = msg + " " + msgTitle;
                         },
                         complete : function(posts) {
+                            window.document.title = msgTitle;
                             saveTagsMap(posts, deleteTags);
                         }
                     };
