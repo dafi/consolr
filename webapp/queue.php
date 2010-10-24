@@ -104,7 +104,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <?php if (isset($error)) { ?>
         <h2><?php echo $error; ?></h2>
         <?php } else if (count($tumblr_queue['posts']) == 0) { ?>
-        <h2>No post scheduled, use <a href="multiq.php">Photo Uploader</a> or <a href="http://www.tumblr.com/tumblelog/<?php echo $tumblr->get_tumblr_name() ?>/new/photo">Dashboard</a> to add post to queue</h2>
+        <h2>No post scheduled, use <a href="upload.php">Photo Uploader</a> or <a href="http://www.tumblr.com/tumblelog/<?php echo $tumblr->get_tumblr_name() ?>/new/photo">Dashboard</a> to add post to queue</h2>
         <?php } ?>
 
         <div id="date-container">

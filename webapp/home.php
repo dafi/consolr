@@ -59,7 +59,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div class="toolbar">
             <div id="cButtons" class="date-container ui-helper-clearfix ui-corner-top ui-corner-bottom ui-widget-content">
                 <ul class="date-image-container">
-                    <li class="date-image"><a href="multiq.php"><img src="images/tb_upload.png" width="75" height="75"/><div class="date-image-time label">Photo Urls Uploader</div></a></li>
+                    <li class="date-image"><a href="upload.php"><img src="images/tb_upload.png" width="75" height="75"/><div class="date-image-time label">Photo Urls Uploader</div></a></li>
                     <li class="date-image"><a href="queue.php"><img src="images/tb_queue.png" width="75" height="75"/><div class="date-image-time label">Scheduled Posts</div></a></li>
                     <li class="date-image"><a href="published.php"><img src="images/tb_published.png" width="75" height="75"/><div class="date-image-time label">Published Posts</div></a></li>
                     <li class="date-image"><a href="tags.php"><img src="images/tb_tags.png" width="75" height="75"/><div class="date-image-time label">Tags</div></a></li>

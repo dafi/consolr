@@ -1,0 +1,34 @@
+#uploadForm textarea,
+#uploadForm input[type='text'] {
+  width: 99%;
+}
+
+.panel-list {
+  height: 10em;
+}
+
+.url-list {
+  height: 100%;
+  overflow-y: auto;
+  list-style-image: url('../images/progress-w.gif');
+}
+
+.error-upload {
+  cursor: pointer;
+  list-style-image: none;
+  list-style-type: none;
+  list-style-position: inside;
+}
+
+.error-container ol li {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+.error-container {
+  height: 4em !important;
+  display: none;
+}
+
+.upload-status-message {
+  margin: 0
+}

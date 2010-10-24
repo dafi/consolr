@@ -156,11 +156,6 @@ noscript div a {
   z-index: 9999;
 }
 
-#multiqForm textarea,
-#multiqForm input[type='text'] {
-  width: 99%;
-}
-
 .button-box {
   float: right;
   margin-top: 0.4em;

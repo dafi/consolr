@@ -9,7 +9,7 @@ require_once 'lib/tumblr/tumblrUtils.php';
             |
             <a href="home.php">Home</a>
             |
-            <a href="multiq.php">Photo Uploader</a>
+            <a href="upload.php">Photo Uploader</a>
             |
             <a href="queue.php">Queue</a>
             |
