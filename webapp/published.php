@@ -64,11 +64,16 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     consolr.setMessageText("Reading...");
                     $("#message-progress-container").show();
                     var tags = tagList.val();
+                    var postsToGet = parseInt($('#postsToGet').val(), 10);
+                    if (isNaN(postsToGet) || postsToGet <= 0) {
+                        postsToGet = null;
+                    }
     
                     consolr.readPublicPhotoPosts(apiUrl, {
                         start : 0,
                         posts : [],
                         tags : tags,
+                        postsToGet: postsToGet,
                         progress : function(data, posts) {
                             consolr.setMessageText("Read posts " + posts.length + "/" + data['posts-total']);
                         },
@@ -146,7 +151,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
             <button id="show-tags-chart">Show Tags</button>
             <button id="filter-tags">Filter Tags</button>
-            <input type="text" id="tagList" size=30"/>
+            <input type="text" id="tagList" size="30"/>
+            <label for="postsToGet">Max posts to read</label>
+            <input type="text" id="postsToGet" size="6"/>
             <button id="read-posts">Start</button>
         </div>
 
