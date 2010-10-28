@@ -60,7 +60,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     consolr.setMessageText("Invalid tumblr name");
                     return;
                 }
-                $('#read-posts').click(function() {
+                $('#search-form').submit(function() {
                     consolr.setMessageText("Reading...");
                     $("#message-progress-container").show();
                     var tags = tagList.val();
@@ -68,7 +68,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     if (isNaN(postsToGet) || postsToGet <= 0) {
                         postsToGet = null;
                     }
-    
+                
                     consolr.readPublicPhotoPosts(apiUrl, {
                         start : 0,
                         posts : [],
@@ -80,21 +80,23 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         complete : function(posts) {
                             consolrPosts.posts = posts;
                             consolr.initTimeline('date', false);
-    
+                
                             consolr.updateMessagePanel();
                             // add tooltip when date container is filled
                             $(".date-image")
                                 .initTooltipPhotoPost()
                                 .dblclick(function() {
                                     $('#dialog-form').dialog('option', 'postInfo', $(this));
+                                    $('#dialog-form').dialog('option', 'consolrState', 'p');
                                     $('#dialog-form').dialog('open');
                                 })
                             .initImageMenu({});
                             $("#dialog-form").initDialogModifyQueuePost({isPublishDateEditAllowed: false});
-    
+                
                             $("#message-progress-container").hide();
                         }
-                        });
+                    });
+                    return false;
                 });
 
                 var tagList = $("#tagList");
@@ -105,22 +107,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         }
                     })
                     .showMessageOnBlur({blurMessage: msgInputTag,
-                        blurClass: 'text-disabled'})
-                    .keypress(function(e) {
-                        var c = e.which ? e.which : e.keyCode;
-                        var selectedFromAC = tagList.autocomplete('option', 'isSelected');
-                        if (c == 13) {
-                            if (tagList.val() && !selectedFromAC) {
-                                tagList.autocomplete('option', 'isSelected', false);
-                                $('#read-posts').click();
-                            }
-                            tagList.autocomplete('option', 'isSelected', false);
-                        }
-                    });
+                        blurClass: 'text-disabled'});
 
                 $("#dialog-tags").initDialogTagsChart();
 
-                $("#toolbar button").button();
+                $("#toolbar button, input[type=submit]").button();
                 $("#show-tags-chart").click(consolr.tags.commands.showTagChart);
 
                 $("#dialog-filter-tags").initDialogFilterTags();
@@ -151,10 +142,12 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
             <button id="show-tags-chart">Show Tags</button>
             <button id="filter-tags">Filter Tags</button>
-            <input type="text" id="tagList" size="30"/>
-            <label for="postsToGet">Max posts to read</label>
-            <input type="text" id="postsToGet" size="6"/>
-            <button id="read-posts">Start</button>
+            <form id="search-form" style="display: inline">
+                <input type="text" id="tagList" size="30"/>
+                <label for="postsToGet">Max posts to read</label>
+                <input type="text" id="postsToGet" size="6"/>
+                <input type="submit" value="Start"/>
+            </form>
         </div>
 
         <div id="date-container">
