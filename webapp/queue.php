@@ -2,13 +2,34 @@
 require_once 'lib/loginUtils.php';
 require_once 'lib/tumblr/tumblrUtils.php';
 
-$tumblr = login_utils::get_tumblr();
-$result = $tumblr->get_queue(true);
-if ($result['status'] == '200') {
-    $tumblr_queue = tumblr_utils::get_json_map($result['result']);
+if (isset($_GET['state'])) {
+    $state = $_GET['state'];
+    if ($state != 'q' && $state != 'd') {
+        $state = 'q';
+    }
 } else {
-    $tumblr_queue = array('posts' => array());
-    $error = 'Error while reading queue. ' . $result['result'];
+    $state = 'q';
+}
+
+$tumblr = login_utils::get_tumblr();
+
+switch ($state) {
+    case 'q':
+        $stateDesc = 'queue';
+        $stateDescCapitalized = 'Queue';
+        $result = $tumblr->get_queue(true);
+        break;
+    case 'd':
+        $stateDesc = 'draft';
+        $stateDescCapitalized = 'Draft';
+        $result = $tumblr->get_draft(true);
+        break;
+}
+if ($result['status'] == '200') {
+    $tumblr_posts = tumblr_utils::get_json_map($result['result']);
+} else {
+    $tumblr_posts = array('posts' => array());
+    $error = 'Error while reading ' . $stateDesc . '. ' . $result['result'];
 }
 
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -17,7 +38,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-        <title>Consolr Queue List</title>
+        <title>Consolr <?php echo $stateDescCapitalized ?> List</title>
 
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
@@ -45,24 +66,30 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <script type="text/javascript">
         <!--//
-            var consolrPosts = {posts: <?php echo json_encode($tumblr_queue['posts']); ?>};
+            var consolrPosts = {posts: <?php echo json_encode($tumblr_posts['posts']); ?>};
 
             $(function() {
+                consolr.dateProperty = '<?php echo ($state == 'd' ? 'date' : 'publish-on-time') ?>';
                 $.initEditor();
-                consolr.initTimeline('publish-on-time', true);
+                consolr.initTimeline(consolr.dateProperty, true);
                 consolr.updateMessagePanel();
 
                 $(".date-image")
                     .initTooltipPhotoPost()
                     .dblclick(function() {
                         $('#dialog-form').dialog('option', 'postInfo', $(this));
+                        $('#dialog-form').dialog('option', 'consolrState', '<?php echo $state?>');
                         $('#dialog-form').dialog('open');
                     })
                     .initImageMenu({});
 
+<?php if ($state == 'd') { ?>
+                $("#dialog-form").initDialogModifyQueuePost({isPublishDateEditAllowed: false});
+<?php } else { ?>
                 $(".date-image-container").initDraggableImage();
-
+                $('#dialog-time-distribution').initDialogTimeDistribution();
                 $("#dialog-form").initDialogModifyQueuePost();
+<?php } ?>
 
                 $("#dialog-tags").initDialogTagsChart();
 
@@ -71,8 +98,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 $("#dialog-filter-tags").initDialogFilterTags();
                 $('#filter-tags').click(consolr.tags.commands.filterTags);
-
-                $('#dialog-time-distribution').initDialogTimeDistribution();
             });
         -->
         </script>
@@ -103,8 +128,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <?php if (isset($error)) { ?>
         <h2><?php echo $error; ?></h2>
-        <?php } else if (count($tumblr_queue['posts']) == 0) { ?>
-        <h2>No post scheduled, use <a href="upload.php">Photo Uploader</a> or <a href="http://www.tumblr.com/tumblelog/<?php echo $tumblr->get_tumblr_name() ?>/new/photo">Dashboard</a> to add post to queue</h2>
+        <?php } else if (count($tumblr_posts['posts']) == 0) { ?>
+        <h2>No post found on <?php echo $stateDesc ?>, use <a href="upload.php">Photo Uploader</a> or <a href="http://www.tumblr.com/tumblelog/<?php echo $tumblr->get_tumblr_name() ?>/new/photo">Dashboard</a> to add post to <?php echo $stateDesc ?></h2>
         <?php } ?>
 
         <div id="date-container">

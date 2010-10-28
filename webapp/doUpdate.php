@@ -9,13 +9,15 @@ if (isset($_POST['postId'])) {
         $state = 'q';
     }
     switch ($state) {
+        case 'd':
         case 'p':
             $post_params = array(
                 'photo-caption' => $_POST['caption'],
                 'click-through-url' => $_POST['clickThroughLink'],
                 'tags' => explode(",", preg_replace('/,\s*/', ',', $_POST['tags']))
                                 );
-            $result = $tumblr->update_published_post($_POST['postId'],
+            $result = $tumblr->update_photo_post($_POST['postId'],
+                                                    $state == 'd' ? 'draft' : 'published',
                                                     false,
                                                     $post_params);
             break;

@@ -28,15 +28,14 @@
                         clickThroughLink : $('#dialog-modify-click-through-link').val(),
                         tags : $('#dialog-modify-tags').val()
                     };
+                    // set the state for the post to update
+                    params.state = $(this).dialog('option', 'consolrState');
                     if (config.isPublishDateEditAllowed) {
                         params.publishDate = $('#dialog-modify-publish-date').val();
                         if (isNaN(Date.parse(params.publishDate))) {
                             alert(INVALID_DATE);
                             return;
                         }
-                    } else {
-                        // the post to update is in publish state
-                        params.state = 'p';
                     }
                     consolr.updateQueuedPost(params, {
                             success: function(params) {

@@ -61,6 +61,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <ul class="date-image-container">
                     <li class="date-image"><a href="upload.php"><img src="images/tb_upload.png" width="75" height="75"/><div class="date-image-time label">Photo Urls Uploader</div></a></li>
                     <li class="date-image"><a href="queue.php"><img src="images/tb_queue.png" width="75" height="75"/><div class="date-image-time label">Scheduled Posts</div></a></li>
+                    <li class="date-image"><a href="queue.php?state=d"><img src="images/tb_draft.png" width="75" height="75"/><div class="date-image-time label">Draft Posts</div></a></li>
                     <li class="date-image"><a href="published.php"><img src="images/tb_published.png" width="75" height="75"/><div class="date-image-time label">Published Posts</div></a></li>
                     <li class="date-image"><a href="tags.php"><img src="images/tb_tags.png" width="75" height="75"/><div class="date-image-time label">Tags</div></a></li>
                     <li class="date-image"><a href="weeklyDigest.php"><img src="images/tb_weekly.png" width="75" height="75"/><div class="date-image-time label">Weekly Digest</div></a></li>

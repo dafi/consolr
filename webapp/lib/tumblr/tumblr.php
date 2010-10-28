@@ -39,6 +39,21 @@ abstract class abstract_tumblr {
                     ));
     }
 
+    function get_draft($use_json = false, $start = '0', $num = '0', $type = '') {
+        $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
+
+        if ($use_json) {
+            $api_url .= "/json";
+        }
+        return $this->do_logged_request($api_url,
+                    array(
+                        'start'     => $start,
+                        'num'       => $num,
+                        'type'      => $type,
+                        'state'     => 'draft'
+                    ));
+    }
+
     function get_post_by_id($post_id, $use_json = false) {
         $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
 
@@ -70,11 +85,11 @@ abstract class abstract_tumblr {
         return $info;
     }
 
-    function update_published_post($post_id, $merge_values = false, $post_params = array()) {
+    function update_photo_post($post_id, $state, $merge_values = false, $post_params = array()) {
         $api_url = 'http://www.tumblr.com/api/write';
         $params = array(
                         'post-id'   => $post_id,
-                        'state'     => 'published'
+                        'state'     => $state
                     );
 
         if ($merge_values) {
