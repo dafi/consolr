@@ -397,7 +397,9 @@ if (typeof(consolr) == "undefined") {
         var ts = [];
         for (var k in consolrPosts['group-date']) {
             if (consolrPosts['group-date'][k].length) {
-                ts.push(new Date(parseInt(k.substring(2, 6), 10),
+                // uses UTC to be sure the calculation ignores daylight saving offset
+                // e.g difference between "01 nov 2010" and "31 oct 2010" is 2
+                ts.push(Date.UTC(parseInt(k.substring(2, 6), 10),
                                  parseInt(k.substring(6, 8), 10) - 1,
                                  parseInt(k.substring(8), 10)));
             }
@@ -409,11 +411,11 @@ if (typeof(consolr) == "undefined") {
 
         var emptyDays = [];
         for (var i = 0; i < ts.length - 1; i++) {
-            var days = Math.ceil((ts[i + 1].getTime() - ts[i].getTime()) / oneDay) - 1;
+            var days = Math.ceil((ts[i + 1] - ts[i]) / oneDay) - 1;
             if (days > 0) {
                 emptyDays.push({
-                    start : ts[i],
-                    end : ts[i + 1],
+                    start : new Date(ts[i]),
+                    end : new Date(ts[i + 1]),
                     dayCount : days});
             }
         }
