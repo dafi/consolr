@@ -38,7 +38,9 @@ if  (typeof (itl) == 'undefined') {
                         }
                     } else if (location.hostname.indexOf('kosty555.pp.ru') >= 0) {
                         links.push(doc.getElementById('img_obj').src);
-                    }                    
+                    } else if (location.hostname.indexOf('turboimagehost.com') >= 0) {
+                        links.push(doc.getElementById('imageid').src);
+                    }
                 } else {
                     links.push(location.href);
                 }
