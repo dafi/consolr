@@ -87,6 +87,10 @@ if (typeof(consolr.upload) == "undefined") {
                 $('#date').val(event.target.getAttribute('crdate'));
             }
         });
+
+        window.addEventListener("message", function(event) {
+            $('#url').val(event.data).focus();
+        }, false);
     };
 
     function startUpload() {
