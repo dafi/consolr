@@ -40,19 +40,41 @@ if  (typeof (itl) == 'undefined') {
                         links.push(doc.getElementById('img_obj').src);
                     } else if (location.hostname.indexOf('turboimagehost.com') >= 0) {
                         links.push(doc.getElementById('imageid').src);
+                    } else if (location.hostname.indexOf('picfoco.com') >= 0) {
+                        links.push(doc.getElementById('img').src);
                     }
                 } else {
                     links.push(location.href);
                 }
             }
-            Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-                .getService(Components.interfaces.nsIClipboardHelper)
-                .copyString(links.join('\n'));
+            var textLinks = links.join('\n');
+            //Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+            //    .getService(Components.interfaces.nsIClipboardHelper)
+            //    .copyString(textLinks);
+            sendMessageLinks(textLinks + '\n');
             Components.classes["@mozilla.org/alerts-service;1"]
                 .getService(Components.interfaces.nsIAlertsService)
                 .showAlertNotification(null, 'Image Tab Links', 'Copied ' + links.length + ' links');
         } catch (ex) {
             alert(ex);
+        }
+    }
+    
+    sendMessageLinks = function(textLinks) {
+        var windowManager = Components.classes['@mozilla.org/appshell/window-mediator;1']
+            .getService(Components.interfaces.nsIWindowMediator);
+        var e = windowManager.getEnumerator(null);
+        while (e.hasMoreElements()) {
+            var win = e.getNext().QueryInterface(Components.interfaces.nsIDOMWindow);
+            var tc = win.getBrowser().tabContainer.childNodes;
+
+            for (var i = 0; i < tc.length; i++) {
+                var tab = tc[i];
+                var contentDoc = tab.linkedBrowser.contentDocument;
+                var contentWin = tab.linkedBrowser.contentWindow;
+                
+                contentWin.postMessage(textLinks, '*');
+            }
         }
     }
 }).apply(itl);
