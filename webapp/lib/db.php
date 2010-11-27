@@ -46,12 +46,13 @@ class consolr_db {
         return $db;
     }
 
-    static function save_tags_list($tumblr_name, $tags_list, $delete_tags) {
+    static function save_tags_list($tumblr_name, $tags_list, $delete_tags, $continue_if_exists = false) {
         $db = consolr_db::connect();
 
         $tumblr_name = mysql_real_escape_string($tumblr_name);
         $delete_tags_sql = "delete from CONSOLR_POST_TAG where tumblr_name='%tumblr_name%'";
-        $insert_tags_sql = "insert into CONSOLR_POST_TAG (TUMBLR_NAME, POST_ID, TAG, PUBLISH_TIMESTAMP) values ('%tumblr_name%', %post_id%, '%tag%', %ts%)";
+        $insert_tags_sql = "insert %ignore% into CONSOLR_POST_TAG (TUMBLR_NAME, POST_ID, TAG, PUBLISH_TIMESTAMP) values ('%tumblr_name%', %post_id%, '%tag%', %ts%)";
+        $insert_tags_sql = str_replace('%ignore%', $continue_if_exists ? 'IGNORE' : '', $insert_tags_sql);
 
         if ($delete_tags) {
             $query = str_replace('%tumblr_name%', $tumblr_name, $delete_tags_sql);
@@ -71,7 +72,7 @@ class consolr_db {
                 $result = mysql_query($query, $db);
 
                 if (!$result) {
-                    die('Error while saving post: ' . mysql_error());
+                    die('Error while saving tags: ' . mysql_error());
                 }
             }
         }
