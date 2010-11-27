@@ -42,6 +42,8 @@ if  (typeof (itl) == 'undefined') {
                         links.push(doc.getElementById('imageid').src);
                     } else if (location.hostname.indexOf('picfoco.com') >= 0) {
                         links.push(doc.getElementById('img').src);
+                    } else if (/u-.*\.com/.test(location.hostname)) {
+                        location.href = doc.getElementById('redirectframe').src;
                     }
                 } else {
                     links.push(location.href);
