@@ -98,7 +98,7 @@ class consolr_db {
 
         $tags = array();
         while ($row = mysql_fetch_assoc($result)) {
-            array_push($tags, array('tag' => $row['tag'],
+            array_push($tags, array('tag' => utf8_encode($row['tag']),
                                     'post_count' => $row['post_count']));
         }
 
