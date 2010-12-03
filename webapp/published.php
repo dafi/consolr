@@ -153,7 +153,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="date-container">
         </div>
 
-        <div style="display:none">
+    <div id="dialogs-container" style="display:none">
     <div id="dialog-form" title="Modify Post">
         <form action="">
         <fieldset>
@@ -188,6 +188,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     <ul id="imageMenu" class="contextMenu" style="display:none">
         <li><a href="#edit">Edit...</a></li>
         <li><a href="#showImage">Show Image</a></li>
+        <li><a href="#showInfo">Show Info...</a></li>
     </ul>
     <?php include('inc/footer.php'); ?>
 

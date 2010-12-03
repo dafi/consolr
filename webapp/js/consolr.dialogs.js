@@ -250,4 +250,47 @@
         });
         return this;
     };
+
+    $.fn.showInfoDialog = function(settings) {
+        var showDialog = function() {
+            $('#dialog-photo-info')
+            .dialog({
+                autoOpen: false,
+                width: 450,
+                height: 300,
+                modal: true,
+                resize: "auto",
+                buttons: {
+                    Close: function() {
+                        $(this).dialog('close');
+                    }
+                },
+                open: function() {
+                    var post = $(this).dialog('option', 'post');
+                    $('#dialog-photo-info .image-links-container a').button().css('width', '100%');
+                    $('#dialog-photo-info-postid').html(post.id);
+                    $('#dialog-photo-info-goto-tumblr').attr('href', post['url']);
+
+                    $('#dialog-photo-info-label-75-url').attr('href', post['photo-url-75']);
+                    $('#dialog-photo-info-label-100-url').attr('href', post['photo-url-100']);
+                    $('#dialog-photo-info-label-250-url').attr('href', post['photo-url-250']);
+                    $('#dialog-photo-info-label-400-url').attr('href', post['photo-url-400']);
+                    $('#dialog-photo-info-label-500-url').attr('href', post['photo-url-500']);
+                    $('#dialog-photo-info-label-1280-url').attr('href', post['photo-url-1280']);
+                }
+            })
+            .dialog('option', 'post', settings.post)
+            .dialog('open');
+        };
+
+        // $.load is async so the construct $.load.dialog({...}) doesn't ensure
+        // dialog content is already injected on DOM.
+        // If the dialog is already injected simply call showDialog() otherwise
+        // call it on load's complete callback
+        if ($('#dialog-photo-info').length) {
+            showDialog();
+        } else {
+            this.load('dialogs/photoInfo.html', showDialog);
+        }
+    }
 })(jQuery);

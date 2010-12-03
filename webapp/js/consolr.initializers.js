@@ -209,6 +209,10 @@
                                 consolr.publishPost(post);
                             }
                             break;
+                        case 'showInfo':
+                            var post = consolr.findPost(li.attr('id'));
+                            $("#dialogs-container").showInfoDialog({post:post});
+                            break;
                         default:
                             alert(action + " is not implemented");
                             break;

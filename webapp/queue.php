@@ -184,6 +184,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <li><a href="#delete">Delete...</a></li>
         <li><a href="#publish">Publish...</a></li>
         <li><a href="#showImage">Show Image</a></li>
+        <li><a href="#showInfo">Show Info...</a></li>
     </ul>
 
     <?php include('inc/footer.php'); ?>
