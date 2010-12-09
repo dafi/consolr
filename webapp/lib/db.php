@@ -244,5 +244,21 @@ class consolr_db {
 
         return $posts;
     }
+
+    static function delete_tags_by_post_id($tumblr_name, $post_id) {
+        $db = consolr_db::connect();
+
+        $tumblr_name = mysql_real_escape_string($tumblr_name);
+        $delete_tags_sql = "delete from CONSOLR_POST_TAG where tumblr_name='%tumblr_name%' AND post_id=%post_id%";
+
+        $query = str_replace('%tumblr_name%', $tumblr_name, $delete_tags_sql);
+        $query = str_replace('%post_id%', $post_id, $query);
+        $result = mysql_query($query, $db);
+        if (!$result) {
+            die('Error while deleting tags: ' . mysql_error());
+        }
+
+        mysql_close($db);
+    }
 }
 ?>

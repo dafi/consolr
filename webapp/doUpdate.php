@@ -1,5 +1,8 @@
 <?php
 require_once 'lib/loginUtils.php';
+require 'inc/dbconfig.php';
+require 'lib/db.php';
+require_once 'lib/tumblr/tumblrUtils.php';
 
 $tumblr = login_utils::get_tumblr();
 if (isset($_POST['postId'])) {
@@ -40,7 +43,12 @@ if (isset($_POST['postId'])) {
             $result = array('status' => '400', 'result' => "Invalid state '" . $state . "'");
             break;
     }
-    if ($result['status'] != "201") {
+    if ($result['status'] == "201") {
+        if ($state == 'p') {
+            consolr_db::delete_tags_by_post_id($tumblr->get_tumblr_name(), $_POST['postId']);
+            tumblr_utils::save_tags_by_post_id($tumblr, $_POST['postId']);
+        }
+    } else {
         header("HTTP/1.x 400 " . $result['result']);
     }
 } else {
