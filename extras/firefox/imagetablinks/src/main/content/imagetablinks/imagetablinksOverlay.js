@@ -42,7 +42,7 @@ if  (typeof (itl) == 'undefined') {
                         links.push(doc.getElementById('imageid').src);
                     } else if (location.hostname.indexOf('picfoco.com') >= 0) {
                         links.push(doc.getElementById('img').src);
-                    } else if (/u-.*\.com/.test(location.hostname)) {
+                    } else if (/u-.*\.com|net$/.test(location.hostname)) {
                         location.href = doc.getElementById('redirectframe').src;
                     }
                 } else {
@@ -65,7 +65,7 @@ if  (typeof (itl) == 'undefined') {
     sendMessageLinks = function(textLinks) {
         var windowManager = Components.classes['@mozilla.org/appshell/window-mediator;1']
             .getService(Components.interfaces.nsIWindowMediator);
-        var e = windowManager.getEnumerator(null);
+        var e = windowManager.getEnumerator("navigator:browser");
         while (e.hasMoreElements()) {
             var win = e.getNext().QueryInterface(Components.interfaces.nsIDOMWindow);
             var tc = win.getBrowser().tabContainer.childNodes;

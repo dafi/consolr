@@ -1,5 +1,5 @@
 <!DOCTYPE extension [
-<!ENTITY extension.version "1.2.1">
+<!ENTITY extension.version "1.2.3">
 ]>
 
 <extension name="imagetablinks">
