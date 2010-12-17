@@ -67,6 +67,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript">
         <!--//
             var consolrPosts = {posts: <?php echo json_encode($tumblr_posts['posts']); ?>};
+            var consolrState = '<?php echo $state?>';
 
             $(function() {
                 consolr.dateProperty = '<?php echo ($state == 'd' ? 'date' : 'publish-on-time') ?>';

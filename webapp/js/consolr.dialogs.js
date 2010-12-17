@@ -269,7 +269,13 @@
                     var post = $(this).dialog('option', 'post');
                     $('#dialog-photo-info .image-links-container a').button().css('width', '100%');
                     $('#dialog-photo-info-postid').html(post.id);
-                    $('#dialog-photo-info-goto-tumblr').attr('href', post['url']);
+                    var url;
+                    if (typeof (consolrState) == 'undefined') {
+                        url = post['url'];
+                    } else {
+                        url = 'http://www.tumblr.com/edit/' + post.id;
+                    }
+                    $('#dialog-photo-info-goto-tumblr').attr('href', url);
 
                     $('#dialog-photo-info-label-75-url').attr('href', post['photo-url-75']);
                     $('#dialog-photo-info-label-100-url').attr('href', post['photo-url-100']);
