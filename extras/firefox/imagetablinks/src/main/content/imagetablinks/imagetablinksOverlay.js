@@ -30,7 +30,8 @@ if  (typeof (itl) == 'undefined') {
                     } else if (location.hostname.indexOf('imagebam.com') >= 0) {
                         var imgs = doc.getElementsByTagName('img');
                         for (var j = 0; j < imgs.length; j++) {
-                            if (imgs[j].getAttribute('src').indexOf('dl.php') > 0) {
+                            var src = imgs[j].getAttribute('src');
+                            if (src.indexOf('dl.php') > 0 || src.indexOf('download.php') > 0) {
                                 links.push(imgs[j].getAttribute('src'));
                                 // get only the first
                                 break;
@@ -44,6 +45,12 @@ if  (typeof (itl) == 'undefined') {
                         links.push(doc.getElementById('img').src);
                     } else if (/u-.*\.com|net$/.test(location.hostname)) {
                         location.href = doc.getElementById('redirectframe').src;
+                    } else if (location.hostname.indexOf('bruce-juice.com') >= 0) {
+                        var img = doc.getElementById('thepic');
+                        // the img is not present on main page
+                        if (img) {
+                            links.push(img.src);
+                        }
                     }
                 } else {
                     links.push(location.href);
