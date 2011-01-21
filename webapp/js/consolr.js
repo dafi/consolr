@@ -452,10 +452,7 @@ if (typeof(consolr) == "undefined") {
 
     this.initLazyImageLoader = function() {
         var showImages = function() {
-            // select all *visible* images without src attribute
-            // selector :visible checks for offsetWidth or offsetHeight greater than 0
-            // but on webkit this isn't true at load time so we check directly the display
-            $('#date-container img[asrc][display!=none]').each(function() {
+                $('.date-image:visible img[asrc]').each(function() {
                 var img = $(this);
                 var top = $(window).scrollTop();
                 var bottom = top + $(window).height();
