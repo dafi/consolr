@@ -260,5 +260,50 @@ class consolr_db {
 
         mysql_close($db);
     }
+
+    /**
+     * @returns an array containing post_id, publish_timestamp, tag
+     * The array i sorted by publish_timestamp
+     */
+    static function get_posts_by_tags($tumblr_name, $tags_array) {
+        $db = consolr_db::connect();
+
+        $tumblr_name = mysql_real_escape_string($tumblr_name);
+        $select_tags_sql = "SELECT distinct post_id, publish_timestamp, tag"
+                            . " FROM CONSOLR_POST_TAG"
+                            . " WHERE tumblr_name='%tumblr_name%'"
+                            . " and (%tags%)"
+                            . " ORDER BY publish_timestamp";
+
+        $posts = array();
+
+        if (count($tags_array)) {
+            $where_clause = '';
+            $sqlOR = " OR ";
+            foreach ($tags_array as $tag) {
+                $where_clause .= "tag = '" . mysql_real_escape_string($tag) . "'" . $sqlOR;
+            }
+            $where_clause = substr($where_clause, 0, strlen($where_clause) - strlen($sqlOR));
+
+            $query = str_replace('%tumblr_name%', $tumblr_name, $select_tags_sql);
+            $query = str_replace('%tags%', $where_clause, $query);
+            $result = mysql_query($query, $db);
+
+            if (!$result) {
+                die('Invalid query: ' . mysql_error());
+            }
+
+            while ($row = mysql_fetch_assoc($result)) {
+                array_push($posts, array('post_id' => $row['post_id'],
+                                        'publish_timestamp' => $row['publish_timestamp'],
+                                        'tag' => $row['tag']));
+            }
+
+            mysql_free_result($result);
+            mysql_close($db);
+        }
+
+        return $posts;
+    }
 }
 ?>

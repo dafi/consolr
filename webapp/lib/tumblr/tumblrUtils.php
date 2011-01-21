@@ -59,5 +59,42 @@ class tumblr_utils {
                                    false,
                                    true);
     }
+
+    static function get_thumbs_html($tumblr, $list, $thumbs_count, $images_per_row) {
+        shuffle($list);
+
+        $count = min($thumbs_count, count($list));
+        $html = '<p>';
+        for ($i = 0; $i < $count; $i++) {
+            $l = $list[$i];
+            $result = $tumblr->get_post_by_id($l['post_id'], true);
+            $map = tumblr_utils::get_json_map($result);
+            if (!empty($map)) {
+                $post = $map['posts'][0];
+    
+                $html .= '<a href="' . $post['url'] . '">';
+                $html .= '<img border="0" src="' . $post['photo-url-75'] . '"></img>';
+                $html .= '</a>&nbsp;&nbsp;';
+                if ((($i + 1) % $images_per_row) == 0) {
+                    $html .= '</p><p>';
+                }
+            }
+        }
+        $html .= '</p>';
+
+        return $html;
+    }
+
+    static function get_see_more_html($tumblr, $title, $tags, $thumbs_count, $images_per_row) {
+        $list = consolr_db::get_posts_by_tags($tumblr->get_tumblr_name(), $tags);
+        $content = '';
+    
+        if (count($list)) {
+            $content = $title;
+            $content .= tumblr_utils::get_thumbs_html($tumblr, $list, $thumbs_count, $images_per_row);
+        }
+    
+        return $content;
+    }
 }
 ?>

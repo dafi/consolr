@@ -1,6 +1,8 @@
 <?php
 require_once 'lib/loginUtils.php';
 require_once 'lib/tumblr/tumblrUtils.php';
+require_once 'inc/dbconfig.php';
+require_once 'lib/db.php';
 
 define("CONSOLR_UPLOAD_OK", 0);
 define("CONSOLR_UPLOAD_ERR_URL_MANDATORY", 1);
@@ -61,6 +63,17 @@ $caption = $_POST['caption'];
 $date = $_POST['date'];
 $tags = $_POST['tags'];
 $state = $_POST['state'];
+
+// do not add here but on doPublish so the selection can contain more photos
+$addSeeMore = false;
+
+if ($addSeeMore) {
+    $title = '<p>&nbsp;</p><p><strong>See More</strong></p>';
+    $see_more_tags = explode(",", $tags);
+    // use only the first tag
+    $see_more_tags = array($see_more_tags[0]);
+    $caption .= tumblr_utils::get_see_more_html($tumblr, $title, $see_more_tags, 3, 3);
+}
 
 if ($state == "queue") {
     $results = queue_photo_by_url($url, $caption, $date, $tags, $tumblr);

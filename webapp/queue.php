@@ -42,10 +42,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
 
-        <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
-
         <link type="text/css" href="css/consolr.css" rel="stylesheet"/>
         <link type="text/css" href="css/dialogs.css" rel="stylesheet"/>
+        <link type="text/css" href="css/consolr/jquery-ui.css" rel="stylesheet" />
         <link type="text/css" href="css/contextMenus.css" rel="stylesheet"/>
 
         <script type="text/javascript" src="js/jquery.js"></script>
