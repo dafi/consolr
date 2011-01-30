@@ -4,8 +4,17 @@ javascript:window.addEventListener('keydown', function(event) {
     if (!isValidKey) {
         return;
     }
-    var currentEntry = document.getElementById('current-entry');
     var title = document.querySelector('#current-entry .entry-title-link').firstChild.nodeValue;
+
+    // add items to starred, starred is null if it's already starred    
+    var starred = document.querySelector('#current-entry .item-star');
+    if (starred) {
+        var evt = document.createEvent("MouseEvents");
+        evt.initMouseEvent("click", true, true, window,
+                            0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        starred.dispatchEvent(evt);
+    }
+
     var tag = document.querySelector('#current-entry .entry-tagging-action-title');
     var evt = document.createEvent("MouseEvents");
     evt.initMouseEvent("click", true, true, window,
