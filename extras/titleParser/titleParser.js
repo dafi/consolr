@@ -35,6 +35,7 @@ var consolrTitleParser = {};
     cities['L.A.'] = 'Los Angeles';
     cities['NY'] = 'New York';
     cities['N.Y.'] = 'New York';
+    cities['NYC'] = 'New York City';
 
     /**
      * Fill parseInfo with day, month, year, matched
@@ -85,6 +86,12 @@ var consolrTitleParser = {};
         parseInfo.where_loc = '***';
         parseInfo.where_city = '***';
 
+        title = title.replace('\u2013', '-')
+                    .replace('\u2018', '\'')
+                    .replace('\u2019', '\'')
+                    .replace('\u201D', '"')
+                    .replace('í', 'i');
+
         var m = title.match(titleRE);
         var start = 0;
         if (m && m[1]) {
@@ -93,7 +100,7 @@ var consolrTitleParser = {};
         }
         parseDate(title, parseInfo);
         var loc = parseInfo.matched ? title.substring(start, parseInfo.matched.index) : title.substring(start);
-        m = loc.match(/(.*?)\s+in\s+([a-z. ]*)/i);
+        m = loc.match(/\s*(.*?)\s+in\s+([a-z. ]*)/i);
         if (m && m[1]) {
             parseInfo.where_loc = m[1];
             parseInfo.where_city = cities[m[2].toUpperCase()];
@@ -125,7 +132,7 @@ var consolrTitleParser = {};
         var parseInfo = {};
         var title = url.value.replace(/(\r\n|\r|\n)+/g, "");
         caption.value = this.parseTitle(title, parseInfo);
-        tags.value = parseInfo.who + ',' + parseInfo.where_loc;
+        tags.value = parseInfo.who + ', ' + parseInfo.where_loc.replace(/[0-9]*/, '');
     };
 }).apply(consolrTitleParser);
 consolrTitleParser.fill();

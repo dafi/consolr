@@ -2,10 +2,8 @@
 <html>
     <head>
         <title>Title Parser</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <style type="text/css">
-        .titles {
-            display:none;
-        }
         #result span {
             font-family: monospace;
             margin-right: 2em;
@@ -15,36 +13,43 @@
             display: inline;
             color: red;
         }
-        
+
         .odd {
             background-color: #ccc;
         }
         </style>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+        <script type="text/javascript" src="../../webapp/js/jquery.js"></script>
         <script type="text/javascript" src="titleParser.js"></script>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <script type="text/javascript">
         $(function() {
-            var titles = $('.titles').text().split('\n');
-            var html = '<ol>';
-            for (var i in titles) {
-                var title = titles[i];
-                var parseInfo = {};
-                var result = consolrTitleParser.parseTitle(title, parseInfo);
-                html += '<li>';
-                html += '<span>' + title + '</span><br/>' + result + '<br/>';
-                html += '<span>Tags:' + parseInfo.who + ',' + parseInfo.where_loc + '</span>' + '<br/>';
-                html +=  '</li>';
-            }
-            html += '</ol>';
-            $('#result').append(html);
-            $('li:odd').addClass('odd');
+            $.ajax({
+                type: "GET",
+                url: "titles.txt",
+                dataType: "text",
+                success: function(text) {
+                    // Name separators (start from begin): - – | ~ @
+                    // Date separators (start from end): , on - – (
+
+                    var titles = text.split('\n');
+                    var html = '<ol>';
+                    for (var i in titles) {
+                        var title = titles[i];
+                        var parseInfo = {};
+                        var result = consolrTitleParser.parseTitle(title, parseInfo);
+                        html += '<li>';
+                        html += '<span>' + title + '</span><br/>' + result + '<br/>';
+                        html += '<span>Tags:' + parseInfo.who + ',' + parseInfo.where_loc + '</span>' + '<br/>';
+                        html +=  '</li>';
+                    }
+                    html += '</ol>';
+                    $('#result').append(html);
+                    $('li:odd').addClass('odd');
+                }
+            });
         });
         </script>
     </head>
     <body>
         <div id="result"></div>
-        <pre class="titles">
-        </pre>
     </body>
 </html>
