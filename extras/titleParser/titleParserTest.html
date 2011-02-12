@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Title decoder</title>
+        <title>Title Parser</title>
         <style type="text/css">
-        .titles1 {
+        .titles {
             display:none;
         }
         #result span {
@@ -21,7 +21,7 @@
         }
         </style>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
-        <script type="text/javascript" src="../extras/titleParser/titleParser.js"></script>
+        <script type="text/javascript" src="titleParser.js"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <script type="text/javascript">
         $(function() {
@@ -34,7 +34,6 @@
                 html += '<li>';
                 html += '<span>' + title + '</span><br/>' + result + '<br/>';
                 html += '<span>Tags:' + parseInfo.who + ',' + parseInfo.where_loc + '</span>' + '<br/>';
-                //$('#result').append('<span>' + i + ': ' + loc + '</span>' + result + '<br/>');
                 html +=  '</li>';
             }
             html += '</ol>';
