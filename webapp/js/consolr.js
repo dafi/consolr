@@ -202,7 +202,7 @@ if (typeof(consolr) == "undefined") {
         for (var i in posts) {
             var post = posts[i];
 
-            if (post.id === postId) {
+            if (post.id == postId) {
                 var publishDate = new Date(params.publishDate);
                 var currPostDate = post['consolr-date'];
 
