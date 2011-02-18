@@ -108,7 +108,7 @@ var consolrTitleParser = {};
                 parseInfo.where_city = m[2];
             }
         } else {
-            parseInfo.where_loc = loc;
+            parseInfo.where_loc = loc.replace(/^\s+/, '').replace(/\s+$/, '');
         }
         var when = '';
         if (!isNaN(parseInfo.day)) {
@@ -132,7 +132,7 @@ var consolrTitleParser = {};
         var parseInfo = {};
         var title = url.value.replace(/(\r\n|\r|\n)+/g, "");
         caption.value = this.parseTitle(title, parseInfo);
-        tags.value = parseInfo.who + ', ' + parseInfo.where_loc.replace(/[0-9]*/, '');
+        tags.value = parseInfo.who + ', ' + parseInfo.where_loc.replace(/[0-9]*|"/, '').replace(/"|'/g, '');
     };
 }).apply(consolrTitleParser);
 consolrTitleParser.fill();
