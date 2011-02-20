@@ -7,12 +7,55 @@ if  (typeof (itl) == 'undefined') {
 }
 
 (function() {
+    var defaultImgRules = [
+        ['imagevenue\\.com', '#thepic'],
+        ['imagebam\\.com', 'img[src*="dl.php"]'],
+        ['imagebam\\.com', 'img[src*="download.php"]'],
+        ['kosty555\\.pp\\.ru', '#img_obj'],
+        ['turboimagehost\\.com', '#imageid'],
+        ['picfoco\\.com', '#img'],
+        ['u-.*\\.com|net$', '#redirectframe'],
+        ['bruce-juice\\.com', '#thepic'],
+        ['bruce-juice\\.com', '#main > div[align=center] img']
+    ];
+
+    function getImageUrl(doc, hostname, imgRules) {
+        for (var i in imgRules) {
+            var imgRule = imgRules[i];
+            var reHostname = new RegExp(imgRule[0]);
+            var img;
+
+            if (reHostname.test(hostname) && (img = doc.querySelector(imgRule[1]))) {
+                return img.src;
+            }
+        }
+        return null;
+    }
+
+    function loadImgRules() {
+        var prefBranch = Components.classes["@mozilla.org/preferences-service;1"]
+                .getService(Components.interfaces.nsIPrefService)
+                .getBranch("imagetablinks.");
+        if (prefBranch.prefHasUserValue('imgRulesUrl')) {
+            var url = prefBranch.getCharPref('imgRulesUrl');
+            var httpReq = new XMLHttpRequest();
+            httpReq.open("GET", url, false);
+            httpReq.send(null);
+            return JSON.parse(httpReq.responseText);
+        } else {
+            return defaultImgRules;
+        }
+    }
+
     this.copyLinks = function(onlyImages) {
         var windowManager = Components.classes['@mozilla.org/appshell/window-mediator;1']
             .getService(Components.interfaces.nsIWindowMediator);
         var links = [];
         var openWindow = windowManager.getMostRecentWindow("navigator:browser");
+
         try {
+            var imgRules = loadImgRules();
+
             var tc = openWindow.getBrowser().tabContainer.childNodes;
             for (var i = 0; i < tc.length; i++) {
                 var tab = tc[i];
@@ -24,32 +67,10 @@ if  (typeof (itl) == 'undefined') {
 
                     if (doc.contentType.indexOf("image/") == 0) {
                         links.push(location.href);
-                    } else if (location.hostname.indexOf('imagevenue.com') >= 0) {
-                        //location.reload(true);
-                        links.push(doc.getElementById('thepic').src);
-                    } else if (location.hostname.indexOf('imagebam.com') >= 0) {
-                        var imgs = doc.getElementsByTagName('img');
-                        for (var j = 0; j < imgs.length; j++) {
-                            var src = imgs[j].getAttribute('src');
-                            if (src.indexOf('dl.php') > 0 || src.indexOf('download.php') > 0) {
-                                links.push(imgs[j].getAttribute('src'));
-                                // get only the first
-                                break;
-                            }
-                        }
-                    } else if (location.hostname.indexOf('kosty555.pp.ru') >= 0) {
-                        links.push(doc.getElementById('img_obj').src);
-                    } else if (location.hostname.indexOf('turboimagehost.com') >= 0) {
-                        links.push(doc.getElementById('imageid').src);
-                    } else if (location.hostname.indexOf('picfoco.com') >= 0) {
-                        links.push(doc.getElementById('img').src);
-                    } else if (/u-.*\.com|net$/.test(location.hostname)) {
-                        location.href = doc.getElementById('redirectframe').src;
-                    } else if (location.hostname.indexOf('bruce-juice.com') >= 0) {
-                        var img = doc.getElementById('thepic');
-                        // the img is not present on main page
-                        if (img) {
-                            links.push(img.src);
+                    } else {
+                        var imgUrl = getImageUrl(doc, location.hostname, imgRules);
+                        if (imgUrl) {
+                            links.push(imgUrl);
                         }
                     }
                 } else {
