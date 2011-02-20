@@ -29,16 +29,16 @@
                 success: function(text) {
                     // Name separators (start from begin): - – | ~ @
                     // Date separators (start from end): , on - – (
-
-                    var titles = text.split('\n');
+                    var titles = text.replace(/\n{2,}/g, '\n').split('\n');
                     var html = '<ol>';
                     for (var i in titles) {
                         var title = titles[i];
                         var parseInfo = {};
                         var result = consolrTitleParser.parseTitle(title, parseInfo);
+
                         html += '<li>';
                         html += '<span>' + title + '</span><br/>' + result + '<br/>';
-                        html += '<span>Tags:' + parseInfo.who + ',' + parseInfo.where_loc + '</span>' + '<br/>';
+                        html += '<span>Tags:' + parseInfo.tags + '</span>' + '<br/>';
                         html +=  '</li>';
                     }
                     html += '</ol>';
