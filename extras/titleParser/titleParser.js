@@ -111,7 +111,7 @@ var consolrTitleParser = {};
         }
         parseDate(title, parseInfo);
         var loc = parseInfo.matched ? title.substring(start, parseInfo.matched.index) : title.substring(start);
-        m = loc.match(/\s*(.*?)\s+in\s+([a-z. ]*)/i);
+        m = loc.match(/\s*(.*?)\s+in\s+([a-z.]*)/i);
         if (m && m[1]) {
             parseInfo.where_loc = m[1];
             parseInfo.where_city = cities[m[2].toUpperCase()];
