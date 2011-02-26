@@ -22,10 +22,22 @@
                 caption = $.cropText(caption || post['photo-caption'], config.captionMaxChars);
 
                 var tags = post['tags'] ? $.cropText(post['tags'].join(", "), config.tagsMaxChars) : "";
+                var tagPublishDaysAgo;
+                $.ajax({
+                    url: "doTagsPublishDate.php",
+                    data: {
+                        tags: post['tags'].join(","),
+                        tumblrName: tumblrName
+                    },
+                    success: function(html) {
+                        tagPublishDaysAgo = html;
+                    },
+                    async: false
+                });
 
                 return $("<div>"
                          + "<span class='tooltip-caption'>" + caption + "</span>"
-                         + "<span class='tooltip-tags'>" + tags + "</span>"
+                         + "<span class='tooltip-tags'>" + tagPublishDaysAgo + "</span>"
                          + "</div>").html();
             },
             showURL: false

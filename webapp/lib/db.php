@@ -263,7 +263,7 @@ class consolr_db {
 
     /**
      * @returns an array containing post_id, publish_timestamp, tag
-     * The array i sorted by publish_timestamp
+     * The array is sorted by publish_timestamp
      */
     static function get_posts_by_tags($tumblr_name, $tags_array) {
         $db = consolr_db::connect();
@@ -288,6 +288,46 @@ class consolr_db {
             $query = str_replace('%tumblr_name%', $tumblr_name, $select_tags_sql);
             $query = str_replace('%tags%', $where_clause, $query);
             $result = mysql_query($query, $db);
+
+            if (!$result) {
+                die('Invalid query: ' . mysql_error());
+            }
+
+            while ($row = mysql_fetch_assoc($result)) {
+                array_push($posts, array('post_id' => $row['post_id'],
+                                        'publish_timestamp' => $row['publish_timestamp'],
+                                        'tag' => $row['tag']));
+            }
+
+            mysql_free_result($result);
+            mysql_close($db);
+        }
+
+        return $posts;
+    }
+
+    static function get_last_published_posts_by_tag($tumblr_name, $tags_array) {
+        $db = consolr_db::connect();
+
+        $tumblr_name = mysql_real_escape_string($tumblr_name);
+        $select_tags_sql = "(SELECT post_id, publish_timestamp, tag"
+                            . " FROM CONSOLR_POST_TAG t"
+                            . " WHERE tumblr_name='%tumblr_name%'"
+                            . " AND t.tag='%tag_name%'"
+                            . " ORDER BY publish_timestamp desc limit 1)";
+
+        $posts = array();
+
+        if (count($tags_array)) {
+            $queries = array();
+            foreach ($tags_array as $tag) {
+                $query = str_replace('%tumblr_name%', $tumblr_name, $select_tags_sql);
+                $query = str_replace('%tag_name%', mysql_real_escape_string($tag), $query);
+                array_push($queries, $query);
+            }
+
+            $union_query = implode(" UNION ", $queries);
+            $result = mysql_query($union_query, $db);
 
             if (!$result) {
                 die('Invalid query: ' . mysql_error());
