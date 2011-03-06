@@ -111,12 +111,14 @@ var consolrTitleParser = {};
         }
         parseDate(title, parseInfo);
         var loc = parseInfo.matched ? title.substring(start, parseInfo.matched.index) : title.substring(start);
-        m = loc.match(/\s*(.*?)\s+in\s+([a-z.]*)/i);
+        // city names can be multi words so allow whitespaces
+        m = loc.match(/\s*(.*?)\s+in\s+([a-z. ]*)/i);
         if (m && m[1]) {
             parseInfo.where_loc = m[1];
-            parseInfo.where_city = cities[m[2].toUpperCase()];
+            var city = trim(m[2]);
+            parseInfo.where_city = cities[city.toUpperCase()];
             if (typeof(parseInfo.where_city) == 'undefined') {
-                parseInfo.where_city = m[2];
+                parseInfo.where_city = city;
             }
         } else {
             parseInfo.where_loc = loc;
