@@ -61,14 +61,21 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     return;
                 }
                 $('#search-form').submit(function() {
-                    consolr.setMessageText("Reading...");
-                    $("#message-progress-container").show();
                     var tags = tagList.val();
                     var postsToGet = parseInt($('#postsToGet').val(), 10);
                     if (isNaN(postsToGet) || postsToGet <= 0) {
                         postsToGet = null;
                     }
-                
+
+                    if (!tags && !postsToGet) {
+                        if (!confirm("Reading all posts can take a long time, are you sure?")) {
+                        return;
+                        }
+                    }
+
+                    consolr.setMessageText("Reading...");
+                    $("#message-progress-container").show();
+
                     consolr.readPublicPhotoPosts(apiUrl, {
                         start : 0,
                         posts : [],
