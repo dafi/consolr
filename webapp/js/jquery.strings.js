@@ -63,10 +63,12 @@
         var coreValFunction = this.val;
         this.val = function(value) {
             // this behavior changed on JQuery 1.4.3
+            var text = '';
             if (value === undefined) {
-                return "";
+                text = $.proxy(coreValFunction, this)();
+            } else {
+                text = $.proxy(coreValFunction, this)(value);
             }
-            var text = $.proxy(coreValFunction, this)(value);
             if (text == config.blurMessage) {
                 this.addClass(config.blurClass).removeClass(config.focusClass);
                 return '';
