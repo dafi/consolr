@@ -7,5 +7,6 @@
  ["u-.*\\.com|net$","#redirectframe"],
  ["bruce-juice\\.com","#thepic"],
  ["bruce-juice\\.com","#main > div[align=center] img"],
+ ["bruce-juice\\.com","img[name=\"TheImage\"]"],
  ["www.hotcelebshome\\.com","#thepic"]
 ]
