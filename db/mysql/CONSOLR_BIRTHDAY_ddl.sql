@@ -2,5 +2,6 @@ CREATE TABLE IF NOT EXISTS CONSOLR_BIRTHDAY (
   id int(11) NOT NULL AUTO_INCREMENT,
   name varchar(255) NOT NULL,
   birth_date date DEFAULT NULL,
+  tumblr_name VARCHAR( 255 ) NOT NULL ,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB;
