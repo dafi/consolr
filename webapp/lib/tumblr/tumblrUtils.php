@@ -60,8 +60,10 @@ class tumblr_utils {
                                    true);
     }
 
-    static function get_thumbs_html($tumblr, $list, $thumbs_count, $images_per_row) {
-        shuffle($list);
+    static function get_thumbs_html($tumblr, $list, $thumbs_count, $images_per_row, $shuffle_list = true, $photo_url_size = 'photo-url-75') {
+        if ($shuffle_list) {
+            shuffle($list);
+        }
 
         $count = min($thumbs_count, count($list));
         $html = '<p>';
@@ -73,7 +75,7 @@ class tumblr_utils {
                 $post = $map['posts'][0];
     
                 $html .= '<a href="' . $post['url'] . '">';
-                $html .= '<img border="0" src="' . $post['photo-url-75'] . '"></img>';
+                $html .= '<img border="0" src="' . $post[$photo_url_size] . '"></img>';
                 $html .= '</a>&nbsp;&nbsp;';
                 if ((($i + 1) % $images_per_row) == 0) {
                     $html .= '</p><p>';
