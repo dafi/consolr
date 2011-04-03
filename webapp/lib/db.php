@@ -346,16 +346,18 @@ class consolr_db {
         return $posts;
     }
 
-    static function get_birth_days($time) {
+    static function get_birth_days($tumblr_name, $time) {
         $db = consolr_db::connect();
 
         $select_tags_sql = "SELECT * FROM CONSOLR_BIRTHDAY"
                         . " where date_format(birth_date, '%m%d') = date_format(%time%, '%m%d')"
+                        . " and tumblr_name='%tumblr_name%'"
                         . " order by date_format(birth_date, '%m%d')";
 
         $birth_days = array();
 
-        $query = str_replace('%time%', strftime("%m%d", $time), $select_tags_sql);
+        $query = str_replace('%tumblr_name%', $tumblr_name, $select_tags_sql);
+        $query = str_replace('%time%', strftime("%m%d", $time), $query);
         $result = mysql_query($query, $db);
 
         if (!$result) {

@@ -17,7 +17,7 @@ if (login_utils::is_logged()) {
 
     $time = time(); //mktime(0, 0, 0, 4, 3, 2011);
 
-    $birth_days = consolr_db::get_birth_days($time);
+    $birth_days = consolr_db::get_birth_days($tumblr->get_tumblr_name(), $time);
     $html = '';
 
     $create_post = isset($_GET['create']);

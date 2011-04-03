@@ -20,29 +20,6 @@ function get_title($from, $to) {
         . ")";
 }
 
-function get_thumbs_html($tumblr, $list, $thumbs_count, $images_per_row) {
-    shuffle($list);
-    $count = min($thumbs_count, count($list));
-    $html = '<p>A little selection of the ' . count($list) . ' photos published last week</p>';
-    $html .= '<p>';
-    for ($i = 0; $i < $count; $i++) {
-        $l = $list[$i];
-        $result = $tumblr->get_post_by_id($l['post_id'], true);
-        $map = tumblr_utils::get_json_map($result);
-        $post = $map['posts'][0];
-    
-        $html .= '<a href="' . $post['url'] . '">';
-        $html .= '<img border="0" src="' . $post['photo-url-75'] . '"></img>';
-        $html .= '</a>&nbsp;&nbsp;';
-        if ((($i + 1) % $images_per_row) == 0) {
-            $html .= '</p><p>';
-        }
-    }
-    $html .= '</p>';
-    
-    return $html;
-}
-
 if (login_utils::is_logged()) {
     //echo preg_replace("/.*(\\.)+(.*)/", "en_US$1$2", "it_IT");
     //echo  "<br/>";
@@ -54,14 +31,19 @@ if (login_utils::is_logged()) {
 
     $list = consolr_db::get_posts_by_publish_range($tumblr->get_tumblr_name(),
                                $last_monday, $last_sunday);
+    if (!count($list)) {
+        echo "<p>No items found</p>";
+        return;
+    }
     $title = get_title($last_monday, $last_sunday);
-    $body = get_thumbs_html($tumblr, $list, MAX_THUMBS_PER_DIGEST, MAX_THUMBS_PER_ROW);
+    $body = '<p>A little selection of the ' . count($list) . ' photos published last week</p>';
+    $body .= tumblr_utils::get_thumbs_html($tumblr, $list, MAX_THUMBS_PER_DIGEST, MAX_THUMBS_PER_ROW);
     $tags = "Weekly Digest";
 
     echo "Count " . count($list);
     echo  "<br/>";
     echo "id " . $list[0]['post_id'] . " " . strftime("%A %d %b %H:%M:%S", $list[0]['publish_timestamp'])
-         . "id " . $list[count($list) - 1]['post_id'] . " " . strftime(" - %A %d %b %H:%M:%S", $list[count($list) - 1]['publish_timestamp']);
+         . " id " . $list[count($list) - 1]['post_id'] . " " . strftime(" - %A %d %b %H:%M:%S", $list[count($list) - 1]['publish_timestamp']);
     echo  "<br/>";
     echo "Range $last_monday - $last_sunday";
     echo  "<br/>";
