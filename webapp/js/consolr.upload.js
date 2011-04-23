@@ -203,6 +203,7 @@ if (typeof(consolr.upload) == "undefined") {
                     $.formatString(msgLastUploadFailed, msgArgs));
                 $('#tabs').tabs('select', 1);
             }
+            $('#url').focus();
             window.document.title = msgTitle;
         } else {
             $('#upload-status').html(
