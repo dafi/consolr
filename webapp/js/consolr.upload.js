@@ -66,7 +66,14 @@ if (typeof(consolr.upload) == "undefined") {
                 // disable so validator ignores it
                 $('#date').attr('disabled', 'true');
             }
+            $.cookie('lastUsedState', this.value, {
+                expires: 365}
+            );
         });
+        var lastUsedState = $.cookie('lastUsedState');
+        if (lastUsedState) {
+            $('#state').val(lastUsedState).trigger('change');
+        }
 
         $('#clear-fields').click(function() {
             $('#url').val('').focus();
