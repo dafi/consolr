@@ -7,15 +7,19 @@ require 'lib/db.php';
 define('MAX_THUMBS_PER_DIGEST', 1);
 define('MAX_THUMBS_PER_ROW', 1);
 
-function get_title($name) {
-    return $name . " Happy Birthday!!";
+function get_title($b) {
+    $birth_arr = explode('-', $b['birth_date']);
+    $now_arr = getdate();
+    $years = $now_arr['year'] - $birth_arr[0];
+    return " Happy " . $years . "th Birthday, " . $b['name'] . "!!";
 }
 
 if (login_utils::is_logged()) {
     setlocale(LC_TIME, 'en_US.utf8');
     $tumblr = login_utils::get_tumblr();
 
-    $time = time(); //mktime(0, 0, 0, 4, 3, 2011);
+    $time = time();
+    //mktime(0, 0, 0, 4, 9, 2011);
 
     $birth_days = consolr_db::get_birth_days($tumblr->get_tumblr_name(), $time);
     $html = '';
@@ -23,7 +27,7 @@ if (login_utils::is_logged()) {
     $create_post = isset($_GET['create']);
     if (count($birth_days)) {
         foreach ($birth_days as $b) {
-            $title = get_title($b['name']);
+            $title = get_title($b);
             $list = consolr_db::get_posts_by_tags($tumblr->get_tumblr_name(), array($b['name']));
             $body = '<p style="font-size:18pt;">' . $b['name'] . ' we wish you a cheerful birthday</p>';
             $body .= '<img src="http://27.media.tumblr.com/tumblr_lj0pzqS8xX1qa5bxzo1_250.png"></img>';
