@@ -21,7 +21,7 @@ javascript:window.addEventListener('keydown', function(event) {
                         0, 0, 0, 0, 0, false, false, false, false, 0, null);
     tag.dispatchEvent(evt);
     setTimeout(function() {
-        var titleRE = /^(.*?)\s([-\u2013|~@]|attends|arrives)/;
+        var titleRE = /^(.*?)\s([-\u2013|~@]|attends|arrives|signs)/;
         var m = title.match(titleRE);
         if (m && m[1]) {
             title = m[1];
