@@ -85,6 +85,15 @@ function extract_info($tumblr) {
         background-color: #aaa;
         display: none;
     }
+    
+    .separator-container {
+        margin-top: 20px;
+    }
+    
+    .separator-container span {
+        font-size: 1.4em;
+        font-weight: bold;
+    }
     </style>
     <script type="text/javascript">
     <?php
@@ -114,6 +123,7 @@ function extract_info($tumblr) {
 
         var arr = [];
         var tagsCount = 0;
+        var separator = '';
         for (var i in map) {
             var items = map[i];
             var title = i;
@@ -126,14 +136,22 @@ function extract_info($tumblr) {
             }
             div += "</div>";
             
+            var firstLetter = title[0].toUpperCase();
+            var html = '';
+            if (separator != firstLetter) {
+                arr.push('<div class="separator-container"><span>' + firstLetter + '</span><hr/>');
+                separator = firstLetter;
+            }
             arr.push('<a target="_blank" href="' + tagUrl + '">' + title + "</a>"
                      + '<a class="item-links" href="javascript:void(0)">&nbsp(' + items.length + ')</a>'
-                     + div);
+                     + div
+                     + '<br/>');
             ++tagsCount;
+            arr.push('</div>');
         }
         $('body').append(
         "<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>"
-        + arr.join('<br/>'));
+        + arr.join(''));
         $('.item-links').click(function() {
            $(this).next().toggle();
         });
