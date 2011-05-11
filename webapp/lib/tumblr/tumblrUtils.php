@@ -51,8 +51,9 @@ class tumblr_utils {
         
         $ts = $post['unix-timestamp'];
         $tags_map = array();
+        $showOrder = 1;
         foreach ($post['tags'] as $tag) {
-            $tags_map[$tag] = array(array('id' => $post_id, 'ts' => $ts));
+            $tags_map[$tag] = array(array('id' => $post_id, 'ts' => $ts, 'so' => $showOrder++));
         }
         consolr_db::save_tags_list($tumblr->get_tumblr_name(),
                                    $tags_map,

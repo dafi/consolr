@@ -51,7 +51,7 @@ class consolr_db {
 
         $tumblr_name = mysql_real_escape_string($tumblr_name);
         $delete_tags_sql = "delete from CONSOLR_POST_TAG where tumblr_name='%tumblr_name%'";
-        $insert_tags_sql = "insert %ignore% into CONSOLR_POST_TAG (TUMBLR_NAME, POST_ID, TAG, PUBLISH_TIMESTAMP) values ('%tumblr_name%', %post_id%, '%tag%', %ts%)";
+        $insert_tags_sql = "insert %ignore% into CONSOLR_POST_TAG (TUMBLR_NAME, POST_ID, TAG, PUBLISH_TIMESTAMP, SHOW_ORDER) values ('%tumblr_name%', %post_id%, '%tag%', %ts%, %show_order%)";
         $insert_tags_sql = str_replace('%ignore%', $continue_if_exists ? 'IGNORE' : '', $insert_tags_sql);
 
         if ($delete_tags) {
@@ -68,6 +68,7 @@ class consolr_db {
                 $query = str_replace('%post_id%', $post['id'], $query);
                 $query = str_replace('%tag%', mysql_real_escape_string($tags), $query);
                 $query = str_replace('%ts%', $post['ts'], $query);
+                $query = str_replace('%show_order%', $post['so'], $query);
 
                 $result = mysql_query($query, $db);
 

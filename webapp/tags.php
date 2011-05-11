@@ -37,6 +37,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         start : 0,
                         //type: '',
                         posts : [],
+                        //postsToGet: 200,
                         progress : function(data, posts) {
                             var msg = $.formatString(msgTitleProgress, {
                                 c: posts.length,
@@ -98,16 +99,17 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     var post = posts[i];
                     var tags = post.tags;
 
+                    var showOrder = 1;
                     for (var j in tags) {
                         var tag = tags[j];
 
                         if (typeof (tagsMap[tag]) == 'undefined') {
-                            tagsMap[tag] = [{id: post.id, ts: post['unix-timestamp']}];
+                            tagsMap[tag] = [{id: post.id, ts: post['unix-timestamp'], so: showOrder++}];
                         } else {
                             if (tagsMap[tag].indexOf(post.id) >= 0) {
                                 if (window.console) console.error('Found duplicated tag "' + tag + '" for post ' + post.id);
                             } else {
-                                tagsMap[tag].push({id: post.id, ts: post['unix-timestamp']});
+                                tagsMap[tag].push({id: post.id, ts: post['unix-timestamp'], so: showOrder++});
                             }
                         }
                     }
