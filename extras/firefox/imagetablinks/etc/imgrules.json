@@ -1,6 +1,7 @@
 [["imagevenue\\.com","#thepic"],
  ["imagebam\\.com","img[src*=\"dl.php\"]"],
  ["imagebam\\.com","img[src*=\"download.php\"]"],
+ ["imagebam\\.com","img[onclick]"],
  ["kosty555\\.pp\\.ru","#img_obj"],
  ["turboimagehost\\.com","#imageid"],
  ["picfoco\\.com","#img"],
