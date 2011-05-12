@@ -39,7 +39,7 @@ function extract_info($tumblr) {
             $ts = $e->attributes->getNamedItem('crawl-timestamp-msec')->nodeValue;
             $title = $xpath->query('f:title', $e)->item(0)->nodeValue;
             $link = $xpath->query('f:link', $e)->item(0)->attributes->getNamedItem('href')->nodeValue;
-            array_push($arr,  array('title' => $title, 'link' => $link, 'ts' => $ts));
+            array_push($arr,  array('title' => $title, 'link' => $link, 'ts' => strftime('%Y-%m-%d', $ts / 1000)));
         }
     }
     return $arr;
@@ -99,16 +99,23 @@ function extract_info($tumblr) {
     <?php
         echo 'var starred = ' . json_encode(extract_info($tumblr)) . ';';
     ?>
-    $(function() {
+    function appendItems(sortByTitle) {
+        if (sortByTitle) {
+            starred.sort(function(a, b) {
+                return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+            });
+        } else {
+            starred.sort(function(a, b) {
+                return a.ts < b.ts;
+            });
+        }
+
         var titleRE = /^(.*?)\s([-\u2013|~@]|attends|arrives|signs)/;
-        starred.sort(function(a, b) {
-            return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-        });
         var map = {};
 
         for (var i in starred) {
             var item = starred[i];
-            var title = item.title;
+            var title = sortByTitle ? item.title : item.ts;
             var m = title.match(titleRE);
             if (m && m[1]) {
                 title = m[1];
@@ -136,7 +143,7 @@ function extract_info($tumblr) {
             }
             div += "</div>";
             
-            var firstLetter = title[0].toUpperCase();
+            var firstLetter = sortByTitle ? title[0].toUpperCase() : title;
             var html = '';
             if (separator != firstLetter) {
                 arr.push('<div class="separator-container"><span>' + firstLetter + '</span><hr/>');
@@ -149,12 +156,25 @@ function extract_info($tumblr) {
             ++tagsCount;
             arr.push('</div>');
         }
-        $('body').append(
-        "<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>"
-        + arr.join(''));
+        $('.main-container')
+            .empty()
+            .append(arr.join(''));
         $('.item-links').click(function() {
            $(this).next().toggle();
         });
+        return tagsCount;
+    }
+    $(function() {
+        $("#toolbar button, input[type=submit]").button();
+        $("#sort-by-title").click(function() {
+            appendItems(true);
+        });
+        $("#sort-by-time").click(function() {
+            appendItems(false);
+        });
+
+        var tagsCount = appendItems(true);
+        $('.items-count').append("<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>");
     });
     </script>
 </head>
@@ -164,5 +184,13 @@ function extract_info($tumblr) {
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
+        <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
+            <button id="sort-by-title">Sort by Title</button>
+            <button id="sort-by-time">Sort by Time</button>
+        </div>
+        <div class="items-count">
+        </div>
+        <div class="main-container">
+        </div>
     </body>
 </html>
