@@ -9,5 +9,6 @@
  ["bruce-juice\\.com","#thepic"],
  ["bruce-juice\\.com","#main > div[align=center] img"],
  ["bruce-juice\\.com","img[name=\"TheImage\"]"],
- ["www.hotcelebshome\\.com","#thepic"]
+ ["www.hotcelebshome\\.com","#thepic"],
+ ["x05.org", "#img_obj"]
 ]
