@@ -138,6 +138,7 @@ function extract_info($tumblr) {
 
             var div = '<div class="links-container">';
             for (var l in items) {
+                div += items[l].ts + '&nbsp;';
                 div += '<a target="_blank" href="' + items[l].link + '">' + items[l].title + '</a>';
                 div += "<br/>";
             }
