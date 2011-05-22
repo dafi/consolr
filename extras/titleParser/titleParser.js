@@ -54,7 +54,7 @@ var consolrTitleParser = {};
         var yearStr;
 
         // handle dates in the form Jan 10, 2010 or January 10 2010 or Jan 15
-        m = title.match(/\s+\(?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[^0-9]*([0-9]*)[^0-9]*([0-9]*)\)?.*$/i);
+        m = title.match(/[-,]\s+\(?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[^0-9]*([0-9]*)[^0-9]*([0-9]*)\)?.*$/i);
         if (m && m[1]) {
             day = parseInt(m[2], 10);
             month = monthsShort[m[1].toLowerCase()];
@@ -100,6 +100,7 @@ var consolrTitleParser = {};
         title = title.replace(/\u2013/g, '-')
                     .replace(/\u2018/g, '\'')
                     .replace(/\u2019/g, '\'')
+                    .replace(/\u201C/g, '"')
                     .replace(/\u201D/g, '"')
                     .replace(/í/g, 'i');
 
