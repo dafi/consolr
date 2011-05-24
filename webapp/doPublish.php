@@ -3,13 +3,16 @@ require_once 'lib/loginUtils.php';
 require_once 'lib/tumblr/tumblrUtils.php';
 require_once 'inc/dbconfig.php';
 require_once 'lib/db.php';
+require_once 'lib/fb/fbUtils.php';
 
 $add_see_more = true;
 
 $tumblr = login_utils::get_tumblr();
 if (isset($_POST['postId'])) {
     $params = array();
+    $caption = '';
     if (isset($_POST['caption'])) {
+        $caption = $_POST['caption'];
         if ($add_see_more) {
             $params['caption'] = add_see_more_html($tumblr, $_POST['postId'], $_POST['caption']);
         } else {
@@ -21,10 +24,15 @@ if (isset($_POST['postId'])) {
     }
 
     $result = $tumblr->publish_post($_POST['postId'], $params);
+
     if ($result['status'] == "201") {
         // id changes after publication
         $new_post_id = $result['result'];
-        tumblr_utils::save_tags_by_post_id($tumblr, $new_post_id);
+        $arr = tumblr_utils::get_json_map($tumblr->get_post_by_id($new_post_id, true));
+        $post = $arr['posts'][0];
+
+        tumblr_utils::save_tags_by_post($tumblr, $post);
+        publish_to_facebook($tumblr, $post, $caption);
     } else {
         header("HTTP/1.x 400 " . $result['result']);
     }
@@ -48,4 +56,17 @@ function add_see_more_html($tumblr, $post_id, $caption) {
     return $caption;
 }
 
+function publish_to_facebook($tumblr, $post, $caption) {
+    $fb_user = consolr_db::get_single_setting($tumblr->get_tumblr_name(), 'fb_user');
+    if ($fb_user) {
+        $fb_access_token = consolr_db::get_single_setting($tumblr->get_tumblr_name(), 'fb_access_token');
+        if ($fb_access_token) {
+            fb_utils::simple_publish_photo($fb_user, $fb_access_token, $post, strip_tags($caption));
+            //fb_utils::simple_publish_photo('221887754490283',
+            //                               '104849156271907|39b17ead514e1c4c7f009e94.1-100002406331668|221887754490283|9YJjowac3LlmKenbzErFB-bTJeU',
+            //                               $post,
+            //                               strip_tags($caption));
+        }            
+    }
+}
 ?>

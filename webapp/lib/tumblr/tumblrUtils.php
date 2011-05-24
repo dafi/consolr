@@ -48,10 +48,15 @@ class tumblr_utils {
     static function save_tags_by_post_id($tumblr, $post_id) {
         $arr = tumblr_utils::get_json_map($tumblr->get_post_by_id($post_id, true));
         $post = $arr['posts'][0];
-        
+    
+        tumblr_utils::save_tags_by_post($tumblr, $post);
+    }
+
+    static function save_tags_by_post($tumblr, $post) {
         $ts = $post['unix-timestamp'];
         $tags_map = array();
         $showOrder = 1;
+        $post_id = $post['id'];
         foreach ($post['tags'] as $tag) {
             $tags_map[$tag] = array(array('id' => $post_id, 'ts' => $ts, 'so' => $showOrder++));
         }
