@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="js/options.js"></script>
+    </head>
+    <body onload="options.init();">
+        <div id="main-container">
+        <form onsubmit="return options.save();">
+            <fieldset class="corner">
+                <legend class="corner">Image Tab Links</legend>
+            <label>
+                <span id="label-imgRulesUrl">Image Rules Url</span>
+                <input type="text" value="" id="imgRulesUrl" style="width:350px">
+            </label>
+            <p id="save-box">
+                <input id="save" type="submit" value="Save" class="button corner">
+            </p>
+        </form>
+        </div>
+    </body>
+</html>
