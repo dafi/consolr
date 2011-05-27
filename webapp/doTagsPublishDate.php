@@ -17,7 +17,7 @@ if (isset($_GET['tags']) && isset($_GET['tumblrName'])) {
         $post = null;
 
         foreach ($posts as $p) {
-            if ($p['tag'] == $tag) {
+            if (strcasecmp($p['tag'], $tag) == 0) {
                 $post = $p;
                 break;
             }
