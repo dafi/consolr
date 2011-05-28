@@ -75,6 +75,7 @@ if (login_utils::is_logged()) {
         $(function() {
             $("#toolbar button, input[type=submit]").button();
             $("#publish").click(function() {
+                location = 'birthdays.php?create=1';
             });
         });
         </script>
