@@ -77,7 +77,7 @@ function extract_info($tumblr) {
         font-size: 16px;
         font-weight: bold;
     }
-    a {
+    .main-container a {
         font-size: 14px;
     }
     
@@ -185,6 +185,8 @@ function extract_info($tumblr) {
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
+        <?php if (login_utils::is_logged()) include('inc/menu.php') ?>
+
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
             <button id="sort-by-title">Sort by Title</button>
             <button id="sort-by-time">Sort by Time</button>
@@ -193,5 +195,6 @@ function extract_info($tumblr) {
         </div>
         <div class="main-container">
         </div>
+    <?php include('inc/footer.php'); ?>
     </body>
 </html>
