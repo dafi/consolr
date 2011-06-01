@@ -62,10 +62,6 @@ function publish_to_facebook($tumblr, $post, $caption) {
         $fb_access_token = consolr_db::get_single_setting($tumblr->get_tumblr_name(), 'fb_access_token');
         if ($fb_access_token) {
             fb_utils::simple_publish_photo($fb_user, $fb_access_token, $post, strip_tags($caption));
-            //fb_utils::simple_publish_photo('221887754490283',
-            //                               '104849156271907|39b17ead514e1c4c7f009e94.1-100002406331668|221887754490283|9YJjowac3LlmKenbzErFB-bTJeU',
-            //                               $post,
-            //                               strip_tags($caption));
         }            
     }
 }
