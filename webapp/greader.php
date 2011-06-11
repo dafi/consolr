@@ -99,12 +99,17 @@ function extract_info($tumblr) {
     <?php
         echo 'var starred = ' . json_encode(extract_info($tumblr)) . ';';
     ?>
-    function appendItems(sortByTitle) {
+    /**
+     * @param sortFlag Title, Time or Count
+     * @returns number of items
+     */
+    function appendItems(sortFlag) {
+        var sortByTitle = sortFlag == 'Title' || sortFlag == 'Count';
         if (sortByTitle) {
             starred.sort(function(a, b) {
                 return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
             });
-        } else {
+        } else if (sortFlag == 'Time') {
             starred.sort(function(a, b) {
                 return a.ts < b.ts;
             });
@@ -128,6 +133,89 @@ function extract_info($tumblr) {
             tagArr.push(item);
         }
 
+        var info = sortFlag == 'Count'
+            ? buildHTMLByCount(getMapByCount(map))
+            : buildHTMLByTitle(map, sortByTitle);
+
+        $('.main-container')
+            .empty()
+            .append(info.html);
+        $('.item-links').click(function() {
+           $(this).next().toggle();
+        });
+        return info.tagsCount;
+    }
+    $(function() {
+        $("#toolbar button, input[type=submit]").button();
+        $("#sort-by-title").click(function() {
+            appendItems('Title');
+        });
+        $("#sort-by-time").click(function() {
+            appendItems('Time');
+        });
+        $("#sort-by-count").click(function() {
+            appendItems('Count');
+        });
+
+        var tagsCount = appendItems('Title');
+        $('.items-count').append("<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>");
+    });
+
+    function getMapByCount(map) {
+        var mapCount = {};
+        var countArr = [];
+        for (var i in map) {
+            var c = map[i].length;
+            var tagArr = mapCount[c];
+            if (tagArr == undefined) {
+                tagArr = [];
+                mapCount[c] = tagArr;
+                countArr.push(c);
+            }
+            tagArr.push(i);
+        }
+        countArr.sort(function(a,b) {
+            return b - a; // desc order
+        });
+        var newMap = {};
+        for (var i = 0; i < countArr.length; i++) {
+            var c = countArr[i];
+            newMap[c] = mapCount[c];
+        }
+        
+        return newMap;
+    }
+
+    function buildHTMLByCount(map) {
+        var arr = [];
+        var tagsCount = 0;
+
+        for (var i in map) {
+            var tagNames = map[i];
+            var title = i;
+
+            var div = '<div class="links-container">';
+            for (var l = 0; l < tagNames.length; l++) {
+                var item = tagNames[l];
+                var tagUrl = "http://www.google.it/reader/view/user%2F-%2Flabel%2F" + encodeURIComponent(item);
+                div += '<a target="_blank" href="' + tagUrl + '">' + item + '</a>';
+                div += "<br/>";
+            }
+            div += "</div>";
+            
+            var html = '';
+            arr.push('<div class="separator-container"><span>' + title + '</span><hr/>');
+            arr.push('<a class="item-links" href="javascript:void(0)">Item count &nbsp(' + tagNames.length + ')</a>'
+                     + div
+                     + '<br/>');
+            ++tagsCount;
+            arr.push('</div>');
+        }
+        
+        return {html: arr.join(''), tagsCount: tagsCount};
+    }
+    
+    function buildHTMLByTitle(map, sortByTitle) {
         var arr = [];
         var tagsCount = 0;
         var separator = '';
@@ -157,26 +245,9 @@ function extract_info($tumblr) {
             ++tagsCount;
             arr.push('</div>');
         }
-        $('.main-container')
-            .empty()
-            .append(arr.join(''));
-        $('.item-links').click(function() {
-           $(this).next().toggle();
-        });
-        return tagsCount;
+        
+        return {html: arr.join(''), tagsCount: tagsCount};
     }
-    $(function() {
-        $("#toolbar button, input[type=submit]").button();
-        $("#sort-by-title").click(function() {
-            appendItems(true);
-        });
-        $("#sort-by-time").click(function() {
-            appendItems(false);
-        });
-
-        var tagsCount = appendItems(true);
-        $('.items-count').append("<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>");
-    });
     </script>
 </head>
     <body>
@@ -190,6 +261,7 @@ function extract_info($tumblr) {
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
             <button id="sort-by-title">Sort by Title</button>
             <button id="sort-by-time">Sort by Time</button>
+            <button id="sort-by-count">Sort by Count</button>
         </div>
         <div class="items-count">
         </div>
