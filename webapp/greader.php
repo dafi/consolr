@@ -82,10 +82,17 @@ function extract_info($tumblr) {
     }
     
     .links-container {
-        background-color: #aaa;
+        color: #000;
+        background-color: #fff;
         display: none;
     }
     
+    .links-container a {
+        color: #000;
+        margin-left: 5em;
+        text-decoration: underline;
+    }
+
     .separator-container {
         margin-top: 20px;
     }
