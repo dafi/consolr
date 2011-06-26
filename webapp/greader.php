@@ -118,7 +118,7 @@ function extract_info($tumblr) {
             });
         } else if (sortFlag == 'Time') {
             starred.sort(function(a, b) {
-                return a.ts < b.ts;
+                return -a.ts.localeCompare(b.ts);
             });
         }
 
