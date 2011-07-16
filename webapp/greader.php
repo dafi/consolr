@@ -122,26 +122,10 @@ function extract_info($tumblr) {
             });
         }
 
-        var titleRE = /^(.*?)\s([-\u2013|~@]|attends|arrives|signs)/;
-        var map = {};
-
-        for (var i in starred) {
-            var item = starred[i];
-            var title = sortByTitle ? item.title : item.ts;
-            var m = title.match(titleRE);
-            if (m && m[1]) {
-                title = m[1];
-            }
-            var tagArr = map[title];
-            if (tagArr == undefined) {
-                tagArr = [];
-                map[title] = tagArr;
-            }
-            tagArr.push(item);
-        }
+        var map = createTagMapFromTitles(starred, sortByTitle);
 
         var info = sortFlag == 'Count'
-            ? buildHTMLByCount(getMapByCount(map))
+            ? buildHTMLByCount(getInfoPerCount(map))
             : buildHTMLByTitle(map, sortByTitle);
 
         $('.main-container')
@@ -168,38 +152,60 @@ function extract_info($tumblr) {
         $('.items-count').append("<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>");
     });
 
-    function getMapByCount(map) {
+    function createTagMapFromTitles(starred, sortByTitle) {
+        var titleRE = /^(.*?)\s([-\u2013|~@]|attends|arrives|signs)/;
+        var map = {};
+
+        for (var i in starred) {
+            var item = starred[i];
+            var title = sortByTitle ? item.title : item.ts;
+            var m = title.match(titleRE);
+            if (m && m[1]) {
+                title = m[1];
+            }
+            var tagArr = map[title];
+            if (tagArr == undefined) {
+                tagArr = [];
+                map[title] = tagArr;
+            }
+            tagArr.push(item);
+        }
+        
+        return map;
+    }
+
+    /**
+     * returns {sortedKeys, values} sortedKeys is an array containing
+     * the keys e.g. the posts count per single tag. values contains the tags
+     */
+    function getInfoPerCount(map) {
         var mapCount = {};
-        var countArr = [];
+        var sortedKeys = [];
         for (var i in map) {
             var c = map[i].length;
             var tagArr = mapCount[c];
             if (tagArr == undefined) {
                 tagArr = [];
                 mapCount[c] = tagArr;
-                countArr.push(c);
+                sortedKeys.push(c);
             }
             tagArr.push(i);
         }
-        countArr.sort(function(a,b) {
+        sortedKeys.sort(function(a,b) {
             return b - a; // desc order
         });
-        var newMap = {};
-        for (var i = 0; i < countArr.length; i++) {
-            var c = countArr[i];
-            newMap[c] = mapCount[c];
-        }
         
-        return newMap;
+        return {sortedKeys: sortedKeys, values: mapCount};
     }
 
     function buildHTMLByCount(map) {
         var arr = [];
         var tagsCount = 0;
 
-        for (var i in map) {
-            var tagNames = map[i];
-            var title = i;
+        for (var i = 0; i < map.sortedKeys.length; i++) {
+            var key = map.sortedKeys[i];
+            var tagNames = map.values[key];
+            var title = key;
 
             var div = '<div class="links-container">';
             for (var l = 0; l < tagNames.length; l++) {
