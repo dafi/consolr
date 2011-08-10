@@ -9,6 +9,9 @@ if (typeof(consolr.tags) == "undefined") {
 (function() {
     this.commands = {};
 
+    // the map containing tag as key and its last publish time as value
+    this.tagsLastPublishTime = {};
+
     /**
      * Return tags grouped by name
      * @returns {array} (elements are objects in the form {name, count})
@@ -109,5 +112,94 @@ if (typeof(consolr.tags) == "undefined") {
 
     this.commands.showTagChart = function() {
         $('#dialog-tags').dialog('open');
+    }
+
+    this.formatTagsPublishDaysAgo = function(timestamps) {
+        var nowTime = new Date().getTime() / 1000;
+        var arr = [];
+        var dayTime = 24 * 60 * 60;
+        
+        for (var i = 0; i < timestamps.length; i++) {
+            var tagTS = timestamps[i];
+            var dayString;
+            if (tagTS.timestamp < 0) {
+                dayString = "new";
+            } else {
+                var spanTime = nowTime - tagTS.timestamp;
+                var days = Math.floor(spanTime / dayTime);
+                var dayString;
+                if (days <= 0) {
+                    dayString = "today";
+                } else if (days == 1) {
+                    dayString = "yesterday";
+                } else {
+                    dayString = days + " days ago";
+                }
+            }
+            arr.push(tagTS.tag + ' <b>(' + dayString + ')</b>');
+        }
+        return arr.join(', ');
+    }
+
+    /**
+     * Get the last publish time for passed tags stored in local cache
+     * returns the object containing found and missing tags in cache
+     * {'tags', 'missingTags'}
+     */
+    this.getTagsLastPublishTime = function(tags) {
+        var missingTags = [];
+        var tagsLastPublishTime = [];
+
+        for (var i = 0; i < tags.length; i++) {
+            var tag = tags[i];
+            var timestamp = this.tagsLastPublishTime[tag];
+
+            if (timestamp) {
+                tagsLastPublishTime.push({'tag': tag, 'timestamp' : timestamp});
+            } else {
+                missingTags.push(tag);
+            }
+        }
+        return {'tags': tagsLastPublishTime, 'missingTags': missingTags};
+    }
+    
+    /**
+     * Update timestamps in cache using object {'tag', 'timestamp'}
+     */
+    this.updateTagsLastPublishTime = function(timestamps) {
+        for (var i = 0; i < timestamps.length; i++) {
+            var tagTS = timestamps[i];
+            this.tagsLastPublishTime[tagTS.tag] = tagTS.timestamp;
+        }
+    }
+    
+    this.fetchTagsLastPublishTime = function(tumblrName, tags) {
+        var lastPublishTime = this.getTagsLastPublishTime(tags);
+
+        if (lastPublishTime.missingTags.length) {
+            $.ajax({
+                url: "doTagsPublishDate.php",
+                data: {
+                    tags: lastPublishTime.missingTags.join(","),
+                    tumblrName: tumblrName
+                },
+                success: function(timestamps) {
+                    consolr.tags.updateTagsLastPublishTime(timestamps);
+    
+                    // preserve tags order so reload all tags
+                    lastPublishTime = consolr.tags.getTagsLastPublishTime(tags);
+                },
+                dataType: 'json',
+                async: false
+            });
+        }
+        return lastPublishTime.tags;
+    }
+    
+    this.evictTagsLastPublishTime = function(tags) {
+        for (var i = 0; i < tags.length; i++) {
+            var tag = tags[i];
+            delete this.tagsLastPublishTime[tag];
+        }
     }
 }).apply(consolr.tags);

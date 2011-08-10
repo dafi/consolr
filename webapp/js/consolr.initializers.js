@@ -21,19 +21,8 @@
                 // If text() returns an empty string uses the caption
                 caption = $.cropText(caption || post['photo-caption'], config.captionMaxChars);
 
-                var tags = post['tags'] ? $.cropText(post['tags'].join(", "), config.tagsMaxChars) : "";
-                var tagPublishDaysAgo;
-                $.ajax({
-                    url: "doTagsPublishDate.php",
-                    data: {
-                        tags: post['tags'].join(","),
-                        tumblrName: tumblrName
-                    },
-                    success: function(html) {
-                        tagPublishDaysAgo = html;
-                    },
-                    async: false
-                });
+                var tags = consolr.tags.fetchTagsLastPublishTime(tumblrName, post['tags']);
+                var tagPublishDaysAgo = consolr.tags.formatTagsPublishDaysAgo(tags);
 
                 return $("<div>"
                          + "<span class='tooltip-caption'>" + caption + "</span>"
@@ -216,10 +205,11 @@
                             }
                             break;
                         case 'publish':
-                            if (e.shiftKey || confirm("Do you want to publish this post now?")) {
+                            //if (e.shiftKey || confirm("Do you want to publish this post now?")) {
                                 var post = consolr.findPost(li.attr('id'));
                                 consolr.publishPost(post);
-                            }
+                                consolr.tags.evictTagsLastPublishTime(post.tags);
+                            //}
                             break;
                         case 'showInfo':
                             var post = consolr.findPost(li.attr('id'));

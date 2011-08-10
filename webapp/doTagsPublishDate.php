@@ -6,9 +6,6 @@ require_once 'lib/db.php';
 
 $tumblr = login_utils::get_tumblr();
 if (isset($_GET['tags']) && isset($_GET['tumblrName'])) {
-    $arr_date = getdate();
-    $now_time = mktime (0, 0, 0, $arr_date['mon'], $arr_date['mday'], $arr_date['year']);
-    $day_time = 24 * 60 * 60;
     $tags = explode(",", $_GET['tags']);
     $posts = consolr_db::get_last_published_posts_by_tag($_GET['tumblrName'], $tags);
     $arr = array();
@@ -23,25 +20,12 @@ if (isset($_GET['tags']) && isset($_GET['tumblrName'])) {
             }
         }
         if ($post) {
-            $arr_date = getdate($post['publish_timestamp']);
-            $post_time = mktime (0, 0, 0, $arr_date['mon'], $arr_date['mday'], $arr_date['year']);
-            $span_time = $now_time - $post_time;
-            $days = floor($span_time / $day_time);
-
-            $day_string;
-            if ($days <= 0) {
-                $day_string = "today";
-            } else if ($days == 1) {
-                $day_string = "yesterday";
-            } else {
-                $day_string = $days . " days ago";
-            }
-            array_push($arr, $post['tag'] . " <b>(" . $day_string . ")</b>");
+            array_push($arr, array('tag' => $tag, 'timestamp' => $post['publish_timestamp']));
         } else {
-            array_push($arr, $tag . " <b>(new)</b>");
+            array_push($arr, array('tag' => $tag, 'timestamp' => -1));
         }
     }
-    $content = implode(", ", $arr);
+    $content = json_encode($arr);
 
     echo $content;
 } else {
