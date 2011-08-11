@@ -14,6 +14,11 @@ if (typeof(consolr) == "undefined") {
     this.dateProperty = 'publish-on-time';
     this.isAscending = false;
 
+    this.SORT_BY_UPLOAD_TIME = 0;
+    this.SORT_BY_LAST_PUBLISH_TIME = 1;
+
+    this.sortType = this.SORT_BY_UPLOAD_TIME;
+
     /**
      * Move image widget to new date container or position
      * @param imageId the image element id to move to new position
@@ -429,10 +434,26 @@ if (typeof(consolr) == "undefined") {
         consolr.dateProperty = tumblrDateProperty;
         consolr.isAscending = ascending;
 
-        // This ensure dates are normalized with client side timezone
-        $(consolrPosts['posts']).each(function(i, el) {
-            el['consolr-date'] = new Date(el[consolr.dateProperty]);
-        });
+        if (this.sortType == this.SORT_BY_LAST_PUBLISH_TIME) {
+            var tags = consolr.tags.getUniqueFirstTags(consolrPosts.posts);
+            var lastPublished = consolr.tags.fetchTagsLastPublishTime(tumblrName, tags);
+            var map = {};
+            for (var i = 0; i < lastPublished.tags.length; i++) {
+                var tagTS = lastPublished.tags[i];
+                map[tagTS.tag] = tagTS.timestamp;
+            }
+            var timeForNewtags = new Date(0)
+            $(consolrPosts['posts']).each(function(i, post) {
+                var tag = post.tags.length > 0 ? post.tags[0] : null;
+                var timestamp = tag ? map[tag] : -1;
+                post['consolr-date'] = tag ? (timestamp > 0 ? new Date(timestamp * 1000) : timeForNewtags) : timeForNewtags;
+            });
+        } else {
+            // This ensure dates are normalized with client side timezone
+            $(consolrPosts['posts']).each(function(i, el) {
+                el['consolr-date'] = new Date(el[consolr.dateProperty]);
+            });
+        }
         var direction = consolr.isAscending ? 1 : -1;
         consolrPosts['posts'].sort(function(a, b) {
             a = a['consolr-date'];
@@ -440,7 +461,8 @@ if (typeof(consolr) == "undefined") {
             return a === b ? 0 : a < b ? -direction : direction;
         });
         consolrPosts['group-date'] = consolr.groupDate.groupPostsByDate(consolrPosts.posts);
-        $('#date-container').html(consolr.groupDate.getDateContainerHTML({
+
+        $('#date-container').empty().html(consolr.groupDate.getDateContainerHTML({
                 sortByDateAsc : consolr.isAscending}));
         $('.title-group-date').click(function() {
             var groupDate = 'gd' + $(this).attr('id').replace(/^[a-z]*/i, '');

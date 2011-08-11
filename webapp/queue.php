@@ -77,7 +77,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 $(".date-image")
                     .initTooltipPhotoPost()
-                    .dblclick(function() {
+                    .live('dblclick', function() {
                         $('#dialog-form').dialog('option', 'postInfo', $(this));
                         $('#dialog-form').dialog('option', 'consolrState', '<?php echo $state?>');
                         $('#dialog-form').dialog('open');
@@ -99,6 +99,20 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                 $("#dialog-filter-tags").initDialogFilterTags();
                 $('#filter-tags').click(consolr.tags.commands.filterTags);
+
+                $('#sort-direction').attr('checked', consolr.isAscending ? 'true' : 'false');
+                $('#sort-type').change(function() {
+                    consolr.sortType = parseInt($(this).val(), 10);
+                    consolr.initTimeline(consolr.dateProperty, $('#sort-direction').attr('checked'));
+
+                    // how to use tooltip() with live()????
+                    $(".date-image")
+                        .initTooltipPhotoPost();
+                });
+                
+                $('#sort-direction').click(function() {
+                    $('#sort-type').change();
+                });
             });
         -->
         </script>
@@ -125,6 +139,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
             <button id="show-tags-chart">Tags Chart</button>
             <button id="filter-tags">Filter Tags</button>
+            <select id="sort-type">
+                <option value="0">Sort by Upload Time</option>
+                <option value="1">Sort By Last Publish Time</option>
+            </select>
+            <label for="sort-direction">Sort Ascending <input type="checkbox" id="sort-direction"></label>
         </div>
 
         <?php if (isset($error)) { ?>

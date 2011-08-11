@@ -22,7 +22,7 @@
                 caption = $.cropText(caption || post['photo-caption'], config.captionMaxChars);
 
                 var tags = consolr.tags.fetchTagsLastPublishTime(tumblrName, post['tags']);
-                var tagPublishDaysAgo = consolr.tags.formatTagsPublishDaysAgo(tags);
+                var tagPublishDaysAgo = consolr.tags.formatTagsPublishDaysAgo(tags.tags);
 
                 return $("<div>"
                          + "<span class='tooltip-caption'>" + caption + "</span>"
@@ -158,7 +158,7 @@
         }
         createMenuHandler(config);
 
-        this.hover(
+        this.live('hover',
             function(e) {
                 if (!menuHandler.enable) {
                     return;

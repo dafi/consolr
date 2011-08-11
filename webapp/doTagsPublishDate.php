@@ -5,9 +5,9 @@ require_once 'inc/dbconfig.php';
 require_once 'lib/db.php';
 
 $tumblr = login_utils::get_tumblr();
-if (isset($_GET['tags']) && isset($_GET['tumblrName'])) {
-    $tags = explode(",", $_GET['tags']);
-    $posts = consolr_db::get_last_published_posts_by_tag($_GET['tumblrName'], $tags);
+if (isset($_POST['tags']) && isset($_POST['tumblrName'])) {
+    $tags = explode(",", $_POST['tags']);
+    $posts = consolr_db::get_last_published_posts_by_tag($_POST['tumblrName'], $tags);
     $arr = array();
 
     foreach ($tags as $tag) {

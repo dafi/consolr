@@ -115,9 +115,9 @@ if (typeof(consolr.tags) == "undefined") {
     }
 
     this.formatTagsPublishDaysAgo = function(timestamps) {
-        var nowTime = new Date().getTime() / 1000;
+        var nowTime = new Date().clearTime().getTime();
         var arr = [];
-        var dayTime = 24 * 60 * 60;
+        var dayTime = 24 * 60 * 60 * 1000;
         
         for (var i = 0; i < timestamps.length; i++) {
             var tagTS = timestamps[i];
@@ -125,7 +125,8 @@ if (typeof(consolr.tags) == "undefined") {
             if (tagTS.timestamp < 0) {
                 dayString = "new";
             } else {
-                var spanTime = nowTime - tagTS.timestamp;
+                var timestamp = new Date(tagTS.timestamp * 1000).clearTime().getTime();
+                var spanTime = nowTime - timestamp;
                 var days = Math.floor(spanTime / dayTime);
                 var dayString;
                 if (days <= 0) {
@@ -179,6 +180,7 @@ if (typeof(consolr.tags) == "undefined") {
         if (lastPublishTime.missingTags.length) {
             $.ajax({
                 url: "doTagsPublishDate.php",
+                type: 'post',
                 data: {
                     tags: lastPublishTime.missingTags.join(","),
                     tumblrName: tumblrName
@@ -193,7 +195,7 @@ if (typeof(consolr.tags) == "undefined") {
                 async: false
             });
         }
-        return lastPublishTime.tags;
+        return lastPublishTime;
     }
     
     this.evictTagsLastPublishTime = function(tags) {
@@ -201,5 +203,28 @@ if (typeof(consolr.tags) == "undefined") {
             var tag = tags[i];
             delete this.tagsLastPublishTime[tag];
         }
+    }
+    
+    /**
+     * Return the first tag of every post removing duplicates
+     */
+    this.getUniqueFirstTags = function(posts) {
+        var mapTags = {};
+
+        for (var i = 0; i < posts.length; i++) {
+            var tags = posts[i].tags;
+            if (tags.length) {
+                var tag = tags[0];
+                mapTags[tag] = 1;
+            }
+        }
+
+        var unique = [];
+        // create array from map
+        for (var i in mapTags) {
+            unique.push(i);
+        }
+        
+        return unique;
     }
 }).apply(consolr.tags);
