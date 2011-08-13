@@ -16,8 +16,8 @@
         }
         this.dialog({
             autoOpen: false,
-            width: 450,
-            height: 330,
+            width: $(window).width() / 3,
+            height: 360,
             modal: true,
             resize: "auto",
             buttons: {
@@ -104,8 +104,8 @@
 
         this.dialog({
             autoOpen: false,
-            width: 300,
-            height: 250,
+            width: $(window).width() / 3,
+            height: $(window).height() / 2,
             modal: true,
             resizable: true,
             buttons: {

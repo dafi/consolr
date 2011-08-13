@@ -196,3 +196,7 @@ noscript div a {
 fieldset legend {
   width: 99%;
 }
+
+#dialog-filter-tags #search {
+  width: 100%;
+}
