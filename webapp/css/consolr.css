@@ -200,3 +200,8 @@ fieldset legend {
 #dialog-filter-tags #search {
   width: 100%;
 }
+
+#cgd19700101, #tgd19700101, #gd19700101, #gd19700101 li div {
+  background-color: #fa0;
+  color: #fff;
+}
