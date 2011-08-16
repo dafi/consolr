@@ -347,12 +347,21 @@ class consolr_db {
         return $posts;
     }
 
-    static function get_birth_days($tumblr_name, $time) {
+    static function get_birth_days($tumblr_name, $time = null, $names = null) {
         $db = consolr_db::connect();
 
+        $filter_names = '';
+        if ($names and count($names) > 0) {
+            $filter_names .= ' and name in ("' . implode('", "', array_map('mysql_escape_string', $names)) . '")';
+        }
+        $filter_time = '';
+        if ($time) {
+            $filter_time = " and date_format(birth_date, '%m%d') = date_format(%time%, '%m%d')";
+        }
         $select_tags_sql = "SELECT * FROM CONSOLR_BIRTHDAY"
-                        . " where date_format(birth_date, '%m%d') = date_format(%time%, '%m%d')"
-                        . " and tumblr_name='%tumblr_name%'"
+                        . " where tumblr_name='%tumblr_name%'"
+                        . $filter_time
+                        . $filter_names
                         . " order by date_format(birth_date, '%m%d')";
 
         $birth_days = array();

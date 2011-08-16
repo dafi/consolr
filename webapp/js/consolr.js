@@ -316,6 +316,7 @@ if (typeof(consolr) == "undefined") {
                     progress : null,
                     complete : null,
                     tags : null,
+                    id: null,
                     type: 'photo'};
 
         if (settings) {
@@ -324,9 +325,14 @@ if (typeof(consolr) == "undefined") {
         if (config.postsToGet !== null && config.postsToGet < config.num) {
             config.num = config.postsToGet;
         }
-        url = url + '?callback=?&type=' + config.type + '&num=' + config.num;
-        if (config.tags) {
-            url += '&tagged=' + config.tags;
+        if (config.id) {
+            url = url + '?callback=?&id=' + config.id;
+            config.postsToGet = 1;
+        } else {
+            url = url + '?callback=?&type=' + config.type + '&num=' + config.num;
+            if (config.tags) {
+                url += '&tagged=' + config.tags;
+            }
         }
         fetchTumblr(url, config);
     }
