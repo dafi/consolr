@@ -71,6 +71,13 @@ if (count($birth_days)) {
             display: block;
             text-align: center;
         }
+        #thumb-info {
+            position: absolute;
+            text-align: center;
+            background-color: #AAA;
+            color: #FFF;
+            left: -9999px;
+        }
         </style>
 
         <script type="text/javascript" src="js/jquery.js"></script>
@@ -122,8 +129,8 @@ if (count($birth_days)) {
             
             for (var i = 0; i < birthInfo.length; i++) {
                 var bi = birthInfo[i];
-                html += '<div class="thumb">';
-                html += '<a class="thumb-title" href="javascript:void(0);" data-index="' + i + '">Change Image (' + bi.published_posts.length + ')</a>';
+                html += '<div class="thumb" data-index="' + i + '">';
+                html += '<a class="thumb-title" href="javascript:void(0);">Change Image (' + bi.published_posts.length + ')</a>';
                 html += '<a target="_blank" href="' + bi.post_url + '"><img width="250" height="250" src="' + bi.image_url + '"></img></a>';
                 html += '</div>';
                 if (((i + 1) % thumbPerLine) == 0) {
@@ -133,7 +140,9 @@ if (count($birth_days)) {
             $('#thumb-container').append(html);
             $('.thumb-title').click(function() {
                 var thumbTitleEl = $(this);
-                var index = thumbTitleEl.attr('data-index');
+                var thumb = thumbTitleEl.parent('.thumb');
+
+                var index = thumb.attr('data-index');
                 var publishedPosts = birthInfo[index].published_posts;
                 var postId = publishedPosts[Math.floor(Math.random() * publishedPosts.length)];
 
@@ -151,6 +160,26 @@ if (count($birth_days)) {
                     }
                 });
             });
+            $('.thumb img').hover(function() {
+                    var thumbInfo = $('#thumb-info');
+                    var el = $(this);
+                    var pos = el.offset();
+
+                    pos.top += el.height() - thumbInfo.height();
+                    thumbInfo.css('left', pos.left + 'px');
+                    thumbInfo.css('top', pos.top + 'px');
+                    thumbInfo.width(el.width());
+
+                    var thumb = el.parents('.thumb');
+                    var index = thumb.attr('data-index');
+                    var name = birthInfo[index].name;
+
+                    thumbInfo.children('span').html(name);
+                },
+                function() {
+                    var thumbInfo = $('#thumb-info');
+                    thumbInfo.offset({left:-9999});
+                });
         });
         </script>
     </head>
@@ -168,7 +197,10 @@ if (count($birth_days)) {
 
     <div id="thumb-container">
     </div>
-    
+
+    <div id="thumb-info"">
+        <span>Name</span>
+    </div>
     <?php include('inc/footer.php'); ?>
     </body>
 </html>
