@@ -32,11 +32,14 @@ class login_utils {
     }
 
     static function get_tumblr($redirect_if_not_logged = true) {
-        $t = $_SESSION['tumblr'];
-        if (isset($t)) {
-            return $t;
+        if (isset($_SESSION['tumblr'])) {
+            $t = $_SESSION['tumblr'];
+            if (isset($t)) {
+                return $t;
+            }
         }
         header("location: " . "login.php");
+        exit(1);
     }
 
     static function after_login() {
