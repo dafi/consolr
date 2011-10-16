@@ -33,10 +33,7 @@ class login_utils {
 
     static function get_tumblr($redirect_if_not_logged = true) {
         if (isset($_SESSION['tumblr'])) {
-            $t = $_SESSION['tumblr'];
-            if (isset($t)) {
-                return $t;
-            }
+            return $_SESSION['tumblr'];
         }
         header("location: " . "login.php");
         exit(1);
