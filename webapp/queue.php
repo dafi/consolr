@@ -53,6 +53,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript" src="js/jquery.strings.js"></script>
         <script type="text/javascript" src="js/jquery.contextMenu.js"></script>
 
+        <script type="text/javascript" src="js/detectmobilebrowser.js"></script>
+
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.groupDate.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
@@ -74,6 +76,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 $.initEditor();
                 consolr.initTimeline(consolr.dateProperty, true);
                 consolr.updateMessagePanel();
+                var isMobile = $.browser.mobile;
 
                 $(".date-image")
                     .initTooltipPhotoPost()
@@ -82,7 +85,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         $('#dialog-form').dialog('option', 'consolrState', '<?php echo $state?>');
                         $('#dialog-form').dialog('open');
                     })
-                    .initImageMenu({});
+                    .initImageMenu({showOnClick: isMobile,
+                                   showOnHover: !isMobile});
 
 <?php if ($state == 'd') { ?>
                 $("#dialog-form").initDialogModifyQueuePost({isPublishDateEditAllowed: false});
@@ -107,7 +111,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
                     // how to use tooltip() with live()????
                     $(".date-image")
-                        .initTooltipPhotoPost();
+                        .initTooltipPhotoPost()
+                        .initImageMenu({showOnClick: isMobile,
+                                       showOnHover: !isMobile});
                 });
                 
                 $('#sort-direction').click(function() {
