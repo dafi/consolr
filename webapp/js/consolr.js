@@ -112,6 +112,7 @@ if (typeof(consolr) == "undefined") {
         if (typeof(settings) == "undefined") {
             settings = {};
         }
+        settings.async = true;
         settings.progressMessage = PUBLISH_POST;
         settings.success = function(params) {
             var groupDate = consolrPosts['group-date'][post['group-date']];
