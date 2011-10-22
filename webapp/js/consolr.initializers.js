@@ -151,42 +151,52 @@
 
     $.fn.initImageMenu = function(settings) {
         var config = {id: 'imageMenuHandler',
-                        cssClasses: 'menu-handle'};
+                        cssClasses: 'menu-handle',
+                        showOnClick: false,
+                        showOnHover: true};
 
         if (settings) {
             $.extend(config, settings);
         }
         createMenuHandler(config);
+        var menuEls = $([]);
 
-        this.live('hover',
-            function(e) {
-                if (!menuHandler.enable) {
-                    return;
-                }
-                var el = $(this);
-                menuHandler.current = el;
-                var menuPos = el.offset();
+        if (config.showOnClick) {
+            menuEls = menuEls.add(this);
+        }
+        
+        if (config.showOnHover) {
+            menuEls = menuEls.add(menuHandler.element);
+            this.hover(function(e) {
+                    if (!menuHandler.enable) {
+                        return;
+                    }
+                    var el = $(this);
+                    menuHandler.current = el;
+                    var menuPos = el.offset();
 
-                // on webkit offsets() doesn't set correctly the position
-                // at first call time so we set manually left and top
-                menuPos.left += el.width() - menuHandler.element.width();
-                menuHandler.element.css('left', menuPos.left + 'px');
-                menuHandler.element.css('top', menuPos.top + 'px');
-            },
-            function(e) {
-                // don't hide if we are on menuhandler
-                if (e.relatedTarget !== menuHandler.element[0]) {
-                    menuHandler.element.css('left', '-9999px');
-                }
-            });
+                    // on webkit offsets() doesn't set correctly the position
+                    // at first call time so we set manually left and top
+                    menuPos.left += el.width() - menuHandler.element.width();
+                    menuHandler.element.css('left', menuPos.left + 'px');
+                    menuHandler.element.css('top', menuPos.top + 'px');
+                },
+                function(e) {
+                    // don't hide if we are on menuhandler
+                    if (e.relatedTarget !== menuHandler.element[0]) {
+                        menuHandler.element.css('left', '-9999px');
+                    }
+                });
+        }
 
-        menuHandler.element.contextMenu({
+        menuEls.contextMenu({
                 menu: 'imageMenu',
                 buttons: "L"
                 },
 
                 function(action, el, pos, e) {
-                    var li = menuHandler.current;
+                    // el is valid for showOnClick, menuHandler.current is valid for showOnHover
+                    var li = menuHandler.current || el;
                     switch (action) {
                         case 'edit':
                             $('#dialog-form').dialog('option', 'postInfo', li);
