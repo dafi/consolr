@@ -2,6 +2,7 @@ body {
   background-color: #555;
   color: #FFF;
   font: 70% sans-serif;
+  margin: 0;
 }
 
 .login-container {
@@ -20,6 +21,10 @@ a:hover {
 
 a img {
   border-width:0;
+}
+
+#date-container {
+  margin: 0 0.6em;
 }
 
 .date-container {
@@ -104,6 +109,12 @@ noscript div a {
   border-bottom: solid 1px #cd0a0a;
 }
 
+#message-panel {
+    background-color: #555555;
+    margin-left: 0.6em;
+    z-index: 9999;
+}
+
 .message-progress-indicator {
   vertical-align: middle;
   margin-right: 4px;
@@ -117,9 +128,13 @@ noscript div a {
 .toolbar {
   padding: 4px 4px;
   margin-bottom: 4px;
+  margin-left: 0.6em;
+  margin-right: 0.6em;
 }
 
 .common-menu {
+  margin-right: 0.6em;
+  margin-top: 0.6em;
   text-align: right;
 }
 
@@ -204,4 +219,20 @@ fieldset legend {
 #cgd19700101, #tgd19700101, #gd19700101, #gd19700101 li div {
   background-color: #fa0;
   color: #fff;
+}
+
+.fixed-menu-bar {
+  position: fixed;
+  background-color: #555555;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
+}
+
+#fixed-menu-bar-separator {
+  margin-bottom: 7em;
+}
+
+#main-container {
+  margin: 0 0.6em;
 }

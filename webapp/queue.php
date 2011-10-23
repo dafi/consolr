@@ -129,28 +129,31 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
-        <?php include('inc/menu.php') ?>
+        <div class="fixed-menu-bar">
+            <?php include('inc/menu.php') ?>
 
-        <div id="message-panel">
-            <span id="message-progress-container" style="display: none">
-                <img class="message-progress-indicator" src="images/progress.gif" alt="..."/>
-            </span>
-            <span id="message-text" class="message-text"></span>
+            <div id="message-panel">
+                <span id="message-progress-container" style="display: none">
+                    <img class="message-progress-indicator" src="images/progress.gif" alt="..."/>
+                </span>
+                <span id="message-text" class="message-text"></span>
+    
+                <div id="operation-in-progress-panel" style="display: none" class="center-top operation-in-progress ui-corner-all">
+                    <span id="operation-in-progress-icon-error" style="display: none; cursor:pointer; float: left; margin-right: 0.3em;" class="ui-icon ui-icon-circle-close"></span><span id="operation-in-progress-text"></span>
+                </div>
+            </div>
 
-            <div id="operation-in-progress-panel" style="display: none" class="center-top operation-in-progress ui-corner-all">
-                <span id="operation-in-progress-icon-error" style="display: none; cursor:pointer; float: left; margin-right: 0.3em;" class="ui-icon ui-icon-circle-close"></span><span id="operation-in-progress-text"></span>
+            <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
+                <button id="show-tags-chart">Tags Chart</button>
+                <button id="filter-tags">Filter Tags</button>
+                <select id="sort-type">
+                    <option value="0">Sort by Upload Time</option>
+                    <option value="1">Sort By Last Publish Time</option>
+                </select>
+                <label for="sort-direction">Sort Ascending <input type="checkbox" id="sort-direction"></label>
             </div>
         </div>
-
-        <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
-            <button id="show-tags-chart">Tags Chart</button>
-            <button id="filter-tags">Filter Tags</button>
-            <select id="sort-type">
-                <option value="0">Sort by Upload Time</option>
-                <option value="1">Sort By Last Publish Time</option>
-            </select>
-            <label for="sort-direction">Sort Ascending <input type="checkbox" id="sort-direction"></label>
-        </div>
+        <div id="fixed-menu-bar-separator"></div>
 
         <?php if (isset($error)) { ?>
         <h2><?php echo $error; ?></h2>

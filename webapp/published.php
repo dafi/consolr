@@ -133,29 +133,32 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
-        <?php if (login_utils::is_logged()) include('inc/menu.php') ?>
+        <div class="fixed-menu-bar">
+            <?php if (login_utils::is_logged()) include('inc/menu.php') ?>
 
-        <div id="message-panel">
-            <span id="message-progress-container" style="display: none">
-                <img class="message-progress-indicator" src="images/progress.gif" alt="..."/>
-            </span>
-            <span id="message-text" class="message-text"></span>
+            <div id="message-panel">
+                <span id="message-progress-container" style="display: none">
+                    <img class="message-progress-indicator" src="images/progress.gif" alt="..."/>
+                </span>
+                <span id="message-text" class="message-text"></span>
+    
+                <div id="operation-in-progress-panel" style="display: none" class="center-top operation-in-progress ui-corner-all ui-state-highlight">
+                    <span id="operation-in-progress-text"></span>
+                </div>
+            </div>
 
-            <div id="operation-in-progress-panel" style="display: none" class="center-top operation-in-progress ui-corner-all ui-state-highlight">
-                <span id="operation-in-progress-text"></span>
+            <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
+                <button id="show-tags-chart">Show Tags</button>
+                <button id="filter-tags">Filter Tags</button>
+                <form id="search-form" style="display: inline">
+                    <input type="text" id="tagList" size="30"/>
+                    <label for="postsToGet">Max posts to read</label>
+                    <input type="text" id="postsToGet" size="6"/>
+                    <input type="submit" value="Start"/>
+                </form>
             </div>
         </div>
-
-        <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
-            <button id="show-tags-chart">Show Tags</button>
-            <button id="filter-tags">Filter Tags</button>
-            <form id="search-form" style="display: inline">
-                <input type="text" id="tagList" size="30"/>
-                <label for="postsToGet">Max posts to read</label>
-                <input type="text" id="postsToGet" size="6"/>
-                <input type="submit" value="Start"/>
-            </form>
-        </div>
+        <div id="fixed-menu-bar-separator"></div>
 
         <div id="date-container">
         </div>

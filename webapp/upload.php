@@ -38,6 +38,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             </div>
         </noscript>
         <?php include('inc/menu.php') ?>
+        <div id="main-container">
         <h1>Upload multiple photo urls at once</h1>
 
         <div class="ui-corner-all ui-state-error error-container" style="height: 1.4em">
@@ -112,6 +113,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 </div>
                 <br style="clear: both"/>
             </div>
+        </div>
         </div>
 
     <?php include('inc/footer.php'); ?>
