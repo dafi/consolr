@@ -78,6 +78,10 @@ if (count($birth_days)) {
             color: #FFF;
             left: -9999px;
         }
+        
+        .date-image {
+            cursor: pointer;
+        }
         </style>
 
         <script type="text/javascript" src="js/jquery.js"></script>
@@ -89,97 +93,36 @@ if (count($birth_days)) {
 
         <script type="text/javascript" src="js/date.js"></script>
         <script type="text/javascript" src="js/consolr.js"></script>
+        <script type="text/javascript" src="js/consolr.birthday.js"></script>
 
         <script type="text/javascript">
         var tumblrName = "<?php echo $tumblr_name ?>";
         var apiUrl = 'http://' + tumblrName + '.tumblr.com/api/read/json';
         var birthInfo = <?php echo json_encode($data) ?>;
+        var consolrPosts = {};
 
         $(function() {
             $("#toolbar button, input[type=submit]").button();
             $("#publish").click(function() {
-                var names = [];
-                var postIds = [];
-                
-                for (var i = 0; i < birthInfo.length; i++) {
-                    var bi = birthInfo[i];
-                    names.push(bi.name);
-                    postIds.push(bi.post_id);
-                }
-                $.ajax({
-                    url: "doPublishBirth.php",
-                    type: 'post',
-                    data: {
-                        names: names.join(','),
-                        post_ids: postIds.join(',')
-                    },
-                    success: function(timestamps) {
-                        alert('done');
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        alert('error');
-                    },
-                    dataType: 'json',
-                    async: false
-                });
+                consolr.birthday.publish(birthInfo);
             });
 
-            var html = '';
-            var thumbPerLine = 2;
-            
-            for (var i = 0; i < birthInfo.length; i++) {
-                var bi = birthInfo[i];
-                html += '<div class="thumb" data-index="' + i + '">';
-                html += '<a class="thumb-title" href="javascript:void(0);">Change Image (' + bi.published_posts.length + ')</a>';
-                html += '<a target="_blank" href="' + bi.post_url + '"><img width="250" height="250" src="' + bi.image_url + '"></img></a>';
-                html += '</div>';
-                if (((i + 1) % thumbPerLine) == 0) {
-                    html += "<br/>";
-                }
-            }
-            $('#thumb-container').append(html);
+            $('#thumb-container').append(consolr.birthday.createThumbHTML(birthInfo));
             $('.thumb-title').click(function() {
                 var thumbTitleEl = $(this);
                 var thumb = thumbTitleEl.parent('.thumb');
-
+                var link = $(thumbTitleEl.next());
+                var img = $('img', link);
                 var index = thumb.attr('data-index');
-                var publishedPosts = birthInfo[index].published_posts;
-                var postId = publishedPosts[Math.floor(Math.random() * publishedPosts.length)];
+                var selectImageInfo = birthInfo[index];
 
-                consolr.readPublicPhotoPosts(apiUrl, {
-                    id: postId,
-                    complete : function(posts) {
-                        var post = posts[0];
-                        birthInfo[index].post_url = post.url;
-                        birthInfo[index].post_id = postId;
-                        birthInfo[index].image_url = post['photo-url-250'];
-                        var link = $(thumbTitleEl.next());
-                        var img = $('img', link);
-                        link.attr('href', birthInfo[index].post_url);
-                        img.attr('src', birthInfo[index].image_url);
-                    }
-                });
+                $("#dialog-thumbnails").initSelectImageDialog();
+                $('#dialog-thumbnails').dialog('option', 'selectImageInfo', selectImageInfo);
+                $('#dialog-thumbnails').dialog('option', 'link', link);
+                $('#dialog-thumbnails').dialog('option', 'img', img);
+                $('#dialog-thumbnails').dialog('open');
             });
-            $('.thumb img').hover(function() {
-                    var thumbInfo = $('#thumb-info');
-                    var el = $(this);
-                    var pos = el.offset();
-
-                    pos.top += el.height() - thumbInfo.height();
-                    thumbInfo.css('left', pos.left + 'px');
-                    thumbInfo.css('top', pos.top + 'px');
-                    thumbInfo.width(el.width());
-
-                    var thumb = el.parents('.thumb');
-                    var index = thumb.attr('data-index');
-                    var name = birthInfo[index].name;
-
-                    thumbInfo.children('span').html(name);
-                },
-                function() {
-                    var thumbInfo = $('#thumb-info');
-                    thumbInfo.offset({left:-9999});
-                });
+            $('.thumb img').hoverOnImage();
         });
         </script>
     </head>
@@ -201,6 +144,14 @@ if (count($birth_days)) {
     <div id="thumb-info"">
         <span>Name</span>
     </div>
+
+    <div id="dialogs-container" style="display:none">
+        <div id="dialog-thumbnails" title="Select Image">
+            <div id="date-container">
+            </div>
+        </div>
+    </div>
+
     <?php include('inc/footer.php'); ?>
     </body>
 </html>
