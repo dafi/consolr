@@ -74,11 +74,11 @@ function extract_info($tumblr) {
 
     <style>
     p {
-        font-size: 16px;
+        font-size: 1.5em;
         font-weight: bold;
     }
-    .main-container a {
-        font-size: 14px;
+    #main-container a {
+        font-size: 1.3em;
     }
     
     .links-container {
@@ -101,6 +101,11 @@ function extract_info($tumblr) {
         font-size: 1.4em;
         font-weight: bold;
     }
+    
+    .items-count {
+        margin: 0.6em;
+    }
+
     </style>
     <script type="text/javascript">
     <?php
@@ -128,7 +133,7 @@ function extract_info($tumblr) {
             ? buildHTMLByCount(getInfoPerCount(map))
             : buildHTMLByTitle(map, sortByTitle);
 
-        $('.main-container')
+        $('#main-container')
             .empty()
             .append(info.html);
         $('.item-links').click(function() {
@@ -269,6 +274,7 @@ function extract_info($tumblr) {
                 <a href="https://www.google.com/adsense/support/bin/answer.py?hl=en&amp;answer=12654">Javascript</a> is required to view this site.
             </div>
         </noscript>
+        <div class="fixed-menu-bar">
         <?php if (login_utils::is_logged()) include('inc/menu.php') ?>
 
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
@@ -276,9 +282,12 @@ function extract_info($tumblr) {
             <button id="sort-by-time">Sort by Time</button>
             <button id="sort-by-count">Sort by Count</button>
         </div>
+        </div>
+        <div id="fixed-menu-bar-separator"></div>
+
         <div class="items-count">
         </div>
-        <div class="main-container">
+        <div id="main-container">
         </div>
     <?php include('inc/footer.php'); ?>
     </body>
