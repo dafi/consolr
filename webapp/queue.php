@@ -49,6 +49,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
+        <script type="text/javascript" src="js/jquery.cookie.js"></script>
         <script type="text/javascript" src="js/jquery.tooltip.min.js"></script>
         <script type="text/javascript" src="js/jquery.strings.js"></script>
         <script type="text/javascript" src="js/jquery.contextMenu.js"></script>
@@ -74,6 +75,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
             $(function() {
                 consolr.dateProperty = '<?php echo ($state == 'd' ? 'date' : 'publish-on-time') ?>';
                 $.initEditor();
+
+                consolr.sortType = $.cookie('sortType') || 0;
+                $('#sort-type').val(consolr.sortType);
+
                 consolr.initTimeline(consolr.dateProperty, true);
                 consolr.updateMessagePanel();
                 var isMobile = $.browser.mobile;
@@ -108,6 +113,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 $('#sort-type').change(function() {
                     consolr.sortType = parseInt($(this).val(), 10);
                     consolr.initTimeline(consolr.dateProperty, $('#sort-direction').attr('checked'));
+
+                    $.cookie('sortType', consolr.sortType, {
+                        expires: 365}
+                    );
 
                     // how to use tooltip() with live()????
                     $(".date-image")
