@@ -385,5 +385,26 @@ class consolr_db {
 
         return $birth_days;
     }
+
+    static function get_missing_birth_days() {
+        $db = consolr_db::connect();
+
+        $query = "SELECT * FROM CONSOLR_VW_MISSING_BIRTHDAYS";
+        $birth_days = array();
+        $result = mysql_query($query, $db);
+
+        if (!$result) {
+            die('Invalid query: ' . mysql_error());
+        }
+
+        while ($row = mysql_fetch_assoc($result)) {
+            array_push($birth_days, $row['name']);
+        }
+
+        mysql_free_result($result);
+        mysql_close($db);
+
+        return $birth_days;
+    }
 }
 ?>
