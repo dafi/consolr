@@ -32,11 +32,11 @@ if (isset($_POST['names']) && isset($_POST['post_ids'])) {
             $title = get_title($b);
             $body = '<p style="font-size:18pt;">' . $b['name'] . ' we wish you a cheerful birthday</p>';
             $body .= '<img src="' . $cake_image_url . '"></img>';
-            $body .= tumblr_utils::get_thumbs_html($tumblr, $list, MAX_THUMBS_PER_DIGEST, MAX_THUMBS_PER_ROW, false, 'photo-url-400');
+            $body .= tumblr_utils::get_thumbs_html($tumblr, $list, MAX_THUMBS_PER_DIGEST, MAX_THUMBS_PER_ROW, false, '400');
             $tags = "Birthday, " . $b['name'];
 
-            $params = array('state' => 'published',
-                            'type' => 'regular',
+            $params = array('state' => 'draft',
+                            'type' => 'text',
                             'title' => $title,
                             'body' => $body,
                             'tags' => $tags);

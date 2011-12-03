@@ -53,7 +53,7 @@ class tumblr_utils {
     }
 
     static function save_tags_by_post($tumblr, $post) {
-        $ts = $post['unix-timestamp'];
+        $ts = $post['timestamp'];
         $tags_map = array();
         $showOrder = 1;
         $post_id = $post['id'];
@@ -66,7 +66,7 @@ class tumblr_utils {
                                    true);
     }
 
-    static function get_thumbs_html($tumblr, $list, $thumbs_count, $images_per_row, $shuffle_list = true, $photo_url_size = 'photo-url-75') {
+    static function get_thumbs_html($tumblr, $list, $thumbs_count, $images_per_row, $shuffle_list = true, $photo_url_width = '75') {
         if ($shuffle_list) {
             shuffle($list);
         }
@@ -77,11 +77,13 @@ class tumblr_utils {
             $l = $list[$i];
             $result = $tumblr->get_post_by_id($l['post_id'], true);
             $map = tumblr_utils::get_json_map($result);
-            if (!empty($map)) {
-                $post = $map['posts'][0];
+            $response = $map['response'];
+            if (!empty($response)) {
+                $post = $response['posts'][0];
+                $photo = tumblr_utils::get_photo_by_width($post['photos'], $photo_url_width);
     
                 $html .= '<a href="' . $post['url'] . '">';
-                $html .= '<img border="0" src="' . $post[$photo_url_size] . '"></img>';
+                $html .= '<img border="0" src="' . $photo['url'] . '"></img>';
                 $html .= '</a>&nbsp;&nbsp;';
                 if ((($i + 1) % $images_per_row) == 0) {
                     $html .= '</p><p>';
@@ -103,6 +105,16 @@ class tumblr_utils {
         }
     
         return $content;
+    }
+
+    static function get_photo_by_width($photos, $width) {
+        $alt_sizes = $photos[0]['alt_sizes'];
+        foreach ($alt_sizes as $alt_size) {
+            if ($alt_size['width'] == $width) {
+                return $alt_size;
+            }
+        }
+        return null;
     }
 }
 ?>

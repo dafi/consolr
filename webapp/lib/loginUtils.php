@@ -45,7 +45,7 @@ class login_utils {
         if ($tumblr_name == null) {
             $list = $tumblr->get_tumblr_list();
             foreach ($list as $l) {
-                if (isset($l['is-primary']) && ($l['is-primary'] == 'yes')) {
+                if ($l['primary'] == '1') {
                     $tumblr_name = $l['name'];
                     break;
                 }

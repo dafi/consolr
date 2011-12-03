@@ -14,7 +14,7 @@ $time = time();
 //mktime(0, 0, 0, 4, 9, 2011);
 
 $birth_days = consolr_db::get_birth_days($tumblr->get_tumblr_name(), $time);
-$photo_url_size = 'photo-url-250';
+$photo_url_width = '250';
 $data = array();
 
 if (count($birth_days)) {
@@ -24,21 +24,22 @@ if (count($birth_days)) {
             shuffle($list);
             $l = $list[0];
 
-            $result = $tumblr->get_post_by_id($l['post_id'], true);
+            $result = $tumblr->get_post_by_id($l['post_id']);
             $map = tumblr_utils::get_json_map($result);
-            if (!empty($map)) {
-                $post = $map['posts'][0];
-
+            $response = $map['response'];
+            if (!empty($response)) {
+                $post = $response['posts'][0];
                 $published_posts = array();
                 
                 foreach ($list as $l) {
                     array_push($published_posts, $l['post_id']);
                 }
+                $alt_size = tumblr_utils::get_photo_by_width($post['photos'], $photo_url_width);
                 array_push($data, array('name' => $b['name'],
                                         'published_posts' => $published_posts,
                                         'post_id' => $post['id'],
-                                        'post_url' => $post['url'],
-                                        'image_url' => $post[$photo_url_size]));
+                                        'post_url' => $post['post_url'],
+                                        'image_url' => $alt_size['url']));
             }
         }
     }
@@ -96,8 +97,8 @@ if (count($birth_days)) {
         <script type="text/javascript" src="js/consolr.birthday.js"></script>
 
         <script type="text/javascript">
-        var tumblrName = "<?php echo $tumblr_name ?>";
-        var apiUrl = 'http://' + tumblrName + '.tumblr.com/api/read/json';
+        var tumblrName = "<?php echo $tumblr_name ?>.tumblr.com";
+        var apiUrl = 'http://api.tumblr.com/v2/blog/' + tumblrName;
         var birthInfo = <?php echo json_encode($data) ?>;
         var consolrPosts = {};
 

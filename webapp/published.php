@@ -41,8 +41,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <script type="text/javascript">
         <!--//
-            var tumblrName = "<?php echo $tumblr_name ?>";
-            var apiUrl = 'http://' + tumblrName + '.tumblr.com/api/read/json';
+            var tumblrName = "<?php echo $tumblr_name ?>.tumblr.com";
+            var apiUrl = 'http://api.tumblr.com/v2/blog/' + tumblrName;
+
             var consolrPosts = {};
                 <?php
                 $tag_names = array();
@@ -82,7 +83,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         tags : tags,
                         postsToGet: postsToGet,
                         progress : function(data, posts) {
-                            consolr.setMessageText("Read posts " + posts.length + "/" + data['posts-total']);
+                            consolr.setMessageText("Read posts " + posts.length + "/" + data.total_posts);
                         },
                         complete : function(posts) {
                             consolrPosts.posts = posts;

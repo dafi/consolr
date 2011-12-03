@@ -17,16 +17,17 @@ switch ($state) {
     case 'q':
         $stateDesc = 'queue';
         $stateDescCapitalized = 'Queue';
-        $result = $tumblr->get_queue(true);
+        $result = $tumblr->get_queue();
         break;
     case 'd':
         $stateDesc = 'draft';
         $stateDescCapitalized = 'Draft';
-        $result = $tumblr->get_draft(true);
+        $result = $tumblr->get_draft();
         break;
 }
 if ($result['status'] == '200') {
     $tumblr_posts = tumblr_utils::get_json_map($result['result']);
+    $tumblr_posts = $tumblr_posts['response'];
 } else {
     $tumblr_posts = array('posts' => array());
     $error = 'Error while reading ' . $stateDesc . '. ' . $result['result'];
@@ -79,7 +80,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 consolr.sortType = $.cookie('sortType') || 0;
                 $('#sort-type').val(consolr.sortType);
 
-                consolr.initTimeline(consolr.dateProperty, true);
+                var isAscending = $.cookie('sortAsc');
+                // cookie returns string
+                isAscending = isAscending ? isAscending == "true" : true;
+
+                consolr.initTimeline(consolr.dateProperty, isAscending);
                 consolr.updateMessagePanel();
                 var isMobile = $.browser.mobile;
 
@@ -109,12 +114,15 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 $("#dialog-filter-tags").initDialogFilterTags();
                 $('#filter-tags').click(consolr.tags.commands.filterTags);
 
-                $('#sort-direction').attr('checked', consolr.isAscending ? 'true' : 'false');
+                $('#sort-direction').attr('checked', consolr.isAscending);
                 $('#sort-type').change(function() {
                     consolr.sortType = parseInt($(this).val(), 10);
                     consolr.initTimeline(consolr.dateProperty, $('#sort-direction').attr('checked'));
 
                     $.cookie('sortType', consolr.sortType, {
+                        expires: 365}
+                    );
+                    $.cookie('sortAsc', consolr.isAscending, {
                         expires: 365}
                     );
 

@@ -17,9 +17,11 @@
                 if (!post) {
                     return "";
                 }
-                var caption = $(post['photo-caption']).text();
+                // different post types use different property
+                var postCaption = post.caption || post.title || post.quote || '';
+                var caption = $(postCaption).text();
                 // If text() returns an empty string uses the caption
-                caption = $.cropText(caption || post['photo-caption'], config.captionMaxChars);
+                caption = $.cropText(caption || postCaption, config.captionMaxChars);
 
                 var tags = consolr.tags.fetchTagsLastPublishTime(tumblrName, post['tags']);
                 var tagPublishDaysAgo = consolr.tags.formatTagsPublishDaysAgo(tags.tags);
@@ -90,8 +92,8 @@
                 var params = {
                     postId : post['id'],
                     publishDate : newDate.format(DATE_FORMAT),
-                    caption : post['photo-caption'],
-                    clickThroughLink : post['photo-link-url'],
+                    caption : post.caption || post.title || post.quote || '',
+                    clickThroughLink : post['link_url'],
                     tags : post['tags'] ? post['tags'].join(", ") : ""
                 };
                 consolr.updateQueuedPost(params, {
@@ -204,9 +206,7 @@
                             break;
                         case 'showImage':
                             var post = consolr.findPost(li.attr('id'));
-                            if (post['photo-url-1280']) {
-                                window.open(post['photo-url-1280']);
-                            }
+                            window.open(post.photos[0].alt_sizes[0].url);
                             break;
                         case 'delete':
                             if (confirm("Do you want to delete this post?")) {

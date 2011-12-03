@@ -165,10 +165,15 @@ if (typeof(consolr.tags) == "undefined") {
 
             for (var i in posts) {
                 var post = posts[i];
+                var smallImgURL;
+                if (post.type == 'photo') {
+                    itemPatterns["imgSrc"] = consolr.getPhotoByWidth(post.photos, 75).url;
+                } else {
+                    itemPatterns["imgSrc"] = 'images/' + post.type + '.png';
+                }
 
                 itemPatterns["postId"] = post.id;
-                itemPatterns["imgSrc"] = post['photo-url-75'];
-                itemPatterns["imgAlt"] = post['slug'];
+                itemPatterns["imgAlt"] = '';//$(post.caption).text(); // TODO post['slug']
                 itemPatterns["time"] = post['consolr-date'].format('HH:mm:ss');
                 itemsHtml += $.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
             }

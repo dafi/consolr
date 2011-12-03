@@ -24,17 +24,19 @@ if (isset($_POST['postId'])) {
     }
 
     $result = $tumblr->publish_post($_POST['postId'], $params);
+    $published_post = tumblr_utils::get_json_map($result['result']);
 
-    if ($result['status'] == "201") {
+    if ($result['status'] == "200") {
         // id changes after publication
-        $new_post_id = $result['result'];
-        $arr = tumblr_utils::get_json_map($tumblr->get_post_by_id($new_post_id, true));
-        $post = $arr['posts'][0];
+        $new_post_id = $published_post['response']['id'];
+
+        $arr = tumblr_utils::get_json_map($tumblr->get_post_by_id($new_post_id));
+        $post = $arr['response']['posts'][0];
 
         tumblr_utils::save_tags_by_post($tumblr, $post);
         publish_to_facebook($tumblr, $post, $caption);
     } else {
-        header("HTTP/1.x 400 " . $result['result']);
+        header("HTTP/1.x 400 " . $published_post['meta']['msg']);
     }
 } else {
     header("HTTP/1.x 400 Invalid Parameters");
@@ -45,7 +47,7 @@ function add_see_more_html($tumblr, $post_id, $caption) {
     $pos = strpos($caption, "See More");
 
     if ($pos === false) {
-        $arr = tumblr_utils::get_json_map($tumblr->get_post_by_id($post_id, true));
+        $arr = tumblr_utils::get_json_map($tumblr->get_draft_post_by_id($post_id));
         $post = $arr['posts'][0];
         $see_more_tags = $post['tags'];
         // use only the first tag

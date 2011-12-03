@@ -11,11 +11,15 @@ abstract class abstract_tumblr {
      */
     protected abstract function do_logged_request($url, $params);
 
+    protected function get_api_url($suffix) {
+        return 'http://api.tumblr.com/v2/blog/' . $this->tumblr_name . '.tumblr.com' . $suffix;
+    }
+
     public function get_userid() {
         if (!isset($user_id)) {
             $list = $this->get_tumblr_list();
             foreach ($list as $l) {
-                if (isset($l['is-primary']) && ($l['is-primary'] == 'yes')) {
+                if ($l['primary'] == '1') {
                     $this->user_id = $l['name'];
                     break;
                 }
@@ -24,105 +28,68 @@ abstract class abstract_tumblr {
         return $this->user_id;
     }
 
-    function get_queue($use_json = false, $start = '0', $num = '0', $type = '') {
-        $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
-
-        if ($use_json) {
-            $api_url .= "/json";
-        }
-        return $this->do_logged_request($api_url,
-                    array(
-                        'start'     => $start,
-                        'num'       => $num,
-                        'type'      => $type,
-                        'state'     => 'queue'
-                    ));
+    function get_queue() {
+        // TODO Error 500
+        return $this->do_logged_request($this->get_api_url('/posts/queue'), array());
     }
 
-    function get_draft($use_json = false, $start = '0', $num = '0', $type = '') {
-        $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
-
-        if ($use_json) {
-            $api_url .= "/json";
-        }
-        return $this->do_logged_request($api_url,
-                    array(
-                        'start'     => $start,
-                        'num'       => $num,
-                        'type'      => $type,
-                        'state'     => 'draft'
-                    ));
+    function get_draft() {
+        return $this->do_logged_request($this->get_api_url('/posts/draft'), array());
     }
 
-    function get_post_by_id($post_id, $use_json = false) {
-        $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
-
-        if ($use_json) {
-            $api_url .= "/json";
-        }
-        $info = $this->do_logged_request($api_url,
+    function get_post_by_id($post_id) {
+        $info = $this->do_logged_request($this->get_api_url('/posts'),
                     array(
-                        'id'        => $post_id
+                        'id'        => $post_id,
+                        'base-hostname' => $this->tumblr_name . '.tumblr.com',
+                        'api_key' => OAUTH_CONSUMER_KEY
                     ));
 
         return $info['result'];
     }
 
-    function post_photo_to_queue($photo_url, $caption, $publish_time, $tags = null) {
-        $api_url = 'http://www.tumblr.com/api/write';
+    function get_draft_post_by_id($post_id) {
+        // API v2 doesn't retrive post by draft but only from published so we use API v1
+        $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read/json';
+    
         $info = $this->do_logged_request($api_url,
                     array(
+                        'id'        => $post_id
+                    ));
+    
+        return $info['result'];
+    }
+
+    function post_photo_to_queue($photo_url, $caption, $publish_time, $tags = null) {
+        $params = array(
+                        'state'     => 'queue',
                         'type'      => 'photo',
                         'source'    => $photo_url,
                         'caption'   => $caption,
-
-                        'group'     => $this->tumblr_name . '.tumblr.com',
                         'tags'      => $tags ? implode(',', $tags) : '',
-
-                        'state'     => 'queue',
                         'publish-on' => $publish_time
-                    ));
-        return $info;
+                       );
+
+        return $this->create_post($params);
     }
 
     function update_photo_post($post_id, $state, $merge_values = false, $post_params = array()) {
-        $api_url = 'http://www.tumblr.com/api/write';
         $params = array(
-                        'post-id'   => $post_id,
-                        'state'     => $state
+                        'id'   => $post_id,
+                        'base-hostname' => $this->tumblr_name . '.tumblr.com',
+                        'api_key' => OAUTH_CONSUMER_KEY
                     );
 
-        if ($merge_values) {
-            // remove variable declaration and the semicolon at the end of string
-            preg_match('/{.*}/s', $this->get_post_by_id($post_id, true), $matches);
-            $json = json_decode($matches[0], true);
-            $post = $json['posts'][0];
-            $tags = isset($post['tags']) ? $post['tags'] : array();
-
-            if ($post['type'] == 'photo') {
-                $params['caption'] = isset($post_params['photo-caption'])
-                                        ? $post_params['photo-caption']
-                                        : $post['photo-caption'];
-                if (isset($post_params['tags'])) {
-                    $tags = array_unique(array_merge($tags, $post_params['tags']));
-                }
-            }
-            $params['tags'] = implode(",", $tags);
-            $params['photo-link-url'] = isset($post_params['photo-link-url'])
-                                    ? $post_params['photo-link-url']
-                                    : $post['photo-link-url'];
-        } else {
-            $params['caption'] = isset($post_params['photo-caption'])
-                                    ? $post_params['photo-caption']
-                                    : '';
-            $params['tags'] = isset($post_params['tags'])
-                                ? implode(",", $post_params['tags'])
-                                : "";
-            $params['click-through-url'] = isset($post_params['click-through-url'])
-                                    ? $post_params['click-through-url']
-                                    : '';
-        }
-        return $this->do_logged_request($api_url,$params);
+        $params['caption'] = isset($post_params['photo-caption'])
+                                ? $post_params['photo-caption']
+                                : '';
+        $params['tags'] = isset($post_params['tags'])
+                            ? implode(",", $post_params['tags'])
+                            : "";
+        $params['link'] = isset($post_params['click-through-url'])
+                                ? $post_params['click-through-url']
+                                : '';
+        return $this->do_logged_request($this->get_api_url('/post/edit'), $params);
     }
 
     /**
@@ -197,82 +164,44 @@ abstract class abstract_tumblr {
         $this->tumblr_name = $tumblr_name;
     }
 
-    function get_published_posts($use_json = false, $start = 0, $num = 50) {
-        $api_url = 'http://' . $this->tumblr_name . '.tumblr.com/api/read';
-
-        if ($use_json) {
-            $api_url .= "/json";
-        }
-        $info = tumblr::do_request($api_url,
-                    array(
-                        'start'     => $start,
-                        'num'       => $num
-                    ));
-
-        return $info['result'];
-    }
-
     function delete_post($post_id) {
-        $api_url = 'http://www.tumblr.com/api/delete';
-
-        return $this->do_logged_request($api_url,
+        return $this->do_logged_request($this->get_api_url('/post/delete'),
                     array(
-                        'post-id'   => $post_id,
+                        'id'   => $post_id,
                     ));
     }
 
     function publish_post($post_id, $params) {
-        $api_url = 'http://www.tumblr.com/api/write';
         $all_params = array(
-                        'post-id'   => $post_id,
-                        'state'     => 'published',
+                        'id'   => $post_id,
                   );
         if (isset($params)) {
             $all_params = array_merge($params, $all_params);
         }
+        // override any state set on params
+        $all_params['state'] = 'published';
 
-        return $this->do_logged_request($api_url, $all_params);
+        return $this->do_logged_request($this->get_api_url('/post/edit'), $all_params);
     }
 
     function create_post($params) {
-        $api_url = 'http://www.tumblr.com/api/write';
         $all_params = array();
         if (isset($params)) {
             $all_params = array_merge($params, $all_params);
         }
-        // can't be set from outside
-        $all_params['group'] = $this->tumblr_name . '.tumblr.com';
 
-        return $this->do_logged_request($api_url, $all_params);
+        return $this->do_logged_request($this->get_api_url('/post'), $all_params);
     }
 
     function get_tumblr_list() {
-        $api_url = 'http://www.tumblr.com/api/authenticate';
+        $api_url = 'http://api.tumblr.com/v2/user/info';
 
         $info = $this->do_logged_request($api_url, array());
-        $response = $info['result'];
-
-        $tumblr_list = array();
-
-        $dom = new DOMDocument('1.0', 'UTF-8');
-        if ($dom->loadXML($response)) {
-            if (count($dom->getElementsByTagName('tumblr'))) {
-                $tumblelogs = $dom->getElementsByTagName('tumblelog');
-                foreach ($tumblelogs as $tumblelog) {
-                    if ($tumblelog->getAttribute('name')) {
-                        $attributes = $tumblelog->attributes;
-                        if (!is_null($attributes)) {
-                            $attrs = array();
-                            foreach ($attributes as $index => $attr) {
-                                $attrs[$attr->name] = $attr->value;
-                            }
-                            array_push($tumblr_list, $attrs);
-                        }
-                    }
-                }
-            };
-        }
-        return $tumblr_list;
+        $response = json_decode($info['result'], true);
+        $response = $response['response'];
+        $user = $response['user'];
+        
+        return $user['blogs'];
     }
 }
 

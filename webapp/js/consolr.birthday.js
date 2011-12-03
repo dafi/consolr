@@ -15,8 +15,8 @@ if (typeof(consolr.birthday) == "undefined") {
             var post = posts[i];
 
             itemPatterns["postId"] = post.id;
-            itemPatterns["imgSrc"] = post['photo-url-75'];
-            itemPatterns["imgAlt"] = post['slug'];
+            itemPatterns["imgSrc"] = consolr.getPhotoByWidth(post.photos, 75).url;
+            itemPatterns["imgAlt"] = '';
             itemsHtml += $.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
         }
         var html = $.formatString(TEMPL_DATE_CONTAINER, {
@@ -105,7 +105,7 @@ if (typeof(consolr.birthday) == "undefined") {
                     tags : selectImageInfo.name,
                     postsToGet: null,
                     progress : function(data, posts) {
-                        consolr.setMessageText("Read posts " + posts.length + "/" + data['posts-total']);
+                        consolr.setMessageText("Read posts " + posts.length + "/" + data.total_posts);
                     },
                     complete : function(posts) {
                         consolrPosts.posts = posts;
@@ -116,7 +116,7 @@ if (typeof(consolr.birthday) == "undefined") {
 
                             selectImageInfo.post_url = post.url;
                             selectImageInfo.post_id = post.id;
-                            selectImageInfo.image_url = post['photo-url-250'];
+                            selectImageInfo.image_url = consolr.getPhotoByWidth(post.photos, 250).url;
 
                             link.attr('href', selectImageInfo.post_url);
                             img.attr('src', selectImageInfo.image_url);

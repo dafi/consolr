@@ -1,5 +1,6 @@
 (function($) {
     var INVALID_DATE = 'Date format is invalid';
+    var DIMENSION_IMAGE_URL = '$dim pixels width Image URL';
 
     $.fn.initDialogModifyQueuePost = function(settings) {
         var config = {isPublishDateEditAllowed: true};
@@ -57,14 +58,20 @@
                 var postInfo = $(this).dialog('option', 'postInfo');
                 var post = consolr.findPost(postInfo.attr('id'));
                 var tags = post['tags'] ? post['tags'].join(", ") : "";
-                var clickThroughLink = post['photo-link-url'] ? post['photo-link-url'] : "";
+                var clickThroughLink = post['link_url'] ? post['link_url'] : "";
                 var date = post['consolr-date'].format("dd NNN yyyy HH:mm:ss");
 
-                $('#dialog-modify-caption').val(post['photo-caption']);
+                $('#dialog-modify-caption').val(post.caption || post.title || post.quote || '');
                 $('#dialog-modify-publish-date').val(date);
                 $('#dialog-modify-click-through-link').val(clickThroughLink);
                 $('#dialog-modify-tags').val(tags);
-                $('#dialog-form fieldset').css('background-image', 'url("' + post['photo-url-75'] + '")');
+                var smallImgURL;
+                if (post.type == 'photo') {
+                    smallImgURL = consolr.getPhotoByWidth(post.photos, 75).url;
+                } else {
+                    smallImgURL = 'images/' + post.type + '.png';
+                }
+                $('#dialog-form fieldset').css('background-image', 'url("' + smallImgURL + '")');
 
                 $('#dialog-modify-caption').focus().select();
             },
@@ -223,8 +230,8 @@
                         var post = posts[i];
                         var params = {
                             postId : post.id,
-                            caption : post['photo-caption'],
-                            clickThroughLink : post['photo-link-url'] ? post['photo-link-url'] : '',
+                            caption : post.caption || post.title || post.quote || '',
+                            clickThroughLink : post['link_url'] ? post['link_url'] : '',
                             tags : post['tags'] ? post['tags'].join(', ') : '',
                             publishDate : post[dateProperty].format('dd NNN yyyy HH:mm:ss')
                         };
@@ -271,18 +278,24 @@
                     $('#dialog-photo-info-postid').html(post.id);
                     var url;
                     if (typeof (consolrState) == 'undefined') {
-                        url = post['url'];
+                        url = post.post_url;
                     } else {
                         url = 'http://www.tumblr.com/edit/' + post.id;
                     }
                     $('#dialog-photo-info-goto-tumblr').attr('href', url);
 
-                    $('#dialog-photo-info-label-75-url').attr('href', post['photo-url-75']);
-                    $('#dialog-photo-info-label-100-url').attr('href', post['photo-url-100']);
-                    $('#dialog-photo-info-label-250-url').attr('href', post['photo-url-250']);
-                    $('#dialog-photo-info-label-400-url').attr('href', post['photo-url-400']);
-                    $('#dialog-photo-info-label-500-url').attr('href', post['photo-url-500']);
-                    $('#dialog-photo-info-label-1280-url').attr('href', post['photo-url-1280']);
+                    var altSizes = post.photos[0].alt_sizes;
+                    var html = '';
+                    for (var i = altSizes.length - 1; i >= 0; i--) {
+                        var image = altSizes[i];
+                        var caption = $.formatString(DIMENSION_IMAGE_URL, {
+                            dim: image.width
+                        });
+                        
+                        html += '<p><a href="' + image.url + '">' + caption + '</a></p>';
+                    }
+                    $('.image-links-container').append(html);
+                    $('#dialog-photo-info .image-links-container a').button().css('width', '100%');
                 }
             })
             .dialog('option', 'post', settings.post)

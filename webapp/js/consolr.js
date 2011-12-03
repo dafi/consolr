@@ -3,7 +3,7 @@ if (typeof(consolr) == "undefined") {
 }
 
 (function() {
-    var POST_PER_REQUEST = 50;
+    var POST_PER_REQUEST = 20;
     var POSTS_IN_DAYS = '$postsCount posts in $postsDays days';
     var DAYS_WITHOUT_POST = "$dayCount day(s) without posts";
     var UPDATE_POST = "Updating post...";
@@ -129,10 +129,10 @@ if (typeof(consolr) == "undefined") {
         }
         var params = {
                 postId: post.id,
-                caption: post['photo-caption']
+                caption: post.caption || post.title || post.quote || ''
         };
-        if (post['photo-link-url']) {
-            params.clickThroughLink = post['photo-link-url'];
+        if (post['link_url']) {
+            params.clickThroughLink = post['link_url'];
         };
 
         doServerOperation('doPublish.php', params, settings);
@@ -213,9 +213,9 @@ if (typeof(consolr) == "undefined") {
                 var currPostDate = post['consolr-date'];
 
                 post['tags'] = params.tags.replace(/,\s*/, ',').split(',');
-                post['photo-caption'] = params.caption;
+                post['caption'] = params.caption;
                 post['consolr-date'] = publishDate;
-                post['photo-link-url'] = params.clickThroughLink;
+                post['link_url'] = params.clickThroughLink;
 
                 posts.splice(i, 1);
 
@@ -282,15 +282,18 @@ if (typeof(consolr) == "undefined") {
     }
 
     function fetchTumblr(url, settings) {
-        $.ajax({url: url + '&start=' + settings.start,
+        $.ajax({url: url + '&offset=' + settings.start,
                 dataType: 'json',
                 async: false,
+                jsonp: 'jsonp',
                 success: function(data, status) {
+                        data = data.response;
+                        var posts = data.posts;
                         if (settings.postsToGet === null) {
-                            settings.postsToGet = data['posts-total'];
+                            settings.postsToGet = data.blog.posts;
                         }
-                        settings.posts = settings.posts.concat(data['posts']);
-                        if (data['posts'].length > 0 && ((settings.start + settings.num) < settings.postsToGet)) {
+                        settings.posts = settings.posts.concat(posts);
+                        if (posts.length > 0 && ((settings.start + settings.num) < settings.postsToGet)) {
                             if (typeof (settings.progress) == "function") {
                                 settings.progress(data, settings.posts);
                             }
@@ -316,9 +319,7 @@ if (typeof(consolr) == "undefined") {
                     postsToGet : null,
                     progress : null,
                     complete : null,
-                    tags : null,
-                    id: null,
-                    type: 'photo'};
+                    tags : null};
 
         if (settings) {
             $.extend(config, settings);
@@ -326,14 +327,10 @@ if (typeof(consolr) == "undefined") {
         if (config.postsToGet !== null && config.postsToGet < config.num) {
             config.num = config.postsToGet;
         }
-        if (config.id) {
-            url = url + '?callback=?&id=' + config.id;
-            config.postsToGet = 1;
-        } else {
-            url = url + '?callback=?&type=' + config.type + '&num=' + config.num;
-            if (config.tags) {
-                url += '&tagged=' + config.tags;
-            }
+        url = url + '/posts/photo?limit=' + config.num;
+        url += "&api_key=Ey5V60LdhikPwmNhTfT2jrL3ZlkYuxA6LSeqOqwQiD7hVOTQrJ";
+        if (config.tags) {
+            url += '&tag=' + config.tags;
         }
         fetchTumblr(url, config);
     }
@@ -457,8 +454,8 @@ if (typeof(consolr) == "undefined") {
             });
         } else {
             // This ensure dates are normalized with client side timezone
-            $(consolrPosts['posts']).each(function(i, el) {
-                el['consolr-date'] = new Date(el[consolr.dateProperty]);
+            $(consolrPosts['posts']).each(function(i, post) {
+                post['consolr-date'] = new Date(post.timestamp * 1000);
             });
         }
         var direction = consolr.isAscending ? 1 : -1;
@@ -468,7 +465,6 @@ if (typeof(consolr) == "undefined") {
             return a === b ? 0 : a < b ? -direction : direction;
         });
         consolrPosts['group-date'] = consolr.groupDate.groupPostsByDate(consolrPosts.posts);
-
         $('#date-container').empty().html(consolr.groupDate.getDateContainerHTML({
                 sortByDateAsc : consolr.isAscending}));
         $('.title-group-date').click(function() {
@@ -518,4 +514,16 @@ if (typeof(consolr) == "undefined") {
         settings.progressMessage = SAVE_TAGS_LIST;
         doServerOperation('doSaveTagsList.php', params, settings);
     }
+
+    this.getPhotoByWidth = function(photos, width) {
+        var altSizes = photos[0]['alt_sizes'];
+        for (var i = 0; i < altSizes.length; i++) {
+            var altSize = altSizes[i];
+            if (altSize['width'] == width) {
+                return altSize;
+            }
+        }
+        return null;
+    }
+
 }).apply(consolr);
