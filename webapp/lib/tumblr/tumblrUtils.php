@@ -82,7 +82,7 @@ class tumblr_utils {
                 $post = $response['posts'][0];
                 $photo = tumblr_utils::get_photo_by_width($post['photos'], $photo_url_width);
     
-                $html .= '<a href="' . $post['url'] . '">';
+                $html .= '<a href="' . $post['post_url'] . '">';
                 $html .= '<img border="0" src="' . $photo['url'] . '"></img>';
                 $html .= '</a>&nbsp;&nbsp;';
                 if ((($i + 1) % $images_per_row) == 0) {
