@@ -1,1 +1,1 @@
-javascript:if (typeof(consolrGReaderTagFiller) == 'undefined'){try{var%20r=document.createElement('script');r.setAttribute('src','http://www.consolr.netsons.org/js/tagFiller.js');document.getElementsByTagName('body')[0].appendChild(r);}catch(e){alert(e)}}else{};
+javascript:if (typeof(consolrGReaderTagFiller) == 'undefined'){try{var%20consolrFiller=document.createElement('script');consolrFiller.setAttribute('src','http://www.consolr.netsons.org/js/tagFiller.js');document.getElementsByTagName('body')[0].appendChild(consolrFiller);}catch(e){alert(e)}}else{};

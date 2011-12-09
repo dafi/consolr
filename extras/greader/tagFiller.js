@@ -23,7 +23,7 @@ var consolrGReaderTagFiller = {};
                         0, 0, 0, 0, 0, false, false, false, false, 0, null);
     tag.dispatchEvent(evt);
     setTimeout(function() {
-        var titleRE = /^(.*?)\s([-\u2013|~@]|attends|arrives|signs)/;
+        var titleRE = /^(.*?)\s([-\u2013|~@]|attends|arrives|arriving|visits|signs)/;
         var m = title.match(titleRE);
         if (m && m[1]) {
             title = m[1];
