@@ -22,7 +22,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript" src="js/jquery-ui.js"></script>
         <script type="text/javascript" src="js/jquery.validate.js"></script>
         <script type="text/javascript" src="js/date.js"></script>
-        <script type="text/javascript" src="js/jquery.cookie.js"></script>
         <script type="text/javascript" src="js/jquery.strings.js"></script>
         <script type="text/javascript" src="js/consolr.upload.js"></script>
         <script type="text/javascript">

@@ -66,11 +66,9 @@ if (typeof(consolr.upload) == "undefined") {
                 // disable so validator ignores it
                 $('#date').attr('disabled', 'true');
             }
-            $.cookie('lastUsedState', this.value, {
-                expires: 365}
-            );
+            localStorage.setItem('lastUsedState', this.value);
         });
-        var lastUsedState = $.cookie('lastUsedState');
+        var lastUsedState = localStorage.getItem('lastUsedState');
         if (lastUsedState) {
             $('#state').val(lastUsedState).trigger('change');
         }
@@ -224,11 +222,9 @@ if (typeof(consolr.upload) == "undefined") {
     function initUpdateDateCheckbox() {
         $('#updateDate').click(function() {
             var value = $(this).attr('checked') ? 'y' : 'n';
-            $.cookie('updateDate', value, {
-                expires: 365}
-            );
+            localStorage.setItem('updateDate', value);
         });
-        var updateDate = $.cookie('updateDate');
+        var updateDate = localStorage.getItem('updateDate');
         // the default is checked
         if (!updateDate) {
             $('#updateDate').click();

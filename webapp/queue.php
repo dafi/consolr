@@ -50,7 +50,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/jquery-ui.js"></script>
-        <script type="text/javascript" src="js/jquery.cookie.js"></script>
         <script type="text/javascript" src="js/jquery.tooltip.min.js"></script>
         <script type="text/javascript" src="js/jquery.strings.js"></script>
         <script type="text/javascript" src="js/jquery.contextMenu.js"></script>
@@ -77,11 +76,11 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                 consolr.dateProperty = '<?php echo ($state == 'd' ? 'date' : 'publish-on-time') ?>';
                 $.initEditor();
 
-                consolr.sortType = $.cookie('sortType') || 0;
+                consolr.sortType = localStorage.getItem('sortType') || 0;
                 $('#sort-type').val(consolr.sortType);
 
-                var isAscending = $.cookie('sortAsc');
-                // cookie returns string
+                var isAscending = localStorage.getItem('sortAsc');
+                // getItem returns string
                 isAscending = isAscending ? isAscending == "true" : true;
 
                 consolr.initTimeline(consolr.dateProperty, isAscending);
@@ -119,12 +118,8 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     consolr.sortType = parseInt($(this).val(), 10);
                     consolr.initTimeline(consolr.dateProperty, $('#sort-direction').attr('checked'));
 
-                    $.cookie('sortType', consolr.sortType, {
-                        expires: 365}
-                    );
-                    $.cookie('sortAsc', consolr.isAscending, {
-                        expires: 365}
-                    );
+                    localStorage.setItem('sortType', consolr.sortType);
+                    localStorage.setItem('sortAsc', consolr.isAscending);
 
                     // how to use tooltip() with live()????
                     $(".date-image")
