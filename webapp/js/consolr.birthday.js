@@ -7,7 +7,7 @@ if (typeof(consolr.birthday) == "undefined") {
                 + '<ul id="$dateId" class="date-image-container">$items</ul></div>';
     var TEMPL_DATE_IMAGE_ITEM = '<li id="i$postId" class="date-image"><img src="$imgSrc" alt="$imgAlt"/></li>';
 
-    this.createHTML = function(posts) {
+    this.createHTML = function(name, posts) {
         var itemsHtml = "";
         var itemPatterns = {};
 
@@ -19,8 +19,9 @@ if (typeof(consolr.birthday) == "undefined") {
             itemPatterns["imgAlt"] = '';
             itemsHtml += $.formatString(TEMPL_DATE_IMAGE_ITEM, itemPatterns);
         }
+
         var html = $.formatString(TEMPL_DATE_CONTAINER, {
-                        "dateTitle" : name,
+                        "dateTitle" : '',
                         "dateId" : 'birthday-' + name,
                         "items" : itemsHtml});
         return html;
@@ -60,6 +61,7 @@ if (typeof(consolr.birthday) == "undefined") {
             names.push(bi.name);
             postIds.push(bi.post_id);
         }
+        consolr.showOperationProgressMessageText('Publishing birthday(s)...');
         $.ajax({
             url: "doPublishBirth.php",
             type: 'post',
@@ -68,10 +70,10 @@ if (typeof(consolr.birthday) == "undefined") {
                 post_ids: postIds.join(',')
             },
             success: function(timestamps) {
-                alert('done');
+                consolr.hideOperationProgressMessageText();
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                alert('error');
+                consolr.showOperationProgressMessageText('Error ' + textStatus, true);
             },
             dataType: 'json',
             async: false
@@ -93,10 +95,13 @@ if (typeof(consolr.birthday) == "undefined") {
                 }
             },
             open: function() {
+                $('#image-progress').progressbar({value:0}).show();
+
                 var selectImageInfo = $(this).dialog('option', 'selectImageInfo');
                 var link = $(this).dialog('option', 'link');
                 var img = $(this).dialog('option', 'img');
                 var dialog = $(this);
+                dialog.dialog('option', 'title', 'Select Image: ' + selectImageInfo.name);
 
                 $('#date-container').empty();
                 consolr.readPublicPhotoPosts(apiUrl, {
@@ -105,11 +110,14 @@ if (typeof(consolr.birthday) == "undefined") {
                     tags : selectImageInfo.name,
                     postsToGet: null,
                     progress : function(data, posts) {
-                        consolr.setMessageText("Read posts " + posts.length + "/" + data.total_posts);
+                        var perc = posts.length * 100 / data.total_posts;
+                        $('#image-progress').progressbar({value:perc});
                     },
                     complete : function(posts) {
+                        $('#image-progress').hide();
+
                         consolrPosts.posts = posts;
-                        $('#date-container').html(consolr.birthday.createHTML(posts));
+                        $('#date-container').html(consolr.birthday.createHTML(selectImageInfo.name, posts));
                         $('.date-image').click(function() {
                             var index = consolr.findPostIndex(this.id);
                             var post = consolrPosts.posts[index];

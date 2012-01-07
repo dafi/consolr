@@ -35,7 +35,7 @@ if (isset($_POST['names']) && isset($_POST['post_ids'])) {
             $body .= tumblr_utils::get_thumbs_html($tumblr, $list, MAX_THUMBS_PER_DIGEST, MAX_THUMBS_PER_ROW, false, '400');
             $tags = "Birthday, " . $b['name'];
 
-            $params = array('state' => 'draft',
+            $params = array('state' => 'publish',
                             'type' => 'text',
                             'title' => $title,
                             'body' => $body,
