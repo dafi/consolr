@@ -76,7 +76,7 @@ if (typeof(consolr.birthday) == "undefined") {
                 consolr.showOperationProgressMessageText('Error ' + textStatus, true);
             },
             dataType: 'json',
-            async: false
+            async: true
         });
     }
 }).apply(consolr.birthday);
