@@ -145,13 +145,13 @@ function extract_info($tumblr) {
         $("#toolbar button, input[type=submit]").button();
         $("#sort-by-title, #sort-by-time, #sort-by-count").click(function() {
             var sortType = $(this).attr('sort-type');
-            localStorage.setItem('sortType', sortType);
+            localStorage.setItem('gReader.sortType', sortType);
             appendItems(sortType);
         });
 
         // first order by title to get correct info for tags count
         var tagsCount = appendItems('Title');
-        appendItems(localStorage.getItem('sortType') || 'Title');
+        appendItems(localStorage.getItem('gReader.sortType') || 'Title');
         $('.items-count').append("<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>");
     });
 
