@@ -143,17 +143,15 @@ function extract_info($tumblr) {
     }
     $(function() {
         $("#toolbar button, input[type=submit]").button();
-        $("#sort-by-title").click(function() {
-            appendItems('Title');
-        });
-        $("#sort-by-time").click(function() {
-            appendItems('Time');
-        });
-        $("#sort-by-count").click(function() {
-            appendItems('Count');
+        $("#sort-by-title, #sort-by-time, #sort-by-count").click(function() {
+            var sortType = $(this).attr('sort-type');
+            localStorage.setItem('sortType', sortType);
+            appendItems(sortType);
         });
 
+        // first order by title to get correct info for tags count
         var tagsCount = appendItems('Title');
+        appendItems(localStorage.getItem('sortType') || 'Title');
         $('.items-count').append("<p>Items found: " + starred.length + " (tags " + tagsCount + ")</p>");
     });
 
@@ -278,9 +276,9 @@ function extract_info($tumblr) {
         <?php if (login_utils::is_logged()) include('inc/menu.php') ?>
 
         <div id="toolbar" class="toolbar ui-widget-header ui-corner-all">
-            <button id="sort-by-title">Sort by Title</button>
-            <button id="sort-by-time">Sort by Time</button>
-            <button id="sort-by-count">Sort by Count</button>
+            <button id="sort-by-title" sort-type="Title">Sort by Title</button>
+            <button id="sort-by-time" sort-type="Time">Sort by Time</button>
+            <button id="sort-by-count" sort-type="Count">Sort by Count</button>
         </div>
         </div>
         <div id="fixed-menu-bar-separator"></div>
