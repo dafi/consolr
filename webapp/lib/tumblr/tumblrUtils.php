@@ -110,7 +110,8 @@ class tumblr_utils {
     static function get_photo_by_width($photos, $width) {
         $alt_sizes = $photos[0]['alt_sizes'];
         foreach ($alt_sizes as $alt_size) {
-            if ($alt_size['width'] == $width) {
+            // some images don't have the exact (==) width so we get closest width (<=)
+            if ($alt_size['width'] <= $width) {
                 return $alt_size;
             }
         }
