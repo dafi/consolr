@@ -26,7 +26,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         <script type="text/javascript">
         <!--//
             var tumblrName = "<?php echo $tumblr_name ?>";
-            var apiUrl = 'http://' + tumblrName + '.tumblr.com/api/read/json';
+            var apiUrl = 'http://api.tumblr.com/v2/blog/' + tumblrName + '.tumblr.com';
             var msgTitle = 'Consolr - Tags';
             var msgTitleProgress = 'Read posts $c/$t';
 
