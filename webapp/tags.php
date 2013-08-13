@@ -104,12 +104,12 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         var tag = tags[j];
 
                         if (typeof (tagsMap[tag]) == 'undefined') {
-                            tagsMap[tag] = [{id: post.id, ts: post['unix-timestamp'], so: showOrder++}];
+                            tagsMap[tag] = [{id: post.id, ts: post['timestamp'], so: showOrder++}];
                         } else {
                             if (tagsMap[tag].indexOf(post.id) >= 0) {
                                 if (window.console) console.error('Found duplicated tag "' + tag + '" for post ' + post.id);
                             } else {
-                                tagsMap[tag].push({id: post.id, ts: post['unix-timestamp'], so: showOrder++});
+                                tagsMap[tag].push({id: post.id, ts: post['timestamp'], so: showOrder++});
                             }
                         }
                     }
