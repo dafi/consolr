@@ -41,7 +41,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                         progress : function(data, posts) {
                             var msg = $.formatString(msgTitleProgress, {
                                 c: posts.length,
-                                t: data['posts-total']});
+                                t: data['total_posts']});
                             consolr.setMessageText(msg);
                             window.document.title = msg + " " + msgTitle;
                         },
@@ -75,7 +75,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                                 postsToGet: 1,
                                 posts : [],
                                 complete : function(posts, data) {
-                                    settings.postsToGet = data['posts-total'] - postsCount;
+                                    settings.postsToGet = data['total_posts'] - postsCount;
                                     consolr.readPublicPhotoPosts(apiUrl, settings);
                                 }
                             });
