@@ -1,9 +1,10 @@
 CREATE TABLE IF NOT EXISTS CONSOLR_BIRTHDAY (
   id int(11) NOT NULL AUTO_INCREMENT,
-  name unique varchar(255) NOT NULL,
+  name varchar(255) NOT NULL,
   birth_date date DEFAULT NULL,
   tumblr_name VARCHAR( 255 ) NOT NULL ,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB;
 
 CREATE VIEW CONSOLR_VW_MISSING_BIRTHDAYS AS
