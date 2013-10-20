@@ -71,6 +71,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
                     ?>
                     <li class="date-image"><a href="birthdays.php"><img src="images/tb_birthday.png" width="75" height="75"/><div class="date-image-time label"><?php echo $birth_menu_label ?></div></a></li>
                     <?php } ?>
+                    <li class="date-image"><a href="refreshBirth.php"><img src="http://27.media.tumblr.com/tumblr_lj0pzqS8xX1qa5bxzo1_250.png" width="75" height="75"/><div class="date-image-time label">Refresh Birthdays</div></a></li>
                     <li class="date-image"><a href="settings.php"><img src="images/tb_settings.png" width="75" height="75"/><div class="date-image-time label">Settings</div></a></li>
                 </ul>
             </div>
